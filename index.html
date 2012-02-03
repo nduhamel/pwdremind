@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<link rel="stylesheet" href="./static/css/bootstrap.css">
+<link href="./static/css/main.css" rel="stylesheet">
+<title>Password Remind</title>
+</head>
+<body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+<script src="./static/js/valid.js"></script>
+<script src="./static/js/tablesorter.js"></script>
+<script src="./static/js/tablesorter_filter.js"></script>
+<script src="./static/js/bootstrap-modal.js"></script>
+<script src="./static/js/jquery.ui.totop.js"></script>
+
+<script>
+$(document).ready(function() {
+
+    $('#pwdlist').hide();
+    // Save base table
+    var basePwdSection = $('#pwdlist').clone()
+
+    var index = {};
+
+    //Utils
+    var showPwdTable = function(){
+        if( !$("#pwdlist-sites > tbody").is(':empty') ){
+            $('#pwdlist').show();
+            $("#pwdlist-sites").tablesorter().tablesorterFilter({filterContainer: $("#id_search"),
+                                  filterColumns: [0,1,2],
+                                  filterCaseSensitive: false});
+            $('#pwdlist-sites').click(function(e) {
+                var target = $(e.target);
+                if (target.is("img[class='delete']")) return removeEntry(target);
+                if (target.is("img[class='showpwd']")) return target.prev("span").fadeToggle("slow");
+            });
+        }
+    };
+
+    var loadEntry = function(){
+        index = new Object(JSON.parse(localStorage.getItem('index')));
+        if (index.length < 1)
+            index = {};
+        $.each(index, function(key, val) {
+            if (val !== 0){
+                id = key;
+                val = JSON.parse(localStorage.getItem(id));
+                $('#pwdlist-sites > tbody:last').append('<tr><td>'+val['site']+'</td><td>'+val['login']+'</td><td><span class="pwd">'+val['pwd']+'</span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></td><td><img src="./static/icons/delete.png" class="delete" alt="delete" data-id="'+id+'"/></td></tr>');
+                $("#pwdlist-sites").trigger("updateCache");
+            }
+        });
+    };
+
+    var removeEntry = function(img){
+        $("#pwdlist-sites").trigger("clearFilter");
+        var id = img.data('id')
+        index[id] = 0;
+        localStorage.setItem('index', JSON.stringify(index));
+        localStorage.removeItem(id);
+        img.closest('tr').remove();
+        if( $("#pwdlist-sites > tbody").is(':empty') ){
+            $("#pwdlist").remove();
+            $('#main').prepend(basePwdSection)
+            $('#pwdlist').hide();
+        }else{
+            $("#pwdlist-sites").trigger("updateCache");
+        }
+        sync();
+    };
+
+    var saveEntry = function(entryJSON){
+        var id = new Date().getTime() + ''
+        index[id] = id;
+        localStorage.setItem('index', JSON.stringify(index));
+        localStorage.setItem(id, JSON.stringify(entryJSON));
+        sync();
+        return id
+    };
+
+    var sync = function sync(sync) {
+        if (navigator.onLine) {
+            $.post('sync.php', localStorage, function(data) {
+                console.log(data);
+                data = JSON.parse(data);
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                localStorage.setItem('index', JSON.stringify(data.index));
+                for (k in data.entries) {
+                    localStorage.setItem(k, JSON.stringify(data.entries[k]));
+                }
+            });
+        } else {
+            alert("Can't sync because you are offline!");
+        }
+    }
+
+    $("#addentry").validation();
+    $("#addentry").submit(function(){
+        if(!$(this).validate()){
+            return false;
+        };
+        var site = $("input[name='site']").val();
+        var login = $("input[name='login']").val();
+        var pwd = $("input[name='pwd']").val();
+        var id = saveEntry( $(this).formToJSON() );
+        $("#pwdlist-sites").trigger("clearFilter");
+        $('#pwdlist-sites > tbody:last').append('<tr><td>'+site+'</td><td>'+login+'</td><td><span class="pwd">'+pwd+'</span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></td><td><img src="./static/icons/delete.png" class="delete" alt="delete" data-id="'+id+'"/></td></tr>');
+        $("#pwdlist-sites").trigger("updateCache");
+        $(this)[0].reset();
+        if(!$('#pwdlist').is(":visible")) showPwdTable();
+        sync();
+        $('#add-modal').modal('toggle');
+        return false
+    });
+
+
+    $.fn.formToJSON = function() {
+        var json = {};
+        $.map($(this).serializeArray(), function(n, i){
+            json[n['name']] = n['value'];
+        });
+        return json;
+    };
+
+
+    $("#login").submit(function(){
+        $.post('sync.php', $(this).formToJSON(), function(data) {
+            console.log(data);
+            data = JSON.parse(data);
+            if (data.error) {
+                $('#login-modal .alert-message.error').show();
+                $('#login-modal input[type="submit"]').removeClass('disabled').removeAttr('disabled').val('connexion');
+                return;
+            }
+            $('#login-modal').modal('hide');
+            sync();
+            loadEntry();
+            showPwdTable();
+        });
+        $('#login-modal input[type="submit"]').addClass('disabled').attr('disabled', 'disabled').val('Identification...');
+        return false;
+    });
+
+    $('#login-modal .alert-message.error').hide();
+    $('#login-modal').modal({
+        show: true,
+        backdrop: 'static',
+    });
+
+    $(".topbar a[href='#add']").click(function () {
+        $('#add-modal').modal({
+            show: true,
+            backdrop: true,
+            keyboard: true
+            });
+        return false;
+    });
+
+    $().UItoTop();
+
+});
+</script>
+<!-- Topbar
+================================================== -->
+<div class="topbar" data-scrollspy="scrollspy" >
+  <div class="topbar-inner">
+    <div class="container">
+      <a class="brand" href="#">Password remind</a>
+      <ul class="nav">
+            <li><a href="#add">Ajouter</a></li>
+      </ul>
+      <ul class="nav secondary-nav">
+        <li><a href="#logout">Se d&eacute;connecter</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div id="login-modal" class="modal hide fade">
+            <div class="modal-header">
+              <h3>Connexion</h3>
+            </div>
+            <div class="modal-body">
+
+             <form id="login" action="">
+                <fieldset>
+                    <div class="clearfix">
+                        <label for="username">Identifiant</label>
+                        <div class="input">
+                            <input class="xlarge" id="username" name="username" size="30" type="text" validation="required" />
+                        </div>
+                    </div><!-- /clearfix -->
+                    <div class="clearfix">
+                        <label for="password">Mot de passe</label>
+                        <div class="input">
+                            <input class="xlarge" id="password" name="password" size="30" type="text" validation="required" />
+                        </div>
+                    </div><!-- /clearfix -->
+                    <div class="alert-message error">
+                        <p><strong>Erreur:</strong> Mauvais identifiant ou mot de passe.</p>
+                    </div>
+            </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn primary" value="connexion" />
+                </div>
+                </fieldset>
+            </form>
+</div>
+
+<div id="add-modal" class="modal hide fade">
+            <div class="modal-header">
+              <a href="#" class="close">&times;</a>
+              <h3>Ajouter</h3>
+            </div>
+            <div class="modal-body">
+
+<form id="addentry" action="">
+<fieldset>
+  <div class="clearfix">
+    <label for="site">Site web</label>
+    <div class="input">
+      <input class="xlarge" id="site" name="site" size="30" type="text" validation="required url" />
+    </div>
+  </div><!-- /clearfix -->
+  <div class="clearfix">
+    <label for="login">Identifiant</label>
+    <div class="input">
+      <input class="xlarge" id="login" name="login" size="30" type="text" validation="required" />
+    </div>
+  </div><!-- /clearfix -->
+  <div class="clearfix">
+    <label for="pwd">Mot de passe</label>
+    <div class="input">
+        <input class="xlarge" id="pwd" name="pwd" size="30" type="password" validation="required" autocomplete="off" />
+    </div>
+  </div><!-- /clearfix -->
+
+            </div>
+            <div class="modal-footer">
+                <input type="submit" class="btn primary" value="Save changes">&nbsp;<button type="reset" class="btn">Cancel</button>
+            </div>
+</fieldset>
+</form>
+</div>
+
+<div id="main" class="container">
+<section id="pwdlist">
+  <div class="page-header">
+    <h1>Sites</h1>
+  </div>
+  <div class="row">
+
+    <div class="span16">
+    <form action="#">
+<fieldset>
+<input type="text" name="search" value="" id="id_search" placeholder="Search" />
+</fieldset>
+</form>
+    <table class="zebra-striped" id="pwdlist-sites">
+        <thead>
+          <tr>
+            <th class="blue header">Site</th>
+            <th class="green header">Identifiant</th>
+            <th class="yellow header">Password</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      </div>
+</section>
+
+</div>
+</body>
+</html>
