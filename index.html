@@ -159,6 +159,16 @@ $(document).ready(function() {
         return false;
     });
 
+	$(".topbar a[href='#logout']").click(function () {
+	   	var logoutRequest = new XMLHttpRequest();
+		logoutRequest.open('GET', 'sync.php?action=logout');
+		logoutRequest.send(null);
+		logoutRequest.onreadystatechange = function() {
+		    if (logoutRequest.readyState == logoutRequest.DONE)
+				location.reload();
+		};
+	});
+
     $().UItoTop();
 
 });
