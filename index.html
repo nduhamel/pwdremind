@@ -46,7 +46,7 @@ $(document).ready(function() {
             if (val !== 0){
                 id = key;
                 val = JSON.parse(localStorage.getItem(id));
-                $('#pwdlist-sites > tbody:last').append('<tr><td>'+val['site']+'</td><td>'+val['login']+'</td><td><span class="pwd">'+val['pwd']+'</span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></td><td><img src="./static/icons/delete.png" class="delete" alt="delete" data-id="'+id+'"/></td></tr>');
+                $('#pwdlist-sites > tbody:last').append('<tr><td><a href="'+val['site']+'">'+val['site']+'</a></td><td>'+val['login']+'</td><td><span class="pwd">'+val['pwd']+'</span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></td><td><img src="./static/icons/delete.png" class="delete" alt="delete" data-id="'+id+'"/></td></tr>');
                 $("#pwdlist-sites").trigger("updateCache");
             }
         });
