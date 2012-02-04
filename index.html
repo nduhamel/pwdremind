@@ -150,6 +150,24 @@ $(document).ready(function() {
         backdrop: 'static',
     });
 
+	//Check connection
+	var isLoggedRequest = new XMLHttpRequest();
+	isLoggedRequest.open('GET', 'sync.php?action=isloggedin');
+	isLoggedRequest.send(null);
+	isLoggedRequest.onreadystatechange = function() {
+	    if (isLoggedRequest.readyState == isLoggedRequest.DONE) { 
+			isLogged = isLoggedRequest.responseText;
+			
+			if (isLogged){
+				 $('#login-modal').modal('hide');
+		         sync();
+		         loadEntry();
+		         showPwdTable();
+			}
+
+	    }
+	};
+
     $(".topbar a[href='#add']").click(function () {
         $('#add-modal').modal({
             show: true,
