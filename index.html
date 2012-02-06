@@ -144,12 +144,6 @@ $(document).ready(function() {
         return false;
     });
 
-    $('#login-modal .alert-message.error').hide();
-    $('#login-modal').modal({
-        show: true,
-        backdrop: 'static',
-    });
-
 	//Check connection
 	var isLoggedRequest = new XMLHttpRequest();
 	isLoggedRequest.open('GET', 'sync.php?action=isloggedin');
@@ -163,6 +157,13 @@ $(document).ready(function() {
 		         sync();
 		         loadEntry();
 		         showPwdTable();
+			}
+			else {			
+			    $('#login-modal .alert-message.error').hide();
+			    $('#login-modal').modal({
+			        show: true,
+			        backdrop: 'static',
+			    });
 			}
 
 	    }
