@@ -107,7 +107,7 @@ $(document).ready(function() {
         var pwd = $("input[name='pwd']").val();
         var id = saveEntry( $(this).formToJSON() );
         $("#pwdlist-sites").trigger("clearFilter");
-        $('#pwdlist-sites > tbody:last').append('<tr><td>'+site+'</td><td>'+login+'</td><td><span class="pwd">'+pwd+'</span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></td><td><img src="./static/icons/delete.png" class="delete" alt="delete" data-id="'+id+'"/></td></tr>');
+        $('#pwdlist-sites > tbody:last').append('<tr><td><a href="'+site+'">'+site+'</a></td><td>'+login+'</td><td><span class="pwd">'+pwd+'</span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></td><td><img src="./static/icons/delete.png" class="delete" alt="delete" data-id="'+id+'"/></td></tr>');
         $("#pwdlist-sites").trigger("updateCache");
         $(this)[0].reset();
         if(!$('#pwdlist').is(":visible")) showPwdTable();
