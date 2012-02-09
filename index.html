@@ -32,7 +32,7 @@ $(document).ready(function() {
                                   filterCaseSensitive: false});
             $('#pwdlist-sites').click(function(e) {
                 var target = $(e.target);
-                if (target.is("img[class='delete']")) return removeEntry(target);
+                if (target.is("img[class='delete']")) return confirmDelete(target);
                 if (target.is("img[class='showpwd']")) return target.prev("span").fadeToggle("slow");
             });
         }
@@ -46,19 +46,30 @@ $(document).ready(function() {
             if (val !== 0){
                 id = key;
                 val = JSON.parse(localStorage.getItem(id));
-                $('#pwdlist-sites > tbody:last').append('<tr><td><a href="'+val['site']+'">'+val['site']+'</a></td><td>'+val['login']+'</td><td><span class="pwd">'+val['pwd']+'</span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></td><td><img src="./static/icons/delete.png" class="delete" alt="delete" data-id="'+id+'"/></td></tr>');
+                $('#pwdlist-sites > tbody:last').append('<tr><td><a href="'+val['site']+'">'+val['site']+'</a></td><td>'+val['login']+'</td><td><span class="pwd">'+val['pwd']+'</span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></td><td><img src="./static/icons/delete.png" class="delete" alt="delete" id='+id+' data-id="'+id+'"/></td></tr>');
                 $("#pwdlist-sites").trigger("updateCache");
             }
         });
     };
 
-    var removeEntry = function(img){
+	var confirmDelete = function(img){
+		$('#confirm-modal').modal({
+            show: true,
+            backdrop: true,
+            keyboard: true
+            });
+			var id = img.data('id');
+			localStorage.setItem('tempId',id);
+	};
+
+    var removeEntry = function(){
         $("#pwdlist-sites").trigger("clearFilter");
-        var id = img.data('id')
+		id = localStorage.getItem('tempId');
         index[id] = 0;
         localStorage.setItem('index', JSON.stringify(index));
         localStorage.removeItem(id);
-        img.closest('tr').remove();
+		$('#'+id).closest('tr').remove();
+
         if( $("#pwdlist-sites > tbody").is(':empty') ){
             $("#pwdlist").remove();
             $('#main').prepend(basePwdSection)
@@ -66,6 +77,7 @@ $(document).ready(function() {
         }else{
             $("#pwdlist-sites").trigger("updateCache");
         }
+		$('#confirm-modal').modal('hide');
         sync();
     };
 
@@ -106,7 +118,7 @@ $(document).ready(function() {
         var pwd = $("input[name='pwd']").val();
         var id = saveEntry( $(this).formToJSON() );
         $("#pwdlist-sites").trigger("clearFilter");
-        $('#pwdlist-sites > tbody:last').append('<tr><td><a href="'+site+'">'+site+'</a></td><td>'+login+'</td><td><span class="pwd">'+pwd+'</span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></td><td><img src="./static/icons/delete.png" class="delete" alt="delete" data-id="'+id+'"/></td></tr>');
+        $('#pwdlist-sites > tbody:last').append('<tr><td><a href="'+site+'">'+site+'</a></td><td>'+login+'</td><td><span class="pwd">'+pwd+'</span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></td><td><img src="./static/icons/delete.png" class="delete" alt="delete" id='+id+' data-id="'+id+'"/></td></tr>');
         $("#pwdlist-sites").trigger("updateCache");
         $(this)[0].reset();
         if(!$('#pwdlist').is(":visible")) showPwdTable();
@@ -167,6 +179,18 @@ $(document).ready(function() {
 
 	    }
 	};
+
+	$("#confirm").submit(function(){
+		event.preventDefault();
+		removeEntry();
+        return false;
+    });
+	
+	$("#cancelDelete").click(function () {
+	   	$('#confirm-modal').modal('hide');
+		localStorage.removeItem('tempId');
+        return false;
+	});
 
     $(".topbar a[href='#add']").click(function () {
         $('#add-modal').modal({
@@ -273,6 +297,28 @@ $(document).ready(function() {
             </div>
 </fieldset>
 </form>
+</div>
+
+<div id="confirm-modal" class="modal hide fade">
+	<div class="modal-header">
+        <h3>Confirmer</h3>
+    </div>
+ 
+   	<div class="modal-body">
+
+		<form id="confirm" action="">
+			<fieldset>
+  				<div class="clearfix">
+    				Confirmez-vous la suppression?
+  				</div><!-- /clearfix -->
+            
+				<div class="modal-footer">
+                	<input type="submit" class="btn primary" value="Confirmer">&nbsp;<button id="cancelDelete" class="btn">Annuler</button>
+            	</div>
+			</fieldset>
+		</form>
+	</div>
+	
 </div>
 
 <div id="main" class="container">
