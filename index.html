@@ -177,7 +177,8 @@ $(document).ready(function() {
         return false;
     });
 
-	$(".topbar a[href='#logout']").click(function () {
+	$(".topbar a[href='#logout']").click(function (event) {
+		event.preventDefault();
 	   	var logoutRequest = new XMLHttpRequest();
 		logoutRequest.open('GET', 'sync.php?action=logout');
 		logoutRequest.send(null);
