@@ -78,7 +78,7 @@ $(document).ready(function() {
         return id
     };
 
-    var sync = function sync(sync) {
+    var sync = function sync() {
         if (navigator.onLine) {
             $.post('sync.php', localStorage, function(data) {
                 console.log(data);
@@ -92,10 +92,9 @@ $(document).ready(function() {
                     localStorage.setItem(k, JSON.stringify(data.entries[k]));
                 }
             });
-        } else {
+        } else
             alert("Can't sync because you are offline!");
-        }
-    }
+    };
 
     $("#addentry").validation();
     $("#addentry").submit(function(){
