@@ -152,29 +152,21 @@ $(document).ready(function() {
     });
 
     //Check connection
-    var isLoggedRequest = new XMLHttpRequest();
-    isLoggedRequest.open('GET', 'sync.php?action=isloggedin');
-    isLoggedRequest.send(null);
-    isLoggedRequest.onreadystatechange = function() {
-        if (isLoggedRequest.readyState == isLoggedRequest.DONE) {
-                    isLogged = isLoggedRequest.responseText;
-
-                    if (isLogged){
-                             $('#login-modal').modal('hide');
-                     sync();
-                     loadEntry();
-                     showPwdTable();
-                    }
-                    else {
-                        $('#login-modal .alert-message.error').hide();
-                        $('#login-modal').modal({
-                            show: true,
-                            backdrop: 'static',
-                        });
-                    }
-
+    $.get('sync.php?action=isloggedin', function(data) {
+        if (data){
+            $('#login-modal').modal('hide');
+            sync();
+            loadEntry();
+            showPwdTable();
+        }else{
+            $('#login-modal .alert-message.error').hide();
+            $('#login-modal').modal({
+                    show: true,
+                    backdrop: 'static',
+            });
         }
-    };
+    });
+
 
     $("#confirm").submit(function(event){
         event.preventDefault();
@@ -201,13 +193,10 @@ $(document).ready(function() {
 
     $(".topbar a[href='#logout']").click(function (event) {
         event.preventDefault();
-        var logoutRequest = new XMLHttpRequest();
-        logoutRequest.open('GET', 'sync.php?action=logout');
-        logoutRequest.send(null);
-        logoutRequest.onreadystatechange = function() {
-            if (logoutRequest.readyState == logoutRequest.DONE)
-                        location.reload();
-        };
+        $.get('sync.php?action=logout', function(data) {
+            console.log(data)
+            location.reload();
+        });
     });
 
     $().UItoTop();
