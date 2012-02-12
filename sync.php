@@ -48,7 +48,8 @@ class PwdRemind{
         unset($_POST['password']);
         $local_hash = $this->db->get_user_pwd_hash($username);
         if($local_hash == hash('sha256', $password)){
-            $this->session->login($username);
+	    $key = hash('md5', $password);
+            $this->session->login($username,$key);
             echo json_encode(array('username' => $username));
             exit;
         }else{
@@ -118,10 +119,11 @@ class Session {
         session_start();
     }
 
-    public function login($userid){
+    public function login($userid,$key){
         session_regenerate_id ();
         $_SESSION['valid'] = True;
         $_SESSION['username'] = $userid;
+	$_SESSION['key'] = $key;
     }
 
     public function is_logged_in(){
