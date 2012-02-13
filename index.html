@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 <head>
 <link rel="stylesheet" href="./static/css/bootstrap.css">
@@ -7,21 +6,29 @@
 <title>Password Remind</title>
 </head>
 <body>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+<script src="./static/js/jquery.js"></script>
+
 <script src="./static/js/valid.js"></script>
 <script src="./static/js/tablesorter.js"></script>
 <script src="./static/js/tablesorter_filter.js"></script>
 <script src="./static/js/bootstrap-modal.js"></script>
 <script src="./static/js/jquery.ui.totop.js"></script>
 
+<script src="./static/js/jquery.idletimeout.js"></script>
+<script src="./static/js/jquery.idletimer.js"></script>
+
 <script>
 $(document).ready(function() {
-
     $('#pwdlist').hide();
     // Save base table
     var basePwdSection = $('#pwdlist').clone()
 
     var index = {};
+    if (sessionStorage.getItem("index") === null) {
+        sessionStorage.setItem('index', JSON.stringify({}));
+    }else{
+        index = sessionStorage.getItem("index");
+    }
 
     //Utils
     var showPwdTable = function(){
@@ -39,13 +46,13 @@ $(document).ready(function() {
     };
 
     var loadEntry = function(){
-        index = new Object(JSON.parse(localStorage.getItem('index')));
+        index = new Object(JSON.parse(sessionStorage.getItem('index')));
         if (index.length < 1)
             index = {};
         $.each(index, function(key, val) {
             if (val !== 0){
                 id = key;
-                val = JSON.parse(localStorage.getItem(id));
+                val = JSON.parse(sessionStorage.getItem(id));
                 $('#pwdlist-sites > tbody:last').append('<tr><td><a href="'+val['site']+'">'+val['site']+'</a></td><td>'+val['login']+'</td><td><span class="pwd">'+val['pwd']+'</span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></td><td><img src="./static/icons/delete.png" class="delete" alt="delete" id='+id+' data-id="'+id+'"/></td></tr>');
                 $("#pwdlist-sites").trigger("updateCache");
             }
@@ -64,8 +71,8 @@ $(document).ready(function() {
     var removeEntry = function(id){
         $("#pwdlist-sites").trigger("clearFilter");
         index[id] = 0;
-        localStorage.setItem('index', JSON.stringify(index));
-        localStorage.removeItem(id);
+        sessionStorage.setItem('index', JSON.stringify(index));
+        sessionStorage.removeItem(id);
         $('#'+id).closest('tr').remove();
         if( $("#pwdlist-sites > tbody").is(':empty') ){
             $("#pwdlist").remove();
@@ -80,29 +87,62 @@ $(document).ready(function() {
     var saveEntry = function(entryJSON){
         var id = new Date().getTime() + ''
         index[id] = id;
-        localStorage.setItem('index', JSON.stringify(index));
-        localStorage.setItem(id, JSON.stringify(entryJSON));
+        sessionStorage.setItem('index', JSON.stringify(index));
+        sessionStorage.setItem(id, JSON.stringify(entryJSON));
         sync();
         return id
     };
 
     var sync = function sync() {
         if (navigator.onLine) {
-            $.post('sync.php', localStorage, function(data) {
+            $.post('sync.php', sessionStorage, function(data) {
+                console.log("sync...");
                 console.log(data);
                 data = JSON.parse(data);
                 if (data.error) {
                     alert(data.error);
                     return;
                 }
-                localStorage.setItem('index', JSON.stringify(data.index));
+                sessionStorage.setItem('index', JSON.stringify(data.index));
                 for (k in data.entries) {
-                    localStorage.setItem(k, JSON.stringify(data.entries[k]));
+                    sessionStorage.setItem(k, JSON.stringify(data.entries[k]));
                 }
             });
         } else
             alert("Can't sync because you are offline!");
     };
+
+    var timeoutHandler = function(){
+        console.log('Start time out');
+        $.idleTimeout('#keepalive-modal', '#keepalive-modal #btn-keepalive', {
+            idleAfter: 100, // user is considered idle after 5 minutes of no movement
+            pollingInterval: 60, // a request to keepalive.php (below) will be sent to the server every minute
+            keepAliveURL: 'sync.php?action=keepalive',
+            serverResponseEquals: 'OK', // the response from keepalive.php must equal the text "OK"
+            onTimeout: function(){
+                sessionStorage.clear();
+                $.get('sync.php?action=logout', function(data) {
+                    console.log(data)
+                    location.reload();
+                });
+            },
+            onIdle: function(){
+                    $('#keepalive-modal').modal({
+                        show: true,
+                        backdrop: 'static',
+                    });
+            },
+            onCountdown: function(counter){
+                    // update the counter span inside the dialog during each second of the countdown
+            },
+            onResume: function(){
+                $('#keepalive-modal').modal('hide');
+            }
+        });
+    };
+    $('#keepalive-modal #btn-close-session').click(function(){
+        $.idleTimeout.options.onTimeout.call(this);
+    });
 
     $("#addentry").validation();
     $("#addentry").submit(function(){
@@ -118,7 +158,6 @@ $(document).ready(function() {
         $("#pwdlist-sites").trigger("updateCache");
         $(this)[0].reset();
         if(!$('#pwdlist').is(":visible")) showPwdTable();
-        sync();
         $('#add-modal').modal('toggle');
         return false
     });
@@ -146,6 +185,7 @@ $(document).ready(function() {
             sync();
             loadEntry();
             showPwdTable();
+            timeoutHandler();
         });
         $('#login-modal input[type="submit"]').addClass('disabled').attr('disabled', 'disabled').val('Identification...');
         return false;
@@ -158,6 +198,7 @@ $(document).ready(function() {
             sync();
             loadEntry();
             showPwdTable();
+            timeoutHandler();
         }else{
             $('#login-modal .alert-message.error').hide();
             $('#login-modal').modal({
@@ -193,6 +234,7 @@ $(document).ready(function() {
 
     $(".topbar a[href='#logout']").click(function (event) {
         event.preventDefault();
+        sessionStorage.clear();
         $.get('sync.php?action=logout', function(data) {
             console.log(data)
             location.reload();
@@ -200,7 +242,6 @@ $(document).ready(function() {
     });
 
     $().UItoTop();
-
 });
 </script>
 <!-- Topbar
@@ -306,6 +347,19 @@ $(document).ready(function() {
                 </form>
         </div>
 
+</div>
+
+<div id="keepalive-modal" class="modal hide fade">
+    <div class="modal-header">
+        <h3>Attention</h3>
+    </div>
+    <div class="modal-body">
+        <p>Vous avez été inactif pendant plus de 5min</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn primary" id="btn-keepalive">Oui, gardez la session ouverte</a>
+        <a href="#" class="btn secondary" id="btn-close-session">Non, fermer la session</a>
+    </div>
 </div>
 
 <div id="main" class="container">
