@@ -1,5 +1,7 @@
 <?php
 
+define("SESSION_TIMEOUT", 100);
+
 $app = new PwdRemind();
 $app->route();
 
@@ -25,6 +27,14 @@ class PwdRemind{
                     $this->session->logout();
                     echo 1;
                     exit;
+                case 'keepalive':
+                    if ($this->session->is_logged_in()){
+                        echo 'OK';
+                        exit;
+                    }else{
+                        echo 'ERROR';
+                        exit;
+                    }
             }
         }
 
@@ -48,8 +58,7 @@ class PwdRemind{
         unset($_POST['password']);
         $local_hash = $this->db->get_user_pwd_hash($username);
         if($local_hash == hash('sha256', $password)){
-	    $key = hash('md5', $password);
-            $this->session->login($username,$key);
+            $this->session->login($username);
             echo json_encode(array('username' => $username));
             exit;
         }else{
@@ -119,17 +128,19 @@ class Session {
         session_start();
     }
 
-    public function login($userid,$key){
+    public function login($userid){
         session_regenerate_id ();
         $_SESSION['valid'] = True;
         $_SESSION['username'] = $userid;
-	$_SESSION['key'] = $key;
+        $_SESSION['LAST_ACTIVITY'] = time();
     }
 
     public function is_logged_in(){
-        if(isset($_SESSION['valid']) && $_SESSION['valid'])
-            return true;
-        return false;
+        if(isset($_SESSION['valid']) && $_SESSION['valid'] && $this->check_activity() ){
+            return True;
+        }else{
+            return False;
+        }
     }
 
     public function logout(){
@@ -139,6 +150,18 @@ class Session {
 
     public function get_username(){
         return $_SESSION['username'];
+    }
+
+    private function check_activity(){
+        if( time() - $_SESSION['LAST_ACTIVITY']  <= SESSION_TIMEOUT ){
+            session_regenerate_id(true);
+            $_SESSION['LAST_ACTIVITY'] = time();
+            return True;
+        }else{
+            $this->logout();
+            return False;
+        }
+
     }
 }
 
