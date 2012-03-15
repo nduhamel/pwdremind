@@ -15,7 +15,7 @@
             outDelay:400,
             containerID: 'toTop',
             containerHoverID: 'toTopHover',
-            scrollSpeed: 1200,
+            scrollSpeed: 200,
             easingType: 'linear'
         };
 
@@ -49,7 +49,6 @@
                 });
             }
             if ( sd > settings.min ){
-                console.log('ok');
                 $(containerIDhash).fadeIn(settings.inDelay);}
             else{
                 $(containerIDhash).fadeOut(settings.Outdelay);}

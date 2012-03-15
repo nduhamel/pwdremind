@@ -428,7 +428,9 @@
 
             /* sorting methods */
             function multisort(table,sortList,cache) {
-
+                if (cache.row.length == 0 || cache.normalized.length == 0){
+                    return cache;
+                }
                 if(table.config.debug) { var sortTime = new Date(); }
 
                 var dynamicExp = "var sortWrapper = function(a,b) {", l = sortList.length;

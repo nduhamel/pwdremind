@@ -26,12 +26,55 @@ section#pwdlist img.showpwd{
     height: 16px;
     width: 25px;
 }
-
+section#pwdlist img.clipboard{
+    margin-left: 20px;
+    height: 16px;
+    width: 16px;
+}
+section#pwdlist img.go{
+    margin-left: 20px;
+    height: 16px;
+    width: 16px;
+}
 span.pwd{
     margin-right: 5px;
     display: none;
 }
+/* Visualizer
+-------------------------------------------------- */
+#chart {
+    text-align:center;
+}
+#chart svg{
+    border-style:solid;
+    border-width:5px;
+}
+#obfuscatePassword {
+    display:none;
+}
+#passwordStrength {
+    padding:5px;
+}
+#passwordStrengthContainer {
+    border:1px solid;
+    height:10px;
+}
+#passwordStrengthCanvas {
+    width:60px;
+    height:10px;
+}
+.passwordHashImage {
+    width:200px;
+    height:15px;
+}
 
+.infoPopup {
+    display:none;
+    position:absolute;
+    background-color:#ffffff;
+    border:2px dashed;
+    padding: 15px;
+}
 /*
 |--------------------------------------------------------------------------
 | UItoTop jQuery Plugin 1.1
@@ -50,11 +93,11 @@ span.pwd{
     height:51px;
     border:none;
     text-indent:-999px;
-    background:url(./static/icons/ui.totop.png) no-repeat left top;
+    background:url(../icons/ui.totop.png) no-repeat left top;
 }
 
 #toTopHover {
-    background:url(./static/icons/ui.totop.png) no-repeat left -51px;
+    background:url(../icons/ui.totop.png) no-repeat left -51px;
     width:51px;
     height:51px;
     display:block;

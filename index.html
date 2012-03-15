@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="./static/css/bootstrap.css">
-<link href="./static/css/main.css" rel="stylesheet">
-<title>Password Remind</title>
+        <link rel="stylesheet" href="./static/css/bootstrap.css">
+        <link href="./static/css/main.css" rel="stylesheet">
+        <title>Password Remind</title>
 </head>
+
 <body>
+
 <script src="./static/js/jquery.js"></script>
 
 <script src="./static/js/valid.js"></script>
@@ -17,314 +19,192 @@
 <script src="./static/js/jquery.idletimeout.js"></script>
 <script src="./static/js/jquery.idletimer.js"></script>
 
+<script src="./static/js/d3.js" type="text/javascript"></script>
+<script src="./static/js/d3.geom.js" type="text/javascript"></script>
+<script src="./static/js/d3.layout.js" type="text/javascript"></script>
+
+<script src="./static/js/visualizer-util.js" type="text/javascript"></script>
+<script src="./static/js/visualizer.js" type="text/javascript"></script>
+
+<script src="./static/js/widget.js"></script>
+
+<script src="./static/js/core/pwdremind.js"></script>
+<script src="./static/js/core/controller.js"></script>
+<script src="./static/js/core/widget.visualizer.js"></script>
+<script src="./static/js/core/widget.pwdlist.js"></script>
+
+<script src="./static/js/pwdremindui.js"></script>
+
+<script src="./static/js/jquery.zclip.js"></script>
+
 <script>
+
 $(document).ready(function() {
-    $('#pwdlist').hide();
-    // Save base table
-    var basePwdSection = $('#pwdlist').clone()
 
-    var index = {};
-    if (sessionStorage.getItem("index") === null) {
-        sessionStorage.setItem('index', JSON.stringify({}));
-    }else{
-        index = sessionStorage.getItem("index");
-    }
+    // HACK zclip
+    $('body').append('<a href="" id="hackzclip">test</a>')
+    $('#hackzclip').zclip({
+                    path: './static/media/ZeroClipboard.swf',
+                    copy: 'toto',
+                   }).hide();
+    // END HACK
 
-    //Utils
-    var showPwdTable = function(){
-        if( !$("#pwdlist-sites > tbody").is(':empty') ){
-            $('#pwdlist').show();
-            $("#pwdlist-sites").tablesorter().tablesorterFilter({filterContainer: $("#id_search"),
-                                  filterColumns: [0,1,2],
-                                  filterCaseSensitive: false});
-            $('#pwdlist-sites').click(function(e) {
-                var target = $(e.target);
-                if (target.is("img[class='delete']")) return confirmDelete(target);
-                if (target.is("img[class='showpwd']")) return target.prev("span").fadeToggle("slow");
-            });
-        }
-    };
+    var pwdremind = new Pwdremind(document);
+    document.pwdremind = pwdremind;
 
-    var loadEntry = function(){
-        index = new Object(JSON.parse(sessionStorage.getItem('index')));
-        if (index.length < 1)
-            index = {};
-        $.each(index, function(key, val) {
-            if (val !== 0){
-                id = key;
-                val = JSON.parse(sessionStorage.getItem(id));
-                $('#pwdlist-sites > tbody:last').append('<tr><td><a href="'+val['site']+'">'+val['site']+'</a></td><td>'+val['login']+'</td><td><span class="pwd">'+val['pwd']+'</span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></td><td><img src="./static/icons/delete.png" class="delete" alt="delete" id='+id+' data-id="'+id+'"/></td></tr>');
-                $("#pwdlist-sites").trigger("updateCache");
+
+    $('#controler').controller({
+            pwdremind: document.pwdremind,
+            default_view: 'pwdlist',
+            views: {'pwdlist': {elem: '#pwdlist',
+                                options: {
+                                    pwdremind: document.pwdremind,
+                                    $pwdtable: $("#pwdlist-sites"),
+                                    $search: $("#id_search"),
+                                    $confirmModal: $('#confirm-modal'),
+                                }
+                    },
+                    'visualizer': { elem: '#visualizer',
+                                    options: {
+                                        pwdremind: document.pwdremind,
+                                    }
+                    },
+
             }
         });
-    };
 
-    var confirmDelete = function(img){
-        $('#confirm-modal').data('id', img.data('id'))
-        $('#confirm-modal').modal({
-            show: true,
-            backdrop: true,
-            keyboard: true
-        });
-    };
+    $("#login-modal").loginModal(pwdremind);
 
-    var removeEntry = function(id){
-        $("#pwdlist-sites").trigger("clearFilter");
-        index[id] = 0;
-        sessionStorage.setItem('index', JSON.stringify(index));
-        sessionStorage.removeItem(id);
-        $('#'+id).closest('tr').remove();
-        if( $("#pwdlist-sites > tbody").is(':empty') ){
-            $("#pwdlist").remove();
-            $('#main').prepend(basePwdSection)
-            $('#pwdlist').hide();
-        }else{
-            $("#pwdlist-sites").trigger("updateCache");
-        }
-        sync();
-    };
-
-    var saveEntry = function(entryJSON){
-        var id = new Date().getTime() + ''
-        index[id] = id;
-        sessionStorage.setItem('index', JSON.stringify(index));
-        sessionStorage.setItem(id, JSON.stringify(entryJSON));
-        sync();
-        return id
-    };
-
-    var sync = function sync() {
-        if (navigator.onLine) {
-            $.post('sync.php', sessionStorage, function(data) {
-                console.log("sync...");
-                console.log(data);
-                data = JSON.parse(data);
-                if (data.error) {
-                    alert(data.error);
-                    return;
-                }
-                sessionStorage.setItem('index', JSON.stringify(data.index));
-                for (k in data.entries) {
-                    sessionStorage.setItem(k, JSON.stringify(data.entries[k]));
-                }
-            });
-        } else
-            alert("Can't sync because you are offline!");
-    };
-
-    var timeoutHandler = function(){
-        console.log('Start time out');
-        $.idleTimeout('#keepalive-modal', '#keepalive-modal #btn-keepalive', {
-            idleAfter: 100, // user is considered idle after 5 minutes of no movement
-            pollingInterval: 60, // a request to keepalive.php (below) will be sent to the server every minute
-            keepAliveURL: 'sync.php?action=keepalive',
-            serverResponseEquals: 'OK', // the response from keepalive.php must equal the text "OK"
-            onTimeout: function(){
-                sessionStorage.clear();
-                $.get('sync.php?action=logout', function(data) {
-                    console.log(data)
-                    location.reload();
-                });
-            },
-            onIdle: function(){
-                    $('#keepalive-modal').modal({
-                        show: true,
-                        backdrop: 'static',
-                    });
-            },
-            onCountdown: function(counter){
-                    // update the counter span inside the dialog during each second of the countdown
-            },
-            onResume: function(){
-                $('#keepalive-modal').modal('hide');
-            }
-        });
-    };
-    $('#keepalive-modal #btn-close-session').click(function(){
-        $.idleTimeout.options.onTimeout.call(this);
-    });
-
-    $("#addentry").validation();
-    $("#addentry").submit(function(){
-        if(!$(this).validate()){
-            return false;
-        };
-        var site = $("input[name='site']").val();
-        var login = $("input[name='login']").val();
-        var pwd = $("input[name='pwd']").val();
-        var id = saveEntry( $(this).formToJSON() );
-        $("#pwdlist-sites").trigger("clearFilter");
-        $('#pwdlist-sites > tbody:last').append('<tr><td><a href="'+site+'">'+site+'</a></td><td>'+login+'</td><td><span class="pwd">'+pwd+'</span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></td><td><img src="./static/icons/delete.png" class="delete" alt="delete" id='+id+' data-id="'+id+'"/></td></tr>');
-        $("#pwdlist-sites").trigger("updateCache");
-        $(this)[0].reset();
-        if(!$('#pwdlist').is(":visible")) showPwdTable();
-        $('#add-modal').modal('toggle');
-        return false
-    });
-
-
-    $.fn.formToJSON = function() {
-        var json = {};
-        $.map($(this).serializeArray(), function(n, i){
-            json[n['name']] = n['value'];
-        });
-        return json;
-    };
-
-
-    $("#login").submit(function(){
-        $.post('sync.php', $(this).formToJSON(), function(data) {
-            console.log(data);
-            data = JSON.parse(data);
-            if (data.error) {
-                $('#login-modal .alert-message.error').show();
-                $('#login-modal input[type="submit"]').removeClass('disabled').removeAttr('disabled').val('connexion');
-                return;
-            }
-            $('#login-modal').modal('hide');
-            sync();
-            loadEntry();
-            showPwdTable();
-            timeoutHandler();
-        });
-        $('#login-modal input[type="submit"]').addClass('disabled').attr('disabled', 'disabled').val('Identification...');
-        return false;
-    });
-
-    //Check connection
-    $.get('sync.php?action=isloggedin', function(data) {
-        if (data){
-            $('#login-modal').modal('hide');
-            sync();
-            loadEntry();
-            showPwdTable();
-            timeoutHandler();
-        }else{
-            $('#login-modal .alert-message.error').hide();
-            $('#login-modal').modal({
-                    show: true,
-                    backdrop: 'static',
-            });
-        }
-    });
-
-
-    $("#confirm").submit(function(event){
+    $(".topbar a[href='#logout']").click(function (event) {
         event.preventDefault();
-        id = $('#confirm-modal').data('id');
-        removeEntry(id);
-        $('#confirm-modal').modal('hide');
-        return false;
+        document.pwdremind.logout();
     });
 
-    $("#cancelDelete").click(function(event) {
-        event.preventDefault();
-        $('#confirm-modal').modal('hide');
-        return false;
-    });
-
-    $(".topbar a[href='#add']").click(function () {
+    // ADD modal
+    $(".topbar a[href='#add']").click(function (e) {
+        e.preventDefault();
         $('#add-modal').modal({
             show: true,
             backdrop: true,
             keyboard: true
             });
-        return false;
     });
+    $("#addentry").validation();
+    $("#addentry").bind('submit',function(e){
+                e.preventDefault();
+                if(!$("#addentry").validate()){
+                    return false;
+                };
+                document.pwdremind.add($("#addentry").formToJSON());
+                $('#add-modal').modal('toggle');
+                $("#addentry")[0].reset();
+    });
+    // END add modal
 
-    $(".topbar a[href='#logout']").click(function (event) {
-        event.preventDefault();
-        sessionStorage.clear();
-        $.get('sync.php?action=logout', function(data) {
-            console.log(data)
-            location.reload();
-        });
+    $(document).bind('pwdremind/login',timeoutHandler);
+    $('#btn-close-session').click(function(){
+        $.idleTimeout.options.onTimeout.call(this);
     });
 
     $().UItoTop();
+
 });
 </script>
 <!-- Topbar
 ================================================== -->
 <div class="topbar" data-scrollspy="scrollspy" >
-  <div class="topbar-inner">
-    <div class="container">
-      <a class="brand" href="#">Password remind</a>
-      <ul class="nav">
-            <li><a href="#add">Ajouter</a></li>
-      </ul>
-      <ul class="nav secondary-nav">
-        <li><a href="#logout">Se d&eacute;connecter</a></li>
-      </ul>
-    </div>
-  </div>
+        <div class="topbar-inner">
+        <div class="container">
+                <a class="brand" href="#">Password remind</a>
+                <ul class="nav" id="controler">
+                <li><a href="#add">Ajouter</a></li>
+<!--
+                <li><a href="#visualizer">Visualiseur</a></li>
+-->
+                </ul>
+                <ul class="nav secondary-nav">
+                        <li><a href="#logout">Se d&eacute;connecter</a></li>
+                </ul>
+        </div>
+        </div>
 </div>
 
 <div id="login-modal" class="modal hide fade">
-            <div class="modal-header">
-              <h3>Connexion</h3>
-            </div>
-            <div class="modal-body">
 
-             <form id="login" action="">
-                <fieldset>
-                    <div class="clearfix">
-                        <label for="username">Identifiant</label>
-                        <div class="input">
-                            <input class="xlarge" id="username" name="username" size="30" type="text" validation="required" />
-                        </div>
-                    </div><!-- /clearfix -->
-                    <div class="clearfix">
-                        <label for="password">Mot de passe</label>
-                        <div class="input">
-                            <input class="xlarge" id="password" name="password" size="30" type="password" validation="required" />
-                        </div>
-                    </div><!-- /clearfix -->
-                    <div class="alert-message error">
+        <div class="modal-header">
+        <h3>Connexion</h3>
+    </div>
+
+        <form id="login" action="">
+        <fieldset>
+                        <div class="modal-body">
+                                <div class="clearfix">
+                                <label for="username">Identifiant</label>
+                            <div class="input">
+                                <input class="xlarge" id="username" name="username" size="30" type="text" validation="required" />
+                            </div>
+                                </div><!-- /clearfix -->
+
+                                <div class="clearfix">
+                                <label for="password">Mot de passe</label>
+                            <div class="input">
+                                <input class="xlarge" id="password" name="password" size="30" type="password" validation="required" />
+                                </div>
+                        </div><!-- /clearfix -->
+
+                                <div class="alert-message error">
                         <p><strong>Erreur:</strong> Mauvais identifiant ou mot de passe.</p>
-                    </div>
-            </div>
-                <div class="modal-footer">
-                    <input type="submit" class="btn primary" value="connexion" />
                 </div>
-                </fieldset>
-            </form>
+                    </div>
+
+                        <div class="modal-footer">
+                        <input type="submit" class="btn primary" value="connexion" />
+                     </div>
+        </fieldset>
+    </form>
+
 </div>
 
 <div id="add-modal" class="modal hide fade">
-            <div class="modal-header">
-              <a href="#" class="close">&times;</a>
-              <h3>Ajouter</h3>
-            </div>
-            <div class="modal-body">
+        <div class="modal-header">
+        <a href="#" class="close">&times;</a>
+        <h3>Ajouter</h3>
+    </div>
 
-<form id="addentry" action="">
-<fieldset>
-  <div class="clearfix">
-    <label for="site">Site web</label>
-    <div class="input">
-      <input class="xlarge" id="site" name="site" size="30" type="text" validation="required url" />
-    </div>
-  </div><!-- /clearfix -->
-  <div class="clearfix">
-    <label for="login">Identifiant</label>
-    <div class="input">
-      <input class="xlarge" id="login" name="login" size="30" type="text" validation="required" />
-    </div>
-  </div><!-- /clearfix -->
-  <div class="clearfix">
-    <label for="pwd">Mot de passe</label>
-    <div class="input">
-        <input class="xlarge" id="pwd" name="pwd" size="30" type="password" validation="required" autocomplete="off" />
-    </div>
-  </div><!-- /clearfix -->
+        <form id="addentry" action="">
+        <fieldset>
+                <div class="modal-body">
 
-            </div>
-            <div class="modal-footer">
-                <input type="submit" class="btn primary" value="Sauvegarder">&nbsp;<button type="reset" class="btn">Effacer</button>
-            </div>
-</fieldset>
-</form>
+                        <div class="clearfix">
+                                <label for="site">Site web</label>
+                            <div class="input">
+                                <input class="xlarge" id="site" name="site" size="30" type="text" validation="required url" />
+                            </div>
+                        </div><!-- /clearfix -->
+
+                                <div class="clearfix">
+                                <label for="login">Identifiant</label>
+                            <div class="input">
+                                <input class="xlarge" id="login" name="login" size="30" type="text" validation="required" />
+                            </div>
+                        </div><!-- /clearfix -->
+
+                                <div class="clearfix">
+                            <label for="pwd">Mot de passe</label>
+                            <div class="input">
+                                <input class="xlarge" id="pwd" name="pwd" size="30" type="password" validation="required" autocomplete="off" />
+                                </div>
+                        </div><!-- /clearfix -->
+
+                </div>
+
+                <div class="modal-footer">
+                        <input type="submit" class="btn primary" value="Sauvegarder">&nbsp;
+                                <button type="reset" class="btn">Effacer</button>
+                    </div>
+
+        </fieldset>
+    </form>
 </div>
 
 <div id="confirm-modal" class="modal hide fade">
@@ -332,63 +212,95 @@ $(document).ready(function() {
         <h3>Confirmer</h3>
     </div>
 
-        <div class="modal-body">
+        <form id="confirm" action="">
+        <fieldset>
 
-                <form id="confirm" action="">
-                        <fieldset>
-                                <div class="clearfix">
-                                Confirmez-vous la suppression?
-                                </div><!-- /clearfix -->
+                <div class="modal-body">
+                        <p>Confirmez-vous la suppression?</p>
+                        </div>
 
-                                <div class="modal-footer">
-                        <input type="submit" class="btn primary" value="Confirmer">&nbsp;<button id="cancelDelete" class="btn">Annuler</button>
-                </div>
-                        </fieldset>
-                </form>
-        </div>
+                <div class="modal-footer">
+                <input type="submit" class="btn primary" value="Confirmer">&nbsp;
+                                <button id="cancelDelete" class="btn">Annuler</button>
+            </div>
+
+                </fieldset>
+    </form>
 
 </div>
 
 <div id="keepalive-modal" class="modal hide fade">
-    <div class="modal-header">
+        <div class="modal-header">
         <h3>Attention</h3>
     </div>
-    <div class="modal-body">
-        <p>Vous avez été inactif pendant plus de 5min</p>
+
+        <div class="modal-body">
+        <p>Vous avez &eacute;t&eacute; inactif pendant plus de 5min</p>
     </div>
-    <div class="modal-footer">
+
+        <div class="modal-footer">
         <a href="#" class="btn primary" id="btn-keepalive">Oui, gardez la session ouverte</a>
         <a href="#" class="btn secondary" id="btn-close-session">Non, fermer la session</a>
     </div>
 </div>
 
 <div id="main" class="container">
-<section id="pwdlist">
-  <div class="page-header">
-    <h1>Sites</h1>
-  </div>
-  <div class="row">
+        <section id="pwdlist">
 
-    <div class="span16">
-    <form action="#">
-<fieldset>
-<input type="text" name="search" value="" id="id_search" placeholder="Search" />
-</fieldset>
-</form>
-    <table class="zebra-striped" id="pwdlist-sites">
-        <thead>
-          <tr>
-            <th class="blue header">Site</th>
-            <th class="green header">Identifiant</th>
-            <th class="yellow header">Password</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      </div>
-</section>
+                <div class="page-header">
+                <h1>Sites</h1>
+                </div>
 
+                <div class="row">
+                <div class="span16">
+
+                        <form action="#">
+                                        <fieldset>
+                                                <input type="text" name="search" value="" id="id_search" placeholder="Search" />
+                                        </fieldset>
+                                </form>
+
+                                <table class="zebra-striped" id="pwdlist-sites">
+                                <thead>
+                                        <tr>
+                                        <th class="blue header">Site</th>
+                                        <th class="green header">Identifiant</th>
+                                        <th class="yellow header">Password</th>
+                                        <th></th>
+                                        </tr>
+                                </thead>
+                                <tbody></tbody>
+                        </table>
+
+                </div>
+                </div>
+
+        </section>
+        <section id="visualizer">
+            <div class="page-header">
+                <h1>Password Visualizer</h1>
+                </div>
+
+                <div class="row">
+                <div class="span16">
+                    <div id="chart">
+                    </div>
+
+                    <div id="siteInfo" class="infoPopup"></div>
+                    <div id="passwordInfo" class="infoPopup">
+                        <div id="passwordHash">
+                            <img id="passwordInfoHashImage" class="passwordHashImage"></img>
+                        </div>
+                        <div id="obfuscatePassword"></div>
+                        <div>
+                        Click to view password.
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+        </section>
 </div>
+
 </body>
 </html>

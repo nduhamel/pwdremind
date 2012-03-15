@@ -22,32 +22,56 @@ class PwdRemind{
             switch( $action ) {
                 case 'isloggedin':
                     echo $this->session->is_logged_in();
+                    session_write_close();
                     exit;
                 case 'logout':
                     $this->session->logout();
                     echo 1;
+                    session_write_close();
                     exit;
                 case 'keepalive':
                     if ($this->session->is_logged_in()){
                         echo 'OK';
+                        session_write_close();
                         exit;
                     }else{
                         echo 'ERROR';
+                        session_write_close();
                         exit;
+                    }
+                case 'add':
+                    if ($this->session->is_logged_in()){
+                        $data = stripslashes($_GET['data']);
+                        $id = $this->db->store_entry($data, $this->session->get_username());
+                        echo json_encode(array('id'=>$id));
+                        session_write_close();
+                        exit;
+                    }else{
+                        error_die('Not logged');
+                    }
+                case 'remove':
+                    if ($this->session->is_logged_in()){
+                        $id = $_GET['id'];
+                        $id = $this->db->delete_entry($id, $this->session->get_username());
+                        echo "OK";
+                        session_write_close();
+                        exit;
+                    }else{
+                        error_die('Not logged');
+                    }
+                case 'get':
+                    if ($this->session->is_logged_in()){
+                        echo json_encode($this->db->get_entries($this->session->get_username()));
+                        session_write_close();
+                        exit;
+                    }else{
+                        error_die('Not logged');
                     }
             }
         }
 
         if (isset($_POST['username']) && isset($_POST['password'])){
             $this->try_login();
-        }
-
-        if (isset($_POST['index'])){
-            if($this->session->is_logged_in()){
-                echo sync($this->db, $this->session->get_username() );
-            }else{
-                error_die('Not logged');
-            }
         }
     }
 
@@ -60,6 +84,7 @@ class PwdRemind{
         if($local_hash == hash('sha256', $password)){
             $this->session->login($username);
             echo json_encode(array('username' => $username));
+            session_write_close();
             exit;
         }else{
             error_die('Invalid login params');
@@ -70,56 +95,8 @@ class PwdRemind{
 
 function error_die($message){
     echo json_encode(array('error' => $message));
+    session_write_close();
     exit;
-}
-
-function sync($db, $username){
-    // Parse incoming data
-    $remote_index = (array)json_decode(stripslashes($_POST['index']), true);
-    unset($_POST['index']);
-    $remote_entries = $_POST;
-
-    // Get local index
-    $local_index = $db->get_local_index($username);
-    $diff_index = array_diff_key($local_index, $remote_index);
-
-    foreach ($remote_index as $id => $item) {
-        if (array_key_exists($id, $local_index)) {
-            if ($item == 0) {
-                // Remote entry has been deleted, remove the local too
-                $local_index[$id] = $item;
-                $db->delete_entry($id,$username);
-                unset($remote_index[$id]);
-                unset($remote_entries[$id]);
-            } elseif ($local_index[$id] == 0) {
-                // Local entry has been deleted, remove local entry too
-                $remote_index[$id] = $local_index[$id];
-                $db->delete_entry($id, $username);
-                unset($remote_index[$id]);
-                unset($remote_entries[$id]);
-            } elseif ($item['timestamp'] == $local_index[$id]['timestamp']) {
-                // Local entry is already the latest, don't send it back
-                unset($remote_entries[$id]);
-            }
-        } else {
-            $local_index[$id] = $remote_index[$id];
-            $db->store_entry($id, stripslashes($_POST[$id]),$username);
-            unset($remote_entries[$id]);
-        }
-    }
-
-    foreach ($diff_index as $id => $data) {
-        if ($local_index[$id] !== 0) {
-            $remote_entries[$id] = $db->get_entry($id,$username);
-            $remote_index[$id] = $local_index[$id];
-        } else {
-            unset($remote_entries[$id]);
-            unset($remote_index[$id]);
-        }
-    }
-
-    $return = array('index' => $remote_index, 'entries' => $remote_entries);
-    return json_encode($return);
 }
 
 class Session {
@@ -153,9 +130,10 @@ class Session {
     }
 
     private function check_activity(){
-        if( time() - $_SESSION['LAST_ACTIVITY']  <= SESSION_TIMEOUT ){
+        $time = time();
+        if( $time - $_SESSION['LAST_ACTIVITY']  <= SESSION_TIMEOUT ){
             session_regenerate_id(true);
-            $_SESSION['LAST_ACTIVITY'] = time();
+            $_SESSION['LAST_ACTIVITY'] = $time;
             return True;
         }else{
             $this->logout();
@@ -201,35 +179,17 @@ class Database {
         return False;
     }
 
-    public function get_local_index($username){
+    public function get_entries($username){
         $username = $this->sqlite_quote_string($username);
-        $result = $this->db_query("SELECT id FROM password WHERE username='$username'");
-        $local_index = array();
-        if(sqlite_num_rows($result)>0){
-            while(sqlite_has_more($result)){
-              $row=sqlite_fetch_single($result);
-              $local_index[$row] = $row;
-            }
-        }
-        return $local_index;
+        $result = $this->db_query("SELECT id,data FROM password WHERE username='$username'");
+        return  sqlite_fetch_all($result, SQLITE_ASSOC);
     }
 
-    public function get_entry($id, $username) {
-        $id = $this->sqlite_quote_string($id);
-        $username = $this->sqlite_quote_string($username);
-        $result = $this->db_query("SELECT data FROM password WHERE id='$id' AND username='$username'");
-        if (sqlite_num_rows($result)>0) {
-            $entry =  json_decode(sqlite_fetch_single($result), true);
-            if($entry){ return $entry; }
-        }
-        return array();
-    }
-
-    public function store_entry($id, $data, $username) {
-        $id = $this->sqlite_quote_string($id);
+    public function store_entry($data, $username) {
         $data = $this->sqlite_quote_string($data);
         $username = $this->sqlite_quote_string($username);
-        $result = $this->db_query("INSERT INTO password VALUES( '$id' , '$data', '$username')");
+        $result = $this->db_query("INSERT INTO password (data, username)  VALUES('$data', '$username')");
+        return sqlite_last_insert_rowid($this->db);
     }
 
     public function delete_entry($id, $username) {
@@ -242,7 +202,7 @@ class Database {
         $stm = "SELECT * FROM password";
         $q = sqlite_exec($this->db, $stm, $error);
         if (!$q) {
-            $stm = "CREATE TABLE password (id TEXT, data TEXT, username TEXT)";
+            $stm = "CREATE TABLE password (id INTEGER PRIMARY KEY, data TEXT, username TEXT)";
             $ok = sqlite_exec($this->db, $stm, $error);
             if (!$ok)
                 die("Cannot execute query. $error");
