@@ -99,6 +99,7 @@ $(document).ready(function() {
                 $('#add-modal').modal('toggle');
                 $("#addentry")[0].reset();
     });
+    $(document).bind('pwdremind/logout', function(e){$('#add-modal').modal('hide')});
     // END add modal
 
     $(document).bind('pwdremind/login',timeoutHandler);
