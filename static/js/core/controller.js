@@ -55,6 +55,7 @@
 
         _close_all: function () {
             if (this.openedView){
+                $(this.element).find("a[href='#"+this.openedView[0]+"']").closest('li').removeClass('active');
                 $(this.openedView[1].elem)[this.openedView[0]]('destroy');
                 this.openedView = null;
             }
