@@ -75,6 +75,19 @@ span.pwd{
     border:2px dashed;
     padding: 15px;
 }
+
+
+
+#complexity {
+    height: 20px;
+    padding: 10px;
+    text-align: center;
+}
+.weak{background-color: #FF5353;}
+.strong{background-color: #FAD054;}
+.stronger{background-color: #93C9F4; }
+.strongest{background-color: #B6FF6C;}
+
 /*
 |--------------------------------------------------------------------------
 | UItoTop jQuery Plugin 1.1

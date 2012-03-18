@@ -44,7 +44,9 @@ function startViz() {
                 return x.group != 2;
             }))
     .enter().append("svg:circle")
-    .attr("class", "node")
+    .attr("class", function(n) {  // HACK
+        return "node group"+n.group;
+    })
     .attr("cx", function(d) { return d.x; })
     .attr("cy", function(d) { return d.y; })
     .attr("r", function(n) {
@@ -53,16 +55,7 @@ function startViz() {
         return 7;
     })
     .style("fill", function(d) { return fill(d.group); })
-    .call(force.drag);
-
-    circleNodes.on('click', function(d) {
-        // Password nodes only
-        if (d.group != 0) return;
-
-        if (confirm("Are you sure you want to display this password in cleartext?")) {
-            alert(d.name);
-        }
-    });
+    .call(force.drag)
 
     var rectNodes = vis.selectAll('.node').data(loginData.nodes)
     .enter().append("svg:rect")
@@ -74,13 +67,6 @@ function startViz() {
     .style("fill", function(d) { return fill(d.group); })
     .call(force.drag);
 
-    var node = vis.selectAll(".node");
-
-    node.on("mouseover", mouseOver);
-
-    node.on("mouseout", function(e) {
-        $('.infoPopup').hide();
-    });
 
     vis.style("opacity", 1e-6)
       .transition()
@@ -100,62 +86,40 @@ function startViz() {
             .attr("y", function(d) { return d.y - (rectNodes.attr('height')/2); });
 
     });
+
+    $('circle,rect').popover({
+        live: true,
+        html: true,
+        delayOut: 500,
+        offset: 40,
+        title: function(){
+            if (this.__data__.group == 0){
+                return "Mot de passe";
+            }
+            if (this.__data__.group == 1){
+                return "Site";
+            }
+            if (this.__data__.group == 2){
+                return "Lien de ressemblance";
+            }
+        },
+        content: function(){
+            if (this.__data__.group == 0){
+                pwdstrength = chkPass(this.__data__.name);
+                var nScore = pwdstrength.total;
+                var cClass = "weak";
+                if (nScore >= 40 && nScore < 60) { cClass = "strong"; }
+                else if (nScore >= 60 && nScore < 80) { cClass = "stronger"; }
+                else if (nScore >= 80) { cClass = "strongest"; }
+                return '<div id="complexity" class="'+cClass+'">'+pwdstrength.total+'</div>';
+            }
+            if (this.__data__.group == 1){
+                return '<a href="'+this.__data__.name+'">'+this.__data__.name+'</a>';
+            }
+            if (this.__data__.group == 2){
+                return "Les mots de passe li\u00e9s \u00e0 ce noeud sont tr\u00e8s ressemblant";
+            }
+        },
+    });
+
 }
-
-//~ function drawPasswordHash(canvas,password) {
-    //~ var hashedPassword = SHA1(password);
-//~
-    //~ var ctx = canvas.getContext('2d');
-    //~ clearCanvas(canvas);
-//~
-    //~ for (var bandX = 0; bandX < 6; bandX++) {
-        //~ ctx.fillStyle = '#' + hashedPassword.substr(bandX*6,6);
-        //~ ctx.fillRect(canvas.width/6*bandX,0,canvas.width/6,canvas.height);
-    //~ }
-//~
-//~ }
-
-function mouseOver(e) {
-    // FIXME: Find a better way to translate viz-space to screen space.
-    $('.infoPopup').css('left',e.x + w/2);
-    $('.infoPopup').css('top',e.y+20);
-    console.log(e);
-
-    if (e.group == 0) {
-        //~ $('#obfuscatePassword').html(obfuscatePassword(e.name));
-        $('#passwordInfo').show();
-        //~ drawPasswordStrength($('#passwordStrengthCanvas').get()[0],passwordStrength(e.name));
-        $('#passwordInfoHashImage').attr('src',getDataURLForHash(SHA1(e.name),200,15));
-    }
-    else {
-        $('#siteInfo').html(e.name).show();
-    }
-}
-
-//~ function clearCanvas(canvas) {
-    //~ var canvasCtx = canvas.getContext('2d');
-    //~ canvasCtx.fillStyle="#ffffff";
-    //~ canvasCtx.lineStyle="#ffffff";
-    //~ canvasCtx.fillRect(0,0,canvas.width,canvas.height);
-//~ }
-
-//~ function drawPasswordStrength(canvas,strength) {
-    //~ var ctx = canvas.getContext('2d');
-    //~ clearCanvas(canvas);
-    //~ ctx.lineStyle="#000000";
-    //~ for (var boxX = 0; boxX < strength.max; boxX++) {
-        //~ if (boxX < strength.score)
-            //~ ctx.fillStyle="#ff0000";
-        //~ else
-            //~ ctx.fillStyle="#ffffff";
-        //~ ctx.fillRect(boxX/strength.max*canvas.width,0,canvas.width/strength.max,canvas.height);
-    //~ }
-//~ }
-
-//~ function obfuscatePassword(password) {
-    //~ var obfuscatePassword = password[0];
-    //~ for (var x = 0; x < password.length-2; x++)
-        //~ obfuscatePassword += '*';
-    //~ obfuscatePassword += password[password.length-1];
-    //~ return obfuscatePassword;
-//~ }

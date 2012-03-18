@@ -22,7 +22,7 @@
         },
 
         _data_loaded: function (e,data) {
-            console.log(data);
+            //~ console.log(data);
             pwdDict = {};
             for (var i in data){
                 var e = JSON.parse(data[i]['data']);

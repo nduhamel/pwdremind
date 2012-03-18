@@ -1,28 +1,4 @@
 //
-// string format util
-//
-String.format = function() {
-  var s = arguments[0];
-  for (var i = 0; i < arguments.length - 1; i++) {
-    var reg = new RegExp("\\{" + i + "\\}", "gm");
-    s = s.replace(reg, arguments[i + 1]);
-  }
-
-  return s;
-}
-
-//
-//  Form to json util
-//
-$.fn.formToJSON = function() {
-    var json = {};
-    $.map($(this).serializeArray(), function(n, i){
-        json[n['name']] = n['value'];
-    });
-    return json;
-};
-
-//
 //  loginModal
 //
 (function( $ ) {
