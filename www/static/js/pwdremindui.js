@@ -26,11 +26,6 @@
                     });
             });
 
-            pwdremind.islogged({
-                onSuccess: $.proxy(methods.hideModal, this),
-                onFail: $.proxy(methods.showModal, this)
-            });
-
             return this;
         },
 

@@ -7,6 +7,15 @@
 </head>
 
 <body>
+<script src="./static/js/sjcl.js"></script>
+
+<script src="./static/js/hermetic/json2.js"></script>
+<script src="./static/js/hermetic/variable.js"></script>
+<script src="./static/js/hermetic/sha1.js"></script>
+<script src="./static/js/hermetic/prng.js"></script>
+<script src="./static/js/hermetic/aes.js"></script>
+<script src="./static/js/hermetic/srp.js"></script>
+<script src="./static/js/hermetic/hermetic.js"></script>
 
 <script src="./static/js/jquery.js"></script>
 
@@ -78,7 +87,7 @@ $(document).ready(function() {
             }
         });
 
-    $("#login-modal").loginModal(pwdremind);
+    $("#login-modal").loginModal(Pwdremind);
 
     $(".topbar a[href='#logout']").click(function (event) {
         event.preventDefault();
@@ -107,13 +116,14 @@ $(document).ready(function() {
     $(document).bind('pwdremind/logout', function(e){$('#add-modal').modal('hide')});
     // END add modal
 
-    $(document).bind('pwdremind/login',timeoutHandler);
-    $('#btn-close-session').click(function(){
-        $.idleTimeout.options.onTimeout.call(this);
-    });
+    //$(document).bind('pwdremind/login',timeoutHandler);
+    //$('#btn-close-session').click(function(){
+    //    $.idleTimeout.options.onTimeout.call(this);
+    //});
 
     $().UItoTop();
 
+    Pwdremind.init();
 });
 </script>
 <!-- Topbar
