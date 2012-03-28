@@ -28,7 +28,6 @@
 <script src="./static/js/tablesorter_filter.js"></script>
 <script src="./static/js/jquery.ui.totop.js"></script>
 
-<script src="./static/js/jquery.idletimeout.js"></script>
 <script src="./static/js/jquery.idletimer.js"></script>
 
 <script src="./static/js/d3.js" type="text/javascript"></script>
@@ -115,11 +114,6 @@ $(document).ready(function() {
     });
     $(document).bind('pwdremind/logout', function(e){$('#add-modal').modal('hide')});
     // END add modal
-
-    //$(document).bind('pwdremind/login',timeoutHandler);
-    //$('#btn-close-session').click(function(){
-    //    $.idleTimeout.options.onTimeout.call(this);
-    //});
 
     $().UItoTop();
 
