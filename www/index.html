@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-        <link rel="stylesheet" href="./static/css/bootstrap.css">
-        <link href="./static/css/main.css" rel="stylesheet">
-        <title>Password Remind</title>
+    <link rel="stylesheet" href="./static/css/bootstrap.css">
+    <link href="./static/css/main.css" rel="stylesheet">
+    <title>Password Remind</title>
 </head>
 
 <body>
@@ -54,252 +54,251 @@
 
 $(document).ready(function() {
 
-    // HACK zclip
-    $('body').append('<a href="" id="hackzclip">test</a>')
-    $('#hackzclip').zclip({
-                    path: './static/media/ZeroClipboard.swf',
-                    copy: 'toto',
-                   }).hide();
-    // END HACK
+	// HACK zclip
+	$('body').append('<a href="" id="hackzclip">test</a>')
+	$('#hackzclip').zclip({
+		path: './static/media/ZeroClipboard.swf',
+		copy: 'toto',
+		}).hide();
+		// END HACK
 
-    var pwdremind = Pwdremind;
-    document.pwdremind = Pwdremind;
+		var pwdremind = Pwdremind;
+		document.pwdremind = Pwdremind;
 
 
-    $('#controler').controller({
-            pwdremind: document.pwdremind,
-            default_view: 'pwdlist',
-            views: {'pwdlist': {elem: '#pwdlist',
-                                options: {
-                                    pwdremind: document.pwdremind,
-                                    $pwdtable: $("#pwdlist-sites"),
-                                    $search: $("#id_search"),
-                                    $confirmModal: $('#confirm-modal'),
-                                }
-                    },
-                    'visualizer': { elem: '#visualizer',
-                                    options: {
-                                        pwdremind: document.pwdremind,
-                                    }
-                    },
+		$('#controler').controller({
+			pwdremind: document.pwdremind,
+			default_view: 'pwdlist',
+			views: {'pwdlist': {
+				elem: '#pwdlist',
+				options: {
+					pwdremind: document.pwdremind,
+					$pwdtable: $("#pwdlist-sites"),
+					$search: $("#id_search"),
+					$confirmModal: $('#confirm-modal'),
+				}},'visualizer': { 
+					elem: '#visualizer',
+					options: {
+						pwdremind: document.pwdremind,
+					}
+				},
+			}
+		});
 
-            }
-        });
+		$("#login-modal").loginModal(Pwdremind);
 
-    $("#login-modal").loginModal(Pwdremind);
+		$(".topbar a[href='#logout']").click(function (event) {
+			event.preventDefault();
+			document.pwdremind.logout();
+		});
 
-    $(".topbar a[href='#logout']").click(function (event) {
-        event.preventDefault();
-        document.pwdremind.logout();
-    });
+		// ADD modal
+		$(".topbar a[href='#add']").click(function (e) {
+			e.preventDefault();
+			$('#add-modal').modal({
+				show: true,
+				backdrop: true,
+				keyboard: true
+			});
+		});
+		$("#addentry").validation();
+		$("#addentry").bind('submit',function(e){
+			e.preventDefault();
+			if(!$("#addentry").validate()){
+				return false;
+			};
+			document.pwdremind.add($("#addentry").formToJSON());
+			$('#add-modal').modal('toggle');
+			$("#addentry")[0].reset();
+		});
+		$(document).bind('pwdremind/logout', function(e){$('#add-modal').modal('hide')});
+		// END add modal
 
-    // ADD modal
-    $(".topbar a[href='#add']").click(function (e) {
-        e.preventDefault();
-        $('#add-modal').modal({
-            show: true,
-            backdrop: true,
-            keyboard: true
-            });
-    });
-    $("#addentry").validation();
-    $("#addentry").bind('submit',function(e){
-                e.preventDefault();
-                if(!$("#addentry").validate()){
-                    return false;
-                };
-                document.pwdremind.add($("#addentry").formToJSON());
-                $('#add-modal').modal('toggle');
-                $("#addentry")[0].reset();
-    });
-    $(document).bind('pwdremind/logout', function(e){$('#add-modal').modal('hide')});
-    // END add modal
+		$().UItoTop();
 
-    $().UItoTop();
-
-    Pwdremind.init();
-});
-</script>
-<!-- Topbar
-================================================== -->
-<div class="topbar" data-scrollspy="scrollspy" >
+		Pwdremind.init();
+	});
+	</script>
+    <!-- Topbar
+    ================================================== -->
+    <div class="topbar" data-scrollspy="scrollspy" >
         <div class="topbar-inner">
-        <div class="container">
+            <div class="container">
                 <a class="brand" href="#">Password remind</a>
                 <ul class="nav" id="controler">
-                <li><a href="#add">Ajouter</a></li>
-<!--
-                <li><a href="#visualizer">Visualiseur</a></li>
--->
+                    <li><a href="#add">Ajouter</a></li>
+                    <!--
+                    <li><a href="#visualizer">Visualiseur</a></li>
+                    -->
                 </ul>
                 <ul class="nav secondary-nav">
-                        <li><a href="#logout">Se d&eacute;connecter</a></li>
+                    <li><a href="#logout">Se d&eacute;connecter</a></li>
                 </ul>
+            </div>
         </div>
-        </div>
-</div>
+    </div>
 
-<div id="login-modal" class="modal hide fade">
+    <div id="login-modal" class="modal hide fade">
 
         <div class="modal-header">
-        <h3>Connexion</h3>
-    </div>
+            <h3>Connexion</h3>
+        </div>
 
         <form id="login" action="">
-        <fieldset>
-                        <div class="modal-body">
-                                <div class="clearfix">
-                                <label for="username">Identifiant</label>
-                            <div class="input">
-                                <input class="xlarge" id="username" name="username" size="30" type="text" validation="required" />
-                            </div>
-                                </div><!-- /clearfix -->
+            <fieldset>
+                <div class="modal-body">
+                    <div class="clearfix">
+                        <label for="username">Identifiant</label>
+                        <div class="input">
+                            <input class="xlarge" id="username" name="username" size="30" type="text" validation="required" />
+                        </div>
+                    </div><!-- /clearfix -->
 
-                                <div class="clearfix">
-                                <label for="password">Mot de passe</label>
-                            <div class="input">
-                                <input class="xlarge" id="password" name="password" size="30" type="password" validation="required" />
-                                </div>
-                        </div><!-- /clearfix -->
+                    <div class="clearfix">
+                        <label for="password">Mot de passe</label>
+                        <div class="input">
+                            <input class="xlarge" id="password" name="password" size="30" type="password" validation="required" />
+                        </div>
+                    </div><!-- /clearfix -->
 
-                                <div class="alert-message error">
+                    <div class="alert-message error">
                         <p><strong>Erreur:</strong> Mauvais identifiant ou mot de passe.</p>
-                </div>
                     </div>
+                </div>
 
-                        <div class="modal-footer">
-                        <input type="submit" class="btn primary" value="connexion" />
-                     </div>
-        </fieldset>
-    </form>
+                <div class="modal-footer">
+                    <input type="submit" class="btn primary" value="connexion" />
+                </div>
+            </fieldset>
+        </form>
 
-</div>
-
-<div id="add-modal" class="modal hide fade">
-        <div class="modal-header">
-        <a href="#" class="close">&times;</a>
-        <h3>Ajouter</h3>
     </div>
+
+    <div id="add-modal" class="modal hide fade">
+        <div class="modal-header">
+            <a href="#" class="close">&times;</a>
+            <h3>Ajouter</h3>
+        </div>
 
         <form id="addentry" action="">
-        <fieldset>
+            <fieldset>
                 <div class="modal-body">
 
-                        <div class="clearfix">
-                                <label for="site">Site web</label>
-                            <div class="input">
-                                <input class="xlarge" id="site" name="site" size="30" type="text" validation="required url" />
-                            </div>
-                        </div><!-- /clearfix -->
+                    <div class="clearfix">
+                        <label for="site">Site web</label>
+                        <div class="input">
+                            <input class="xlarge" id="site" name="site" size="30" type="text" validation="required url" />
+                        </div>
+                    </div><!-- /clearfix -->
 
-                                <div class="clearfix">
-                                <label for="login">Identifiant</label>
-                            <div class="input">
-                                <input class="xlarge" id="login" name="login" size="30" type="text" validation="required" />
-                            </div>
-                        </div><!-- /clearfix -->
+                    <div class="clearfix">
+                        <label for="login">Identifiant</label>
+                        <div class="input">
+                            <input class="xlarge" id="login" name="login" size="30" type="text" validation="required" />
+                        </div>
+                    </div><!-- /clearfix -->
 
-                                <div class="clearfix">
-                            <label for="pwd">Mot de passe</label>
-                            <div class="input">
-                                <input class="xlarge" id="pwd" name="pwd" size="30" type="password" validation="required" autocomplete="off" />
-                                </div>
-                        </div><!-- /clearfix -->
+                    <div class="clearfix">
+                        <label for="pwd">Mot de passe</label>
+                        <div class="input">
+                            <input class="xlarge" id="pwd" name="pwd" size="30" type="password" validation="required" autocomplete="off" />
+                        </div>
+                    </div><!-- /clearfix -->
 
                 </div>
 
                 <div class="modal-footer">
-                        <input type="submit" class="btn primary" value="Sauvegarder">&nbsp;
-                                <button type="reset" class="btn">Effacer</button>
-                    </div>
+                    <input type="submit" class="btn primary" value="Sauvegarder">&nbsp;
+                    <button type="reset" class="btn">Effacer</button>
+                </div>
 
-        </fieldset>
-    </form>
-</div>
-
-<div id="confirm-modal" class="modal hide fade">
-        <div class="modal-header">
-        <h3>Confirmer</h3>
+            </fieldset>
+        </form>
     </div>
+
+    <div id="confirm-modal" class="modal hide fade">
+        <div class="modal-header">
+            <h3>Confirmer</h3>
+        </div>
 
         <form id="confirm" action="">
-        <fieldset>
+            <fieldset>
 
                 <div class="modal-body">
-                        <p>Confirmez-vous la suppression?</p>
-                        </div>
+                    <p>Confirmez-vous la suppression?</p>
+                </div>
 
                 <div class="modal-footer">
-                <input type="submit" class="btn primary" value="Confirmer">&nbsp;
-                                <button id="cancelDelete" class="btn">Annuler</button>
-            </div>
+                    <input type="submit" class="btn primary" value="Confirmer">&nbsp;
+                    <button id="cancelDelete" class="btn">Annuler</button>
+                </div>
 
-                </fieldset>
-    </form>
+            </fieldset>
+        </form>
 
-</div>
-
-<div id="keepalive-modal" class="modal hide fade">
-        <div class="modal-header">
-        <h3>Attention</h3>
     </div>
+
+    <div id="keepalive-modal" class="modal hide fade">
+        <div class="modal-header">
+            <h3>Attention</h3>
+        </div>
 
         <div class="modal-body">
-        <p>Vous avez &eacute;t&eacute; inactif pendant plus de 5min</p>
-    </div>
+            <p>Vous avez &eacute;t&eacute; inactif pendant plus de 5min</p>
+        </div>
 
         <div class="modal-footer">
-        <a href="#" class="btn primary" id="btn-keepalive">Oui, gardez la session ouverte</a>
-        <a href="#" class="btn secondary" id="btn-close-session">Non, fermer la session</a>
+            <a href="#" class="btn primary" id="btn-keepalive">Oui, gardez la session ouverte</a>
+            <a href="#" class="btn secondary" id="btn-close-session">Non, fermer la session</a>
+        </div>
     </div>
-</div>
 
-<div id="main" class="container">
+    <div id="main" class="container">
         <section id="pwdlist">
 
-                <div class="page-header">
+            <div class="page-header">
                 <h1>Sites</h1>
-                </div>
+            </div>
 
-                <div class="row">
+            <div class="row">
                 <div class="span16">
 
-                        <form action="#">
-                                        <fieldset>
-                                                <input type="text" name="search" value="" id="id_search" placeholder="Search" />
-                                        </fieldset>
-                                </form>
+                    <form action="#">
+                        <fieldset>
+                            <input type="text" name="search" value="" id="id_search" placeholder="Search" />
+                        </fieldset>
+                    </form>
 
-                                <table class="zebra-striped" id="pwdlist-sites">
-                                <thead>
-                                        <tr>
-                                        <th class="blue header">Site</th>
-                                        <th class="green header">Identifiant</th>
-                                        <th class="yellow header">Password</th>
-                                        <th></th>
-                                        </tr>
-                                </thead>
-                                <tbody></tbody>
-                        </table>
+                    <table class="zebra-striped" id="pwdlist-sites">
+                        <thead>
+                            <tr>
+                                <th class="blue header">Site</th>
+                                <th class="green header">Identifiant</th>
+                                <th class="yellow header">Password</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
 
                 </div>
-                </div>
+            </div>
 
         </section>
         <section id="visualizer">
             <div class="page-header">
                 <h1>Password Visualizer</h1>
-                </div>
+            </div>
 
-                <div class="row">
+            <div class="row">
                 <div class="span16">
                     <div id="chart">
                     </div>
                 </div>
-                </div>
+            </div>
 
         </section>
-</div>
+    </div>
 
 </body>
 </html>
