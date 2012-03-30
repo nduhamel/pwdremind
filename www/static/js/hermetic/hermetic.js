@@ -96,8 +96,8 @@
 
         this.start = function (username, password, authCallback) {
             auth.callback = authCallback;
-            var nonce = Hermetic.Prng.getRandomBytes(Hermetic.Srp.Options.strengthBits/8);
-
+            //~ var nonce = Hermetic.Prng.getRandomBytes(Hermetic.Srp.Options.strengthBits/8);
+            var nonce = sjcl.codec.hex.fromBits(sjcl.random.randomWords(256/32,0));
             auth.srpSession = Hermetic.Srp.createSession(username,password,nonce);
 
             auth.srpSession.computeClientPublicKey(nonce);
