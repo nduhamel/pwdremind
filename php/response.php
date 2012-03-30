@@ -12,7 +12,7 @@ class Response {
 
 	public function __construct($key=NULL){
 		if (!is_null($key)){
-			$this->macKey = substr($key,32,40);
+			$this->setKey($key);
 		}else{
 			$this->macKey = NULL;
 		}
@@ -22,7 +22,6 @@ class Response {
 		if ( is_null($this->macKey) ){
 			throw new Exception("INTERNAL_ERROR");
 		}
-
 		return hmac($this->macKey, $data);
 	}
 
@@ -37,8 +36,8 @@ class Response {
 
 	public function data($data){
 		$this->status = "OK";
-		$this->data = $data;
-		$this->sig = $this->sign($data);
+		$this->data = json_encode($data);
+		$this->sig = $this->sign($this->data);
 	}
 
 	public function message($msg){
@@ -47,30 +46,30 @@ class Response {
 	}
 
 	public function send(){
-		$result = NULL;
-
-		if ( is_null($this->status) ){
-			$result->status = "ERROR";
-			$result->reason = "INVALID_REQUEST";
-
-			}elseif ($this->status == "ERROR") {
-				$result->status = "ERROR";
-				$result->reason = $this->msg;
-
-			}elseif ( is_null($this->data) && is_null($this->msg) ){
-				$result->status = "ERROR";
-				$result->reason = "INTERNAL_ERROR";
-
-			}else{
-				$result->status = "OK";
-				if ( !is_null($this->data) ){
-					$result->data = json_encode($this->data);
-					$result->sig = $this->sign($result->data);
-				} else {
-					$result->msg = $this->msg;
-				}
-			}
-
-			echo json_encode($result);
-		}
+		$this->check_error();
+		echo $this;
 	}
+	
+	public function check_error(){
+		
+		if ( is_null($this->status) ){
+			$this->error("INVALID_REQUEST");
+		} 
+		elseif ( is_null($this->data) && is_null($this->msg) ){
+			$this->error("INTERNAL_ERROR");
+		}
+		
+	}
+	
+	public function __toString(){
+		
+		$data = array(
+			'status' => $this->status,
+			'data' => $this->data,
+			'msg' => $this->msg,
+			'sig' => $this->sig
+		);
+		
+		return json_encode($data);
+	}
+}
