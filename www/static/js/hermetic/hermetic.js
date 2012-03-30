@@ -200,7 +200,7 @@
                 } else {
                     result.status = 'ERROR';
                     result.data = null;
-                    result.reason = 'MESSAGE_AUTHENTICATION_FAILURE';
+                    result.msg = 'MESSAGE_AUTHENTICATION_FAILURE';
                     return result;
                 }
             }
@@ -214,7 +214,7 @@
         } catch (e) {
             result.status = 'ERROR';
             result.data = null;
-            result.reason = 'MESSAGE_FORMAT_ERROR';
+            result.msg = 'MESSAGE_FORMAT_ERROR';
         }
         return result;
     }
