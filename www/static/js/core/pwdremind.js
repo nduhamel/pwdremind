@@ -23,7 +23,7 @@ var Pwdremind = (function() {
                         }else{
                             result.status = 'ERROR';
                             result.data = null;
-                            result.reason = 'MESSAGE_AUTHENTICATION_FAILURE';
+                            result.msg = 'MESSAGE_AUTHENTICATION_FAILURE';
                         }
                     } else if ( response.msg ){
                         result.status = 'OK';
@@ -31,16 +31,16 @@ var Pwdremind = (function() {
                     } else if ( response.status == 'ERROR' ){
                         result.status = 'ERROR';
                         result.data = null;
-                        result.reason = response.reason;
+                        result.msg = response.msg;
                     } else {
                         result.status = 'ERROR';
                         result.data = null;
-                        result.reason = 'MESSAGE_FORMAT_ERROR';
+                        result.msg = 'MESSAGE_FORMAT_ERROR';
                     }
                 } catch (e) {
                     result.status = 'ERROR';
                     result.data = null;
-                    result.reason = 'MESSAGE_FORMAT_ERROR';
+                    result.msg = 'MESSAGE_FORMAT_ERROR';
                 }
 
                 httpCallback(result);
