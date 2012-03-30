@@ -26,3 +26,6 @@ Stack trace:
   thrown in /home/nicolas/www/pwdremind/php/response.php on line 23
 [26-Mar-2012 12:29:10] PHP Catchable fatal error:  Argument 1 passed to SrpSession::__construct() must implement interface SrpOptions, none given, called in /home/nicolas/www/pwdremind/www/sync.php on line 16 and defined in /home/nicolas/www/pwdremind/php/srpsession.php on line 37
 [28-Mar-2012 01:03:05] PHP Fatal error:  Class 'AuthenticationFailedException' not found in /home/nicolas/www/pwdremind/php/srpsession.php on line 147
+[30-Mar-2012 22:25:48] PHP Fatal error:  Class 'AuthenticationFailedException' not found in /home/nicolas/www/pwdremind/php/srpsession.php on line 147
+[30-Mar-2012 23:22:31] PHP Fatal error:  Class 'AuthenticationFailedException' not found in /home/nicolas/www/pwdremind/php/srpsession.php on line 147
+[30-Mar-2012 23:22:33] PHP Fatal error:  Class 'AuthenticationFailedException' not found in /home/nicolas/www/pwdremind/php/srpsession.php on line 147

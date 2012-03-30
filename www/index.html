@@ -9,14 +9,6 @@
 <body>
 <script src="./static/js/sjcl.js"></script>
 
-<script src="./static/js/hermetic/json2.js"></script>
-<script src="./static/js/hermetic/variable.js"></script>
-<script src="./static/js/hermetic/sha1.js"></script>
-<script src="./static/js/hermetic/prng.js"></script>
-<script src="./static/js/hermetic/aes.js"></script>
-<script src="./static/js/hermetic/srp.js"></script>
-<script src="./static/js/hermetic/hermetic.js"></script>
-
 <script src="./static/js/jquery.js"></script>
 
 <script src="./static/js/bootstrap/bootstrap-modal.js"></script>
@@ -41,6 +33,14 @@
 
 <script src="./static/js/core/utils.js"></script>
 <script src="./static/js/core/pwdremind.js"></script>
+<script src="./static/js/core/pwdremind.bigint.js"></script>
+<script src="./static/js/core/pwdremind.crypto.js"></script>
+<script src="./static/js/core/pwdremind.crypto.sha1.js"></script>
+<script src="./static/js/core/pwdremind.crypto.srp.js"></script>
+<script src="./static/js/core/pwdremind.session.js"></script>
+<script src="./static/js/core/pwdremind.app.js"></script>
+
+
 <script src="./static/js/core/controller.js"></script>
 <script src="./static/js/core/widget.visualizer.js"></script>
 <script src="./static/js/core/widget.pwdlist.js"></script>
@@ -54,71 +54,71 @@
 
 $(document).ready(function() {
 
-	// HACK zclip
-	$('body').append('<a href="" id="hackzclip">test</a>')
-	$('#hackzclip').zclip({
-		path: './static/media/ZeroClipboard.swf',
-		copy: 'toto',
-		}).hide();
-		// END HACK
+    // HACK zclip
+    $('body').append('<a href="" id="hackzclip">test</a>')
+    $('#hackzclip').zclip({
+        path: './static/media/ZeroClipboard.swf',
+        copy: 'toto',
+        }).hide();
+        // END HACK
 
-		var pwdremind = Pwdremind;
-		document.pwdremind = Pwdremind;
+        var pwdremind = new Pwdremind.App();
+        document.pwdremind = pwdremind;
 
 
-		$('#controler').controller({
-			pwdremind: document.pwdremind,
-			default_view: 'pwdlist',
-			views: {'pwdlist': {
-				elem: '#pwdlist',
-				options: {
-					pwdremind: document.pwdremind,
-					$pwdtable: $("#pwdlist-sites"),
-					$search: $("#id_search"),
-					$confirmModal: $('#confirm-modal'),
-				}},'visualizer': { 
-					elem: '#visualizer',
-					options: {
-						pwdremind: document.pwdremind,
-					}
-				},
-			}
-		});
+        $('#controler').controller({
+            pwdremind: pwdremind,
+            default_view: 'pwdlist',
+            views: {'pwdlist': {
+                elem: '#pwdlist',
+                options: {
+                    pwdremind: pwdremind,
+                    $pwdtable: $("#pwdlist-sites"),
+                    $search: $("#id_search"),
+                    $confirmModal: $('#confirm-modal'),
+                }},'visualizer': {
+                    elem: '#visualizer',
+                    options: {
+                        pwdremind: pwdremind,
+                    }
+                },
+            }
+        });
 
-		$("#login-modal").loginModal(Pwdremind);
+        $("#login-modal").loginModal(pwdremind);
 
-		$(".topbar a[href='#logout']").click(function (event) {
-			event.preventDefault();
-			document.pwdremind.logout();
-		});
+        $(".topbar a[href='#logout']").click(function (event) {
+            event.preventDefault();
+            pwdremind.logout();
+        });
 
-		// ADD modal
-		$(".topbar a[href='#add']").click(function (e) {
-			e.preventDefault();
-			$('#add-modal').modal({
-				show: true,
-				backdrop: true,
-				keyboard: true
-			});
-		});
-		$("#addentry").validation();
-		$("#addentry").bind('submit',function(e){
-			e.preventDefault();
-			if(!$("#addentry").validate()){
-				return false;
-			};
-			document.pwdremind.add($("#addentry").formToJSON());
-			$('#add-modal').modal('toggle');
-			$("#addentry")[0].reset();
-		});
-		$(document).bind('pwdremind/logout', function(e){$('#add-modal').modal('hide')});
-		// END add modal
+        // ADD modal
+        $(".topbar a[href='#add']").click(function (e) {
+            e.preventDefault();
+            $('#add-modal').modal({
+                show: true,
+                backdrop: true,
+                keyboard: true
+            });
+        });
+        $("#addentry").validation();
+        $("#addentry").bind('submit',function(e){
+            e.preventDefault();
+            if(!$("#addentry").validate()){
+                return false;
+            };
+            pwdremind.add($("#addentry").formToJSON());
+            $('#add-modal').modal('toggle');
+            $("#addentry")[0].reset();
+        });
+        $(document).bind('pwdremind/logout', function(e){$('#add-modal').modal('hide')});
+        // END add modal
 
-		$().UItoTop();
+        $().UItoTop();
 
-		Pwdremind.init();
-	});
-	</script>
+        pwdremind.init();
+    });
+    </script>
     <!-- Topbar
     ================================================== -->
     <div class="topbar" data-scrollspy="scrollspy" >

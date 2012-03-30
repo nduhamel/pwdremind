@@ -1,36 +1,4 @@
-/*
-Copyright (c) 2009 Galini Associates Ltd.
-
-Permission is hereby granted, free of charge, to any person
-obtaining a copy of this software and associated documentation
-files (the "Software"), to deal in the Software without
-restriction, including without limitation the rights to use,
-copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.
-
-@author Antonio Caciuc, http://www.denksoft.com
-
-Part of this code is from the Big Integer Library v. 5.1
-by Leemon Baird, http://www.leemon.com
-
-*/
 (function() {
-
-    window.Hermetic = {};
 
     //bigint globals
     var bpe=0;         //bits stored per array element
@@ -909,14 +877,14 @@ by Leemon Baird, http://www.leemon.com
 
     var hexdigits = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
 
-    function Variable() {
+    function BigInt() {
         if ( !(this instanceof arguments.callee) )
             throw Error("Constructor called as a function");
     };
 
-    Hermetic.Variable = Variable;
+    Pwdremind.BigInt = BigInt;
 
-    Variable.prototype = {
+    BigInt.prototype = {
 
         reset : function() {
             this.hexValue = undefined;
@@ -979,7 +947,7 @@ by Leemon Baird, http://www.leemon.com
             return this.hexValue;
         },
 
-        toBigInt : function() {            
+        toBigInt : function() {
             if (this.bigIntValue == undefined) {
                 if (this.hexValue == undefined) {
                     throw "undefined variable";
@@ -990,27 +958,27 @@ by Leemon Baird, http://www.leemon.com
         },
 
         Mod : function(n) {
-            return new Variable().fromBigInt(mod(this.toBigInt(),n.toBigInt()));
+            return new BigInt().fromBigInt(mod(this.toBigInt(),n.toBigInt()));
         },
 
         Add : function(n) {
-            return new Variable().fromBigInt(add(this.toBigInt(),n.toBigInt()));
+            return new BigInt().fromBigInt(add(this.toBigInt(),n.toBigInt()));
         },
 
         Sub : function(n) {
-            return new Variable().fromBigInt(sub(this.toBigInt(),n.toBigInt()));
+            return new BigInt().fromBigInt(sub(this.toBigInt(),n.toBigInt()));
         },
 
         Mult : function(n) {
-            return new Variable().fromBigInt(mult(this.toBigInt(),n.toBigInt()));
+            return new BigInt().fromBigInt(mult(this.toBigInt(),n.toBigInt()));
         },
 
         MultMod : function(x,n) {
-            return new Variable().fromBigInt(multMod(this.toBigInt(),x.toBigInt(),n.toBigInt()));
+            return new BigInt().fromBigInt(multMod(this.toBigInt(),x.toBigInt(),n.toBigInt()));
         },
 
         PowMod : function(x,n) {
-            return new Variable().fromBigInt(powMod(this.toBigInt(), x.toBigInt(), n.toBigInt()));
+            return new BigInt().fromBigInt(powMod(this.toBigInt(), x.toBigInt(), n.toBigInt()));
         },
 
         Equals : function(n) {
@@ -1020,6 +988,6 @@ by Leemon Baird, http://www.leemon.com
         EqualsInt : function(i) {
             return equalsInt(this.toBigInt(),i);
         }
-        
+
     };
-}());    
+}());
