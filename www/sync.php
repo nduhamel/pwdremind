@@ -20,13 +20,13 @@ if (isset($_GET['action'])){
 
 	if ( $_GET['action'] == 'isloggedin') {
 
-		if ($session->is_logged_in()){
+		if ($session->is_logged_in())
 			$response->message("AUTHENTICATED");
-		}else{
+		else
 			$response->message("NOT_AUTHENTICATED");
-		}
-
-	} elseif ( $session->is_logged_in() ){
+	}
+	elseif ( $session->is_logged_in() ){
+		
 		$response->setKey($session->Khex);
 
 		switch( $_GET['action'] ) {
@@ -56,12 +56,9 @@ if (isset($_GET['action'])){
 			$entries = $db->get_entries($session->get_username());
 			$response->data($entries);
 			break;
-
-			case 'test':
-			$response->message($session->I);
-			break;
 		}
-	}else{
+	}
+	else {
 		$response->error("NOT_AUTHENTICATED");
 	}
 }
