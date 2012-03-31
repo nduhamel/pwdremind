@@ -3,10 +3,9 @@ require_once('srpsession.php');
 require_once('hermetic/crypto_util.php');
 
 function publicKeyExchange ($username, $salt, $verifier, $A){
-	global $srpOptions;
 	try {
-		$srpSession = new SrpSession($srpOptions);
-		$b = secure_random($srpOptions->privateKeyBitSize());
+		$srpSession = new SrpSession();
+		$b = secure_random($srpSession->getKeySize());
 		$srpSession->initialize($username, $salt, $verifier, $A, $b);
 
 		$result->status = "OK";
@@ -22,8 +21,7 @@ function publicKeyExchange ($username, $salt, $verifier, $A){
 }
 
 function sharedKeyVerification ($username, $A, $M1){
-	global $srpOptions;
-	$srpSession = new SrpSession($srpOptions);
+	$srpSession = new SrpSession();
 	if ($srpSession->state() == 2){
 		try {
 			$M2 = $srpSession->verifyM1computeM2($M1);

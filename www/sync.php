@@ -12,7 +12,7 @@ ini_set("error_log" , "Errors.log.txt");
 ini_set("display_errors" , "0");
 
 $db = new Database('../test.db');
-$session = new SrpSession($srpOptions);
+$session = new SrpSession();
 $response = new Response();
 
 

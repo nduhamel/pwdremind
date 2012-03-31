@@ -2,19 +2,6 @@
 require_once('session.php');
 require_once('hermetic/crypto_util.php');
 
-interface SrpOptions {
-	public function Nhex();
-	public function Ndec();
-	public function ghex();
-	public function gdec();
-	public function khex();
-	public function kdec();
-	public function NgXorHash();
-	public function privateKeyBitSize();
-	public function hash($input);
-	public function keyHash($input);
-}
-
 class SrpSession extends Session {
 	private $srp;
 	public  $I;
@@ -34,9 +21,9 @@ class SrpSession extends Session {
 	public  $Khex;
 	public  $M1;
 
-	function __construct(SRPOptions $srp) {
+	function __construct() {
 		parent::__construct();
-		$this->srp = $srp;
+		$this->srp = new SRP_SHA1_256();
 		if ( $this->getValue('SRP_state', FALSE) == FALSE){
 			$this->setValue('SRP_state',0);
 			} elseif ( $this->getValue('SRP_state') >= 1){
@@ -154,6 +141,10 @@ class SrpSession extends Session {
 
 			$M2 = $this->srp->hash(pack("H*", $this->Ahex).pack("H*", $M1).pack("H*", $this->Khex));
 			return $M2;
+		}
+		
+		public function getKeySize(){
+			return $this->srp->privateKeyBitSize();
 		}
 
 	}

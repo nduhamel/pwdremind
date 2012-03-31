@@ -26,6 +26,20 @@ OTHER DEALINGS IN THE SOFTWARE.
 @author Antonio Caciuc, http://www.denksoft.com
 
 */
+
+interface SrpOptions {
+	public function Nhex();
+	public function Ndec();
+	public function ghex();
+	public function gdec();
+	public function khex();
+	public function kdec();
+	public function NgXorHash();
+	public function privateKeyBitSize();
+	public function hash($input);
+	public function keyHash($input);
+}
+
 class SRP_SHA1_256 implements SRPOptions {
 
     public function Nhex() { return '0115b8b692e0e045692cf280b436735c77a5a9e8a9e7ed56c965f87db5b2a2ece3'; }
