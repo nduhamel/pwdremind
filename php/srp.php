@@ -1,4 +1,5 @@
 <?php
+
 require_once('srpsession.php');
 require_once('hermetic/crypto_util.php');
 
@@ -12,9 +13,9 @@ function publicKeyExchange ($username, $salt, $verifier, $A){
 		$result->salt = $salt;
 		$result->B = $srpSession->getB();
 
-	} catch (SrpException $e) {
+	} catch (Exception $e) {
 		$result->status = "ERROR";
-		$result->reason = "INVALID_REQUEST";
+		$result->msg = "INVALID_REQUEST";
 	}
 
 	return $result;
@@ -22,18 +23,18 @@ function publicKeyExchange ($username, $salt, $verifier, $A){
 
 function sharedKeyVerification ($username, $A, $M1){
 	$srpSession = new SrpSession();
-	if ($srpSession->state() == 2){
+	if ($srpSession->getState() == SrpSession::READY){
 		try {
 			$M2 = $srpSession->verifyM1computeM2($M1);
 			$result->status = 'OK';
 			$result->M2 = $M2;
-		} catch (SrpException $e) {
+		} catch (Exception $e) {
 			$result->status = "ERROR";
-			$result->reason = "AUTHENTICATION_FAILED";
+			$result->msg = "AUTHENTICATION_FAILED";
 		}
 	}else{
 		$result->status = "ERROR";
-		$result->reason = "INVALID_REQUEST";
+		$result->msg = "INVALID_REQUEST";
 	}
 
 	return $result;
