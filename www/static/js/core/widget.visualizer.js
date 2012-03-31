@@ -1,6 +1,3 @@
-//
-//  Visualizer widget
-//
 (function ( $, window, document, undefined ) {
 
     $.widget( "pwdremind.visualizer" , {
@@ -34,7 +31,9 @@
                     pwdDict[pwd] = [site];
                 }
             }
-            vizualizerInit(pwdDict, this.options.height, this.options.width, this.options.chart);
+            var vis = new Visualizer();
+            vis.setup(pwdDict, this.options.height, this.options.width, this.options.chart);
+            vis.start();
         },
 
         // Destroy an instantiated plugin and clean up
