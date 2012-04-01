@@ -17,7 +17,7 @@
                     backdrop: 'static',
             });
 
-            mod.find("#login").submit(function(event){
+            mod.find("#login-form").submit(function(event){
                 event.preventDefault();
                 mod.find('input[type="submit"]').addClass('disabled').attr('disabled', 'disabled').val('Identification...');
                 pwdremind.login({
@@ -38,6 +38,7 @@
             mod = $(this);
             mod.find('.alert-message.error').hide();
             mod.find('input[type="submit"]').removeClass('disabled').removeAttr('disabled').val('connexion');
+            $("#login-form")[0].reset();
             mod.modal('hide');
             return this;
         },
@@ -46,6 +47,7 @@
             mod = $(this);
             mod.find('.alert-message.error').show();
             mod.find('input[type="submit"]').removeClass('disabled').removeAttr('disabled').val('connexion');
+            $("#login-form")[0].reset();
             return this;
         },
 
