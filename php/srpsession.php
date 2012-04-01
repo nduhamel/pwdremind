@@ -77,7 +77,7 @@ class SrpSession extends Session {
 
 		$this->Adec = hex2dec($A);
 		if ( strcmp(bcmod($this->Adec,$this->srp->Ndec()), '0') == 0 ) {
-			throw new Exception('Protocol exception');
+			throw new Exception('PROTOCOL_EXCEPTION');
 		}
 
 		$this->Ahex = $A;
@@ -124,14 +124,13 @@ class SrpSession extends Session {
 		$M1 = $this->srp->hash($hi);
 		$this->M1 = $M1;
 		if (strcmp($M1,$clientM1) != 0) {
-			throw new Exception('Authentication failed');
+			throw new Exception('AUTHENTICATION_FAILED');
 		}
 
 		// Login the user
 		$this->login($this->I);
 
 		//M2 = H(A, M, K)
-
 		$M2 = $this->srp->hash(pack("H*", $this->Ahex).pack("H*", $M1).pack("H*", $this->Khex));
 		return $M2;
 	}
