@@ -29,11 +29,11 @@ $auth->run();
 
 class Authentication {
 	
-	private $_result;
 	private $_username;
 	private $_A;
 	private $_M1;
 	private $_db;
+	private $_srp;
 	private $_srpOptions;
 	
 	public function __construct(Database $db,$username,$A,$M1){
@@ -41,7 +41,7 @@ class Authentication {
 		$this->_A = $A;
 		$this->_M1 = $M1;
 		$this->_db = $db;
-		$this->_result = NULL;
+		$this->_srp = new Srp();
 		$this->_srpOptions = new SRP_SHA1_256();
 	}
 	
@@ -52,7 +52,7 @@ class Authentication {
 			if ( strlen($this->_A)==strlen($this->_srpOptions->Nhex()) && isHex($this->_A)) {
 				$isValid = true;
 				if ( isset($this->_M1)) {
-					if (strlen($this->_M1)==40 && isHex($this->_M1)) { // 40hex digits = 160bits
+					if (strlen($this->_M1) == 40 && isHex($this->_M1)) { // 40hex digits = 160bits
 						$isValid = true;
 					}else{
 						$isValid = false;
@@ -63,25 +63,25 @@ class Authentication {
 		return $isValid;
 	}
 	
-	public function run(){
+	public function run() {
 		
 		if ( $this->_is_validRequest() ) {
-			if (empty($this->_M1)) { // public key exchange
+			if (empty($this->_M1)) { 
 				$user_data = $this->_db->get_verifier($this->_username);
 				if (!is_null($user_data) && !is_null($user_data->verifier)) {
-					$result = publicKeyExchange($this->_username,$user_data->salt, $user_data->verifier, $this->_A );
-				} else {
-					$result->status = "ERROR";
-					$result->msg = "USER_DOES_NOT_EXIST";
+					$this->_srp->publicKeyExchange($this->_username,$user_data->salt, $user_data->verifier, $this->_A );
+				} 
+				else {
+					$this->_srp = new Srp('ERROR','USER_DOES_NOT_EXIST');
 				}
-			} else { // shared key verification
-				$result = sharedKeyVerification($this->_username, $this->_A, $this->_M1);
+			} 
+			else {
+				$this->_srp->sharedKeyVerification($this->_M1);
 			}
-		} else {
-			$result->status = "ERROR";
-			$result->msg = "INVALID_REQUEST";
+		} 
+		else {
+			$this->_srp = new Srp('ERROR','INVALID_REQUEST');
 		}
-		echo json_encode($result);
-		
+		echo $this->_srp;
 	}
 }
