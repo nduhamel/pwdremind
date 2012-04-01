@@ -310,7 +310,7 @@
         if (resultRowsCount == 0)
         {
             var size = table.config.headerList.length;
-            $(table.tBodies[0]).append("<tr><td align='center' class='b i' colspan='" + size +"'>No matching saved searches</td></tr>");
+            $(table.tBodies[0]).append("<tr><td align='center' class='b i' colspan='" + size +"'>Aucuns r&eacute;sultats</td></tr>");
             return;
         }
         for (var i=0; i < resultRowsCount; i++) {
