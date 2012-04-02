@@ -120,7 +120,7 @@
                 field = obj.field,
                 errorClass = "error",
                 types = field.attr("validation").split(" "),
-                container = field.closest('.clearfix'),
+                container = field.closest('.control-group'),
                 errors = [];
 
             field.next(".error").remove();

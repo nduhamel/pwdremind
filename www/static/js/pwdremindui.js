@@ -11,7 +11,7 @@
 
             $this = this;
             mod = $(this);
-            mod.find('.alert-message.error').hide();
+            mod.find('.alert.alert-error').hide();
             mod.modal({
                     show: false,
                     backdrop: 'static',
@@ -36,7 +36,7 @@
 
         hideModal : function(){
             mod = $(this);
-            mod.find('.alert-message.error').hide();
+            mod.find('.alert.alert-error').hide();
             mod.find('input[type="submit"]').removeClass('disabled').removeAttr('disabled').val('connexion');
             $("#login-form")[0].reset();
             mod.modal('hide');
@@ -45,7 +45,7 @@
 
         loginFail : function(){
             mod = $(this);
-            mod.find('.alert-message.error').show();
+            mod.find('.alert.alert-error').show();
             mod.find('input[type="submit"]').removeClass('disabled').removeAttr('disabled').val('connexion');
             $("#login-form")[0].reset();
             return this;

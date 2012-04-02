@@ -88,7 +88,7 @@
         $('circle,rect').popover({
             live: true,
             html: true,
-            delayOut: 500,
+            delay: {hide: 500},
             offset: 40,
             title: function(){
                 if (this.__data__.group == 0){
