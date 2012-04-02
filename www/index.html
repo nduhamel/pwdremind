@@ -2,8 +2,10 @@
 <html>
 <head>
     <link rel="stylesheet" href="./static/css/bootstrap.css">
+    <link href="./static/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="./static/css/main.css" rel="stylesheet">
     <title>Password Remind</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
@@ -11,9 +13,10 @@
 
 <script src="./static/js/jquery.js"></script>
 
-<script src="./static/js/bootstrap/bootstrap-modal.js"></script>
-<script src="./static/js/bootstrap/bootstrap-twipsy.js"></script>
-<script src="./static/js/bootstrap/bootstrap-popover.js"></script>
+<script src="./static/js/bootstrap/bootstrap2-modal.js"></script>
+<script src="./static/js/bootstrap/bootstrap2-tooltip.js"></script>
+<script src="./static/js/bootstrap/bootstrap2-popover.js"></script>
+<script src="./static/js/bootstrap/bootstrap2-collapse.js"></script>
 
 <script src="./static/js/valid.js"></script>
 <script src="./static/js/tablesorter.js"></script>
@@ -86,13 +89,13 @@ $(document).ready(function() {
 
     $("#login-modal").loginModal(pwdremind);
 
-    $(".topbar a[href='#logout']").click(function (event) {
+    $(".navbar a[href='#logout']").click(function (event) {
         event.preventDefault();
         pwdremind.logout();
     });
 
     // ADD modal
-    $(".topbar a[href='#add']").click(function (e) {
+    $(".navbar a[href='#add']").click(function (e) {
         e.preventDefault();
         $('#add-modal').modal({
             show: true,
@@ -120,19 +123,25 @@ $(document).ready(function() {
     </script>
     <!-- Topbar
     ================================================== -->
-    <div class="topbar" data-scrollspy="scrollspy" >
-        <div class="topbar-inner">
+    <div class="navbar navbar-fixed-top" data-scrollspy="scrollspy" >
+        <div class="navbar-inner">
             <div class="container">
+
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
                 <a class="brand" href="#">Password remind</a>
-                <ul class="nav" id="controler">
-                    <li><a href="#add">Ajouter</a></li>
-                    <!--
-                    <li><a href="#visualizer">Visualiseur</a></li>
-                    -->
-                </ul>
-                <ul class="nav secondary-nav">
-                    <li><a href="#logout">Se d&eacute;connecter</a></li>
-                </ul>
+                <div class="nav-collapse">
+                    <ul class="nav" id="controler">
+                        <li><a href="#add">Ajouter</a></li>
+                    </ul>
+                    <ul class="nav pull-right">
+                        <li><a href="#logout">Se d&eacute;connecter</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -143,30 +152,31 @@ $(document).ready(function() {
             <h3>Connexion</h3>
         </div>
 
-        <form id="login-form" action="">
+        <form id="login-form" action="" class="form-horizontal">
             <fieldset>
                 <div class="modal-body">
-                    <div class="clearfix">
-                        <label for="username">Identifiant</label>
-                        <div class="input">
-                            <input class="xlarge" id="username" name="username" size="30" type="text" validation="required" />
-                        </div>
-                    </div><!-- /clearfix -->
 
-                    <div class="clearfix">
-                        <label for="password">Mot de passe</label>
-                        <div class="input">
-                            <input class="xlarge" id="password" name="password" size="30" type="password" validation="required" />
+                    <div class="control-group">
+                        <label class="control-label" for="username">Identifiant</label>
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="username" name="username" validation="required" />
                         </div>
-                    </div><!-- /clearfix -->
+                    </div>
 
-                    <div class="alert-message error">
+                    <div class="control-group">
+                        <label class="control-label" for="password">Mot de passe</label>
+                        <div class="controls">
+                            <input type="password" class="input-xlarge" id="password" name="password" validation="required" />
+                        </div>
+                    </div>
+
+                    <div class="alert alert-error">
                         <p><strong>Erreur:</strong> Mauvais identifiant ou mot de passe.</p>
                     </div>
                 </div>
 
                 <div class="modal-footer">
-                    <input type="submit" class="btn primary" value="connexion" />
+                    <input type="submit" class="btn btn-primary" value="connexion" />
                 </div>
             </fieldset>
         </form>
@@ -175,39 +185,39 @@ $(document).ready(function() {
 
     <div id="add-modal" class="modal hide fade">
         <div class="modal-header">
-            <a href="#" class="close">&times;</a>
+            <a class="close" data-dismiss="modal">&times;</a>
             <h3>Ajouter</h3>
         </div>
 
-        <form id="addentry" action="">
+        <form id="addentry" action="" class="form-horizontal">
             <fieldset>
                 <div class="modal-body">
 
-                    <div class="clearfix">
-                        <label for="site">Site web</label>
-                        <div class="input">
-                            <input class="xlarge" id="site" name="site" size="30" type="text" validation="required url" />
+                    <div class="control-group">
+                        <label class="control-label" for="site">Site web</label>
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="site" name="site" validation="required url" />
                         </div>
-                    </div><!-- /clearfix -->
+                    </div>
 
-                    <div class="clearfix">
-                        <label for="login">Identifiant</label>
-                        <div class="input">
-                            <input class="xlarge" id="login" name="login" size="30" type="text" validation="required" />
+                    <div class="control-group">
+                        <label class="control-label" for="login">Identifiant</label>
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="login" name="login" validation="required" />
                         </div>
-                    </div><!-- /clearfix -->
+                    </div>
 
-                    <div class="clearfix">
-                        <label for="pwd">Mot de passe</label>
-                        <div class="input">
-                            <input class="xlarge" id="pwd" name="pwd" size="30" type="password" validation="required" autocomplete="off" />
+                    <div class="control-group">
+                        <label class="control-label" for="login">Mot de passe</label>
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="pwd" name="pwd" validation="required" autocomplete="off" />
                         </div>
-                    </div><!-- /clearfix -->
+                    </div>
 
                 </div>
 
                 <div class="modal-footer">
-                    <input type="submit" class="btn primary" value="Sauvegarder">&nbsp;
+                    <input type="submit" class="btn btn-primary" value="Sauvegarder">&nbsp;
                     <button type="reset" class="btn">Effacer</button>
                 </div>
 
@@ -228,7 +238,7 @@ $(document).ready(function() {
                 </div>
 
                 <div class="modal-footer">
-                    <input type="submit" class="btn primary" value="Confirmer">&nbsp;
+                    <input type="submit" class="btn btn-primary" value="Confirmer">&nbsp;
                     <button id="cancelDelete" class="btn">Annuler</button>
                 </div>
 
@@ -237,65 +247,40 @@ $(document).ready(function() {
 
     </div>
 
-    <div id="keepalive-modal" class="modal hide fade">
-        <div class="modal-header">
-            <h3>Attention</h3>
-        </div>
+    <div class="container">
 
-        <div class="modal-body">
-            <p>Vous avez &eacute;t&eacute; inactif pendant plus de 5min</p>
-        </div>
-
-        <div class="modal-footer">
-            <a href="#" class="btn primary" id="btn-keepalive">Oui, gardez la session ouverte</a>
-            <a href="#" class="btn secondary" id="btn-close-session">Non, fermer la session</a>
-        </div>
-    </div>
-
-    <div id="main" class="container">
         <section id="pwdlist">
 
             <div class="page-header">
                 <h1>Sites</h1>
             </div>
 
-            <div class="row">
-                <div class="span16">
+            <form action="#">
+                <fieldset>
+                    <input type="text" name="search" value="" id="id_search" placeholder="Search" />
+                </fieldset>
+            </form>
 
-                    <form action="#">
-                        <fieldset>
-                            <input type="text" name="search" value="" id="id_search" placeholder="Search" />
-                        </fieldset>
-                    </form>
-
-                    <table class="zebra-striped" id="pwdlist-sites">
-                        <thead>
-                            <tr>
-                                <th class="blue header">Site</th>
-                                <th class="green header">Identifiant</th>
-                                <th class="yellow header">Password</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-
-                </div>
-            </div>
-
+            <table class="table table-striped" id="pwdlist-sites">
+                <thead>
+                    <tr>
+                        <th class="blue header">Site</th>
+                        <th class="green header">Identifiant</th>
+                        <th class="yellow header">Password</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </section>
+
         <section id="visualizer">
             <div class="page-header">
                 <h1>Password Visualizer</h1>
             </div>
 
-            <div class="row">
-                <div class="span16">
-                    <div id="chart">
-                    </div>
-                </div>
+            <div id="chart">
             </div>
-
         </section>
     </div>
 
