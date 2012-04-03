@@ -5,55 +5,107 @@ require_once('../php/srpsession.php');
 require_once('../php/response.php');
 require_once('../config.php');
 
-$db = new Database(DB_PATH);
-$session = new SrpSession();
-$response = new Response();
+//Todo
+if (isset($_GET['action']))
+	$action = $_GET['action'];
+else
+	$action = NULL;
+	
+if (isset($_GET['id']))
+	$id = $_GET['id'];	
+else
+	$id = NULL;
+//----
 
-if (isset($_GET['action'])){
+$sync = new Sync($action,$id);
+$sync->run();
 
-	if ( $_GET['action'] == 'isloggedin') {
-
-		if ($session->is_logged_in())
-			$response->message("AUTHENTICATED");
-		else
-			$response->message("NOT_AUTHENTICATED");
+class Sync {
+	
+	private $_db;
+	private $_session;
+	private $_response;
+	private $_action;
+	private $_id;
+	private $_isloggedin;
+	
+	public function __construct($action,$id){
+		$this->_action = $action;
+		$this->_id = $id;
+		$this->_db = new Database(DB_PATH);
+		$this->_session = new SrpSession();
+		$this->_response = new Response();
+		$this->_isloggedin = $this->_session->is_logged_in();
 	}
-	elseif ( $session->is_logged_in() ){
+	
+	private function _checkErrors(){
+		$error = false;
 		
-		$response->setKey($session->getKhex());
-
-		switch( $_GET['action'] ) {
-
-			case 'logout':
-			$session->logout();
-			$response->message("LOGOUT");
-			break;
-
-			case 'ping':
-			$response->message("OK");
-			break;
-
-			case 'add':
-			$data = stripslashes($_GET['data']);
-			$id = $db->store_entry($data, $session->get_username());
-			$response->data($id);
-			break;
-
-			case 'remove':
-			$id = $_GET['id'];
-			$id = $db->delete_entry($id, $session->get_username());
-			$response->data($id);
-			break;
-
-			case 'get':
-			$entries = $db->get_entries($session->get_username());
-			$response->data($entries);
-			break;
+		//Todo: if action == 'remove' check in db if the id exist
+		
+		if(isset($this->_action)) {
+			if ($this->_isloggedin){
+				if (($this->_action == 'remove') and empty($this->_id)){
+					$this->_response->error("ITEM_ID_NOT_DEFINED");
+					$error = true;
+				}
+			}
+			else {
+				if ($this->_action == 'isloggedin'){
+					$this->_response->message("NOT_AUTHENTICATED");
+					$error = true;
+				}
+				else {
+					$this->_response->error("NOT_AUTHENTICATED");
+					$error = true;
+				}
+			}
 		}
+		else {
+			$this->_response->error("ACTION_NOT_DEFINED");
+			$error = true;
+		}
+		return $error;
 	}
-	else {
-		$response->error("NOT_AUTHENTICATED");
-	}
-}
+	
+	public function run() {
+		
+		if (!$this->_checkErrors()) {
+			$this->_response->setKey($this->_session->getKhex());
+			switch( $this->_action ) {
+				
+				case 'isloggedin':
+				$this->_response->message("AUTHENTICATED");
+				break;
+				
+				case 'logout':
+				$this->_session->logout();
+				$this->_response->message("LOGOUT");
+				break;
 
-$response->send();
+				case 'ping':
+				$this->_response->message("OK");
+				break;
+
+				case 'add':
+				$data = stripslashes($_GET['data']);
+				$id = $this->_db->store_entry($data, $this->_session->get_username());
+				$this->_response->data($id);
+				break;
+
+				case 'remove':
+				$this->_id = $this->_db->delete_entry($this->_id, $this->_session->get_username());
+				$this->_response->data($this->_id);
+				break;
+
+				case 'get':
+				$entries = $this->_db->get_entries($this->_session->get_username());
+				$this->_response->data($entries);
+				break;
+			}
+		}
+		$this->_response->send();
+	
+	}	
+
+}
