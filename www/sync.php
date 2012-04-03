@@ -27,7 +27,7 @@ if (isset($_GET['action'])){
 	}
 	elseif ( $session->is_logged_in() ){
 		
-		$response->setKey($session->Khex);
+		$response->setKey($session->getKhex());
 
 		switch( $_GET['action'] ) {
 

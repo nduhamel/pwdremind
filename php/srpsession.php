@@ -6,24 +6,11 @@ require_once('hermetic/srp_256.php');
 
 class SrpSession extends Session {
 	
-	public  $Shex;
-	public  $Khex;
-	public  $M1;
-	public  $I;
-	public  $vhex;
-	public  $Ahex;
-		
+	private $_Ahex, $_Bhex, $_bhex ,$_Khex, $_Shex, $_shex, $_uhex, $_vhex;
+	private $_Adec, $_Bdec, $_bdec, $_Sdec, $_udec, $_vdec;
+	private $_I;
+	private $_M1; 
 	private $_srp;
-	private $_shex;
-	private $_vdec;
-	private $_Adec;
-	private $_bhex;
-	private $_bdec;
-	private $_Bhex;
-	private $_Bdec;
-	private $_uhex;
-	private $_udec;
-	private $_Sdec;
 	
 	const NOT_INITIALIZED = 0;
 	const INITIALIZED = 1;
@@ -35,10 +22,10 @@ class SrpSession extends Session {
 		if ( $this->getState() == (SrpSession::INITIALIZED or SrpSession::READY) ){
 			try {
 				$this->_shex = $this->getValue('SRP_shex');
-				$this->Ahex = $this->getValue('SRP_Ahex');
+				$this->_Ahex = $this->getValue('SRP_Ahex');
 				$this->_Bhex = $this->getValue('SRP_Bhex');
-				$this->Khex = $this->getValue('SRP_Khex');
-				$this->I = $this->getValue('SRP_I');
+				$this->_Khex = $this->getValue('SRP_Khex');
+				$this->_I = $this->getValue('SRP_I');
 				$this->setState(SrpSession::READY);
 			} catch (InvalidArgumentException $e){
 				$this->setState(SrpSession::NOT_INITIALIZED);
@@ -58,7 +45,7 @@ class SrpSession extends Session {
 	}
 
 	private function computeK() {
-		$hash_input = str_pad($this->Ahex, strlen($this->_srp->Nhex()), "0", STR_PAD_LEFT).str_pad($this->_Bhex, strlen($this->_srp->Nhex()), "0", STR_PAD_LEFT);
+		$hash_input = str_pad($this->_Ahex, strlen($this->_srp->Nhex()), "0", STR_PAD_LEFT).str_pad($this->_Bhex, strlen($this->_srp->Nhex()), "0", STR_PAD_LEFT);
 		$hash_input = pack("H*",$hash_input);
 		$this->_uhex = $this->_srp->hash($hash_input);
 		$this->_udec = hex2dec($this->_uhex);
@@ -68,11 +55,11 @@ class SrpSession extends Session {
 		$Stmp = bcpowmod($Stmp, $this->_bdec, $this->_srp->Ndec()); // (v^u*A)^b (mod N)
 
 		$this->_Sdec = $Stmp;
-		$this->Shex = dec2hex($this->_Sdec);
+		$thisthis->_Shex = dec2hex($this->_Sdec);
 
-		$this->Shex = str_pad($this->Shex, strlen($this->_srp->Nhex()), "0", STR_PAD_LEFT);
+		$thisthis->_Shex = str_pad($thisthis->_Shex, strlen($this->_srp->Nhex()), "0", STR_PAD_LEFT);
 
-		$this->Khex = $this->_srp->keyHash(pack("H*",$this->Shex));
+		$this->_Khex = $this->_srp->keyHash(pack("H*",$thisthis->_Shex));
 	}
 
 	function initialize($I, $s, $v, $A, $b) {
@@ -81,10 +68,10 @@ class SrpSession extends Session {
 		if ( strcmp(bcmod($this->_Adec,$this->_srp->Ndec()), '0') == 0 ) 
 			throw new Exception('PROTOCOL_EXCEPTION');
 
-		$this->Ahex = $A;
-		$this->I = $I;
+		$this->_Ahex = $A;
+		$this->_I = $I;
 		$this->_shex = $s;
-		$this->vhex = $v;
+		$this->_vhex = $v;
 		$this->_vdec = hex2dec($v);
 		$this->_bhex = $b;
 		$this->_bdec = hex2dec($b);
@@ -93,10 +80,10 @@ class SrpSession extends Session {
 		$this->computeK();
 
 		$this->setValue('SRP_shex',$this->_shex);
-		$this->setValue('SRP_Ahex',$this->Ahex);
+		$this->setValue('SRP_Ahex',$this->_Ahex);
 		$this->setValue('SRP_Bhex',$this->_Bhex);
-		$this->setValue('SRP_Khex',$this->Khex);
-		$this->setValue('SRP_I',$this->I);
+		$this->setValue('SRP_Khex',$this->_Khex);
+		$this->setValue('SRP_I',$this->_I);
 		$this->setState(SrpSession::INITIALIZED);
 	}
 
@@ -104,39 +91,38 @@ class SrpSession extends Session {
 		//M1 = H( H(N) xor H(g) , H (I) , s, A, B, K)
 
 		$hi = byte2hex($this->_srp->NgXorHash());
-		$hi .= $this->_srp->hash($this->I);
+		$hi .= $this->_srp->hash($this->_I);
 		$hi .= $this->_shex;
 
-		$hi .= str_pad($this->Ahex, strlen($this->_srp->Nhex()), "0", STR_PAD_LEFT);
+		$hi .= str_pad($this->_Ahex, strlen($this->_srp->Nhex()), "0", STR_PAD_LEFT);
 		$hi .= str_pad($this->_Bhex, strlen($this->_srp->Nhex()), "0", STR_PAD_LEFT);
 
-		$hi .= $this->Khex;
+		$hi .= $this->_Khex;
 		
 		if (strlen($hi) % 2 == 1)
 			$hi= $hi.'0';
 
 		$hi = pack("H*",$hi);
 		$hash_input = $this->_srp->NgXorHash();
-		$hash_input .= pack("H*", $this->_srp->hash($this->I));
+		$hash_input .= pack("H*", $this->_srp->hash($this->_I));
 		$hash_input .= pack("H*", $this->_shex);
-		$hash_input .= pack("H*", $this->Ahex);
+		$hash_input .= pack("H*", $this->_Ahex);
 		$hash_input .= pack("H*", $this->_Bhex);
-		$hash_input .= pack("H*", $this->Khex);
+		$hash_input .= pack("H*", $this->_Khex);
 		$M1 = $this->_srp->hash($hi);
-		$this->M1 = $M1;
+		$this->_M1 = $M1;
 		if (strcmp($M1,$clientM1) != 0)
 			throw new Exception('AUTHENTICATION_FAILED');
 
 		// Login the user
-		$this->login($this->I);
+		$this->login($this->_I);
 
 		//M2 = H(A, M, K)
-		$M2 = $this->_srp->hash(pack("H*", $this->Ahex).pack("H*", $M1).pack("H*", $this->Khex));
+		$M2 = $this->_srp->hash(pack("H*", $this->_Ahex).pack("H*", $M1).pack("H*", $this->_Khex));
 		return $M2;
 	}
 	
-	public function getKeySize(){
-		return $this->_srp->privateKeyBitSize();
-	}
-
+	public function getKeySize() { return $this->_srp->privateKeyBitSize(); }
+	public function getKhex() { return $this->_Khex; }
+	
 }
