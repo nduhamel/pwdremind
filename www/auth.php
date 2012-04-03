@@ -2,10 +2,7 @@
 require_once('../php/hermetic/crypto_util.php');
 require_once('../php/srp.php');
 require_once('../php/database.php');
-
-ini_set("log_errors" , "1");
-ini_set("error_log" , "Errors.log.txt");
-ini_set("display_errors" , "0");
+require_once('../config.php');
 
 //Todo
 if (isset($_POST['username']))
@@ -24,7 +21,7 @@ else
 	$M1 = NULL;
 //----
 
-$auth = new Authentication(new Database('../test.db'),$username,$A,$M1);
+$auth = new Authentication(new Database(DB_PATH),$username,$A,$M1);
 $auth->run();
 
 class Authentication {

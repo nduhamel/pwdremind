@@ -3,18 +3,11 @@
 require_once('../php/database.php');
 require_once('../php/srpsession.php');
 require_once('../php/response.php');
+require_once('../config.php');
 
-
-define("SESSION_TIMEOUT", 300);
-
-ini_set("log_errors" , "1");
-ini_set("error_log" , "Errors.log.txt");
-ini_set("display_errors" , "0");
-
-$db = new Database('../test.db');
+$db = new Database(DB_PATH);
 $session = new SrpSession();
 $response = new Response();
-
 
 if (isset($_GET['action'])){
 
