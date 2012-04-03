@@ -7,8 +7,10 @@
 
 /* Body and structure
 -------------------------------------------------- */
-section {
+body {
+  position: relative;
   padding-top: 60px;
+  background-color: #fff;
 }
 
 @media (min-width: 980px) {
@@ -17,6 +19,11 @@ section {
   }
 }
 
+/*     Form input align hack
+------------------------------------------------------*/
+form#addentry input#site,form#addentry input#login{
+    width: 262px;
+}
 
 /* Restore tablesorter support removed in Bootstrap 2
 ----------------------------------------------------- */

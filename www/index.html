@@ -51,6 +51,7 @@
 
 <script src="./static/js/jquery.zclip.js"></script>
 <script src="./static/js/passwordstrength.js"></script>
+<script src="./static/js/pwdgen.js"></script>
 
 <script>
 
@@ -114,6 +115,91 @@ $(document).ready(function() {
         $("#addentry")[0].reset();
     });
     $(document).bind('pwdremind/logout', function(e){$('#add-modal').modal('hide')});
+
+    // Show/Hide password
+    $("input#pwd + span>i").live("click", function() {
+        var input = $('input#pwd').clone();
+
+        if (input.attr('type') == 'password'){
+            input.attr('type', 'text');
+            $(this).removeClass('icon-eye-open').addClass('icon-eye-close');
+        }else{
+            input.attr('type', 'password');
+            $(this).addClass('icon-eye-open').removeClass('icon-eye-close');
+        }
+        $("input#pwd").replaceWith(input);
+    });
+
+    // Pwdgen
+    $("form#addentry i.icon-random").live("click", function() {
+        $("input#pwd").val(PasswordGenerator());
+    });
+
+    // Pwdgen with options
+    $("form#addentry i.icon-random").popover({
+            live: true,
+            html: true,
+            delay: {show: 400, hide: 500},
+            placement: 'left',
+            offset: 0,
+            title: "G&eacute;n&eacute;rateur de mots de passe",
+            content: '\
+            <form id="addentry-pwdgen"> \
+            <fieldset>\
+                <div class="control-group"> \
+                    <label class="control-label">Options</label> \
+                    <div class="controls"> \
+                        <label class="radio"> \
+                            <input type="radio" checked="" value="all" name="pwdgen-option"/> \
+                            Tous caract&egrave;res imprimables \
+                        </label> \
+                        <label class="radio"> \
+                            <input type="radio" value="alphanumeric" name="pwdgen-option"/> \
+                            Uniquement des caract&egrave;res alphanum&eacute;riques \
+                        </label> \
+                        <label class="radio"> \
+                            <input type="radio" value="alpha" name="pwdgen-option"/> \
+                            Uniquement des lettres \
+                        </label> \
+                        <label class="radio"> \
+                            <input type="radio" value="numeric" name="pwdgen-option"/> \
+                            Uniquement des chiffres \
+                        </label> \
+                    </div> \
+                </div> \
+            </fieldset> \
+                <div class="form-actions"> \
+                    <button class="btn btn-primary" type="submit">G&eacute;n&eacute;rer</button> \
+                </div> \
+            </form> \
+            '
+    });
+
+    $("form#addentry-pwdgen button").live("click", function() {
+        var options = {}
+        var choose = $('form#addentry-pwdgen input[name=pwdgen-option]:checked').val();
+
+        switch (choose){
+            case 'alphanumeric':
+            options.special = false;
+            break;
+
+            case 'alpha':
+            options.special = false;
+            options.number = false;
+            break;
+
+            case 'numeric':
+            options.special = false;
+            options.letter = false;
+            break;
+        }
+        console.log(options);
+        $("input#pwd").val(PasswordGenerator(options));
+        return false;
+    });
+
+
     // END add modal
 
     $().UItoTop();
@@ -196,21 +282,23 @@ $(document).ready(function() {
                     <div class="control-group">
                         <label class="control-label" for="site">Site web</label>
                         <div class="controls">
-                            <input type="text" class="input-xlarge" id="site" name="site" validation="required url" />
+                            <input type="text" class="" id="site" name="site" validation="required url" />
                         </div>
                     </div>
 
                     <div class="control-group">
                         <label class="control-label" for="login">Identifiant</label>
                         <div class="controls">
-                            <input type="text" class="input-xlarge" id="login" name="login" validation="required" />
+                            <input type="text" class="" id="login" name="login" validation="required" />
                         </div>
                     </div>
 
                     <div class="control-group">
                         <label class="control-label" for="login">Mot de passe</label>
                         <div class="controls">
-                            <input type="text" class="input-xlarge" id="pwd" name="pwd" validation="required" autocomplete="off" />
+                            <div class="input-prepend input-append">
+                                <span class="add-on"><i class="icon-random"></i></span><input type="password" class="" id="pwd" name="pwd" validation="required" autocomplete="off" /><span class="add-on"><i class="icon-eye-open"></i></span>
+                            </div>
                         </div>
                     </div>
 
