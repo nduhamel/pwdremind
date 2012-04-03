@@ -40,14 +40,18 @@ class Sync {
 	
 	private function _checkErrors(){
 		$error = false;
-		
-		//Todo: if action == 'remove' check in db if the id exist
-		
+
 		if(isset($this->_action)) {
 			if ($this->_isloggedin){
-				if (($this->_action == 'remove') and empty($this->_id)){
-					$this->_response->error("ITEM_ID_NOT_DEFINED");
-					$error = true;
+				if ($this->_action == 'remove') {
+				 	if ( empty($this->_id) ){
+						$this->_response->error("ITEM_ID_NOT_DEFINED");
+						$error = true;
+					}
+					elseif (!$this->_db->check_entry($this->_id, $this->_session->get_username())) {
+						$this->_response->error("ID_NOT_FOUND");
+						$error = true;
+					}
 				}
 			}
 			else {
@@ -102,6 +106,7 @@ class Sync {
 				$entries = $this->_db->get_entries($this->_session->get_username());
 				$this->_response->data($entries);
 				break;
+				
 			}
 		}
 		$this->_response->send();

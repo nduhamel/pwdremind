@@ -41,6 +41,16 @@ class Database {
 		$req->execute(array('id'=>$id, 'username'=>$username));
 		return $id;
 	}
+	
+	public function check_entry($id, $username) {
+		$req = $this->_db->prepare("SELECT id FROM password WHERE id=:id AND username=:username ");
+		$req->execute(array('id'=>$id, 'username'=>$username));
+		$req = $req->fetchall(PDO::FETCH_ASSOC);
+		if (count($req) == 1)
+			return true;
+		else
+			return false;
+	}
 
 	private function createTables(){
 		$stm = "CREATE TABLE password (id INTEGER PRIMARY KEY, data TEXT, username TEXT)";
