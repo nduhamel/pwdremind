@@ -4,7 +4,7 @@ require_once('../config.php');
 class Database {
 	private $_db;
 
-	public function __construct($dbname) {
+	public function __construct() {
 		try {
 			$this->_db = new PDO(PDO_DNS);
 			$this->_db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
