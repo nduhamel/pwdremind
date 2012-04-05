@@ -211,6 +211,8 @@
                  this.lastSearch = '';
                  var cache = dataCache.entries;
                  dataCache.filtered = null;
+            }else{
+                cache = dataCache.filtered;
             }
 
             var sortTh = $('.SortUp, .SortDown').first();
