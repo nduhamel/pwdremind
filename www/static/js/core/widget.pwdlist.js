@@ -187,7 +187,6 @@
             var phrase = $("#search input").val();
 
             function has_words(text, words) {
-
                 for (var i=0; i < words.length; i++) {
                   if (words[i].charAt(0) == '-') {
                     if (text.indexOf(words[i].substr(1)) != -1) return false; // Negated word must not be in text
@@ -238,7 +237,12 @@
 
         //todo
         postAdd : function(e,id, entryJSON){
-            $('#pwdlist-sites > tbody:last').append(String.format(this.options.rowtpl,entryJSON['site'],entryJSON['login'],entryJSON['pwd'],id));
+            dataCache.entries.push({
+                    'id' : id,
+                    'data' : entryJSON
+                });
+            $("#search input").val('');
+            this.search();
         },
 
         showConfirm : function(id){
