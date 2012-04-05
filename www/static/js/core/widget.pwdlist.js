@@ -103,7 +103,7 @@
                     break;
                 }
 
-                previous = $(this).siblings('th').removeClass('SortUp').removeClass('SortDown');
+                previous = $(this).siblings('th').removeClass('SortUp').removeClass('SortDown').data('sort','');
 
                 sort = $(this).data('sort');
                 if ( sort == 'down'){
@@ -269,6 +269,7 @@
         destroy: function () {
             console.log("Destroy pwdlist");
             dataCache = null;
+            $('.SortUp, .SortDown').removeClass('SortUp').removeClass('SortDown').data('sort','');
             this.clearTable();
             // unbind event
             $(document).unbind('.pwdlist');
