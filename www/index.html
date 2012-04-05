@@ -19,8 +19,6 @@
 <script src="./static/js/bootstrap/bootstrap2-collapse.js"></script>
 
 <script src="./static/js/valid.js"></script>
-<script src="./static/js/tablesorter.js"></script>
-<script src="./static/js/tablesorter_filter.js"></script>
 <script src="./static/js/jquery.ui.totop.js"></script>
 
 <script src="./static/js/jquery.idletimer.js"></script>
@@ -77,7 +75,6 @@ $(document).ready(function() {
             options: {
                 pwdremind: pwdremind,
                 $pwdtable: $("#pwdlist-sites"),
-                $search: $("#id_search"),
                 $confirmModal: $('#confirm-modal'),
             }},'visualizer': {
                 elem: '#visualizer',
@@ -339,22 +336,16 @@ $(document).ready(function() {
 
         <section id="pwdlist">
 
-            <div class="page-header">
-                <h1>Sites</h1>
-            </div>
-
-            <form action="#">
-                <fieldset>
-                    <input type="text" name="search" value="" id="id_search" placeholder="Search" />
-                </fieldset>
+            <form id="search" class="well form-search">
+                <input id="search" type="text" class="input-xlarge search-query" placeholder="Rechercher">
             </form>
 
             <table class="table table-striped" id="pwdlist-sites">
                 <thead>
                     <tr>
-                        <th class="blue header">Site</th>
-                        <th class="green header">Identifiant</th>
-                        <th class="yellow header">Password</th>
+                        <th class="blue sortable">Site</th>
+                        <th class="green sortable">Identifiant</th>
+                        <th class="yellow">Password</th>
                         <th></th>
                     </tr>
                 </thead>
