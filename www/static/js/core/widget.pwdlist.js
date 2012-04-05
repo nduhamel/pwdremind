@@ -187,6 +187,7 @@
             var phrase = $("#search input").val();
 
             function has_words(text, words) {
+                text = text.toLowerCase();
                 for (var i=0; i < words.length; i++) {
                   if (words[i].charAt(0) == '-') {
                     if (text.indexOf(words[i].substr(1)) != -1) return false; // Negated word must not be in text
@@ -204,7 +205,7 @@
 
             if ( phrase && phrase != this.lastSearch) {
                 this.lastSearch = phrase;
-                var cache = dataCache.entries.filter(doFilter(phrase.split(" ")));
+                var cache = dataCache.entries.filter(doFilter(phrase.toLowerCase().split(" ")));
                 dataCache.filtered = cache;
             }else if ( !phrase ){
                  this.lastSearch = '';
