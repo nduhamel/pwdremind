@@ -19,7 +19,7 @@ class Database {
 	}
 
 	public function get_verifier($username){
-		$req = $this->_db->prepare("SELECT * FROM users WHERE username = :username");
+		$req = $this->_db->prepare("SELECT * FROM user WHERE username = :username");
 		$req->execute(array('username'=>$username));
 		return $req->fetchObject();
 	}
@@ -52,18 +52,26 @@ class Database {
 			return false;
 	}
 
-	private function createTables(){
-		$stm = "CREATE TABLE password (id INTEGER PRIMARY KEY, data TEXT, username TEXT)";
-		$this->_db->query($stm);
-		$stm = "CREATE TABLE users (id INTEGER PRIMARY KEY, 
-				username VARCHAR(128) NOT NULL UNIQUE, verifier 
-				VARCHAR(256) NOT NULL, salt VARCHAR(32) NOT NULL );";
-		$this->_db->query($stm);
+	public function createTables() {
+		
+		$req = "CREATE TABLE password (
+				id INTEGER PRIMARY KEY, 
+				data TEXT, 
+				username VARCHAR(128) NOT NULL)";
+		$this->_db->query($req);
+		
+		$req = "CREATE TABLE user (
+				id INTEGER PRIMARY KEY, 
+				username VARCHAR(128) NOT NULL UNIQUE, 
+				verifier VARCHAR(256) NOT NULL, 
+				salt VARCHAR(32) NOT NULL );";
+		$this->_db->query($req);
 
 		// admin:admin
-		$stm = "INSERT INTO users (username, verifier, salt) 
-		VALUES ('admin', '01073e301b235e616c19eddd48cadf1c48c0ed83c1e5a2cb0841ab892808b4468e', 
-		'ee8528c459ba7fcfb5a6');";
-		$this->_db->query($stm);
+		$req = "INSERT INTO user (username, verifier, salt) 
+				VALUES ('admin', 
+						'01073e301b235e616c19eddd48cadf1c48c0ed83c1e5a2cb0841ab892808b4468e', 
+						'ee8528c459ba7fcfb5a6');";
+		$this->_db->query($req);
 	}
 }
