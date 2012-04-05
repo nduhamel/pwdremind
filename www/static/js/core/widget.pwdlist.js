@@ -40,13 +40,14 @@
             // Pwdremind event
             $(document).bind('pwdremind/afterAdd.pwdlist', $.proxy(this.postAdd, this));
             $(document).bind('pwdremind/dataLoaded.pwdlist', $.proxy(this.dataLoaded, this));
+            $(document).bind('pwdremind/afterRemove.pwdlist', $.proxy(this.postRemove, this));
 
             // Confirm modal
             $("#confirm").bind('submit.pwdlist', $.proxy(function(event){
                 event.preventDefault();
                 id = this.options.$confirmModal.data('id');
                 this.options.pwdremind.remove(id);
-                $('#'+id).closest('tr').remove();
+                //$('#'+id).closest('tr').remove();
                 this.options.$confirmModal.modal('hide');
             },this));
 
@@ -236,13 +237,21 @@
             this.showTable(cache);
         },
 
-        //todo
         postAdd : function(e,id, entryJSON){
             dataCache.entries.push({
                     'id' : id,
                     'data' : entryJSON
                 });
             $("#search input").val('');
+            this.search();
+        },
+
+        postRemove : function (e, id){
+            console.log(id);
+            dataCache.entries = dataCache.entries.filter(function(elem,i,a){return (elem.id !=  id)});
+            if ( dataCache.filtered ){
+                dataCache.filtered = dataCache.filtered.filter(function(elem,i,a){ return (elem.id !=  id)});
+            }
             this.search();
         },
 
