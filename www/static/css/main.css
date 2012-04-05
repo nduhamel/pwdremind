@@ -39,7 +39,7 @@ table th.sortable:after {
   border-color: #000 transparent;
   visibility: hidden;
 }
-table .SortUp, table .SortDown {
+table .SortUp, table .headerSortDown {
   background-color: rgba(141, 192, 219, 0.25);
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 }
@@ -53,7 +53,7 @@ table .SortDown:after, table .SortDown:hover:after {
   -moz-opacity: 0.6;
   opacity: 0.6;
 }
-table .SortUp:after {
+table th.SortUp:after {
   border-bottom: none;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
