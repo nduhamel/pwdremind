@@ -114,6 +114,9 @@ table .SortUp.purple, table .SortDown.purple {
 
 /*  pwdlist
 ----------------------------------------------------- */
+section#pwdlist span{
+    margin-right: 20px;
+}
 
 section#pwdlist img{
     height: 16px;
@@ -124,17 +127,14 @@ section#pwdlist img.showpwd{
     width: 25px;
 }
 section#pwdlist img.clipboard{
-    margin-left: 20px;
     height: 16px;
     width: 16px;
 }
 section#pwdlist img.go{
-    margin-left: 20px;
     height: 16px;
     width: 16px;
 }
 span.pwd{
-    margin-right: 5px;
     display: none;
 }
 /* Visualizer

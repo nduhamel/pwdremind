@@ -15,11 +15,9 @@ var View = View || [];
                     +'<td><a href="{0}" target="_blank">{0}</a></td>'
                     +'<td>{1}</td>'
                     +'<td>'
-                        +'<span class="pwd">{2}</span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" />'
+                        +'<span class="pwd">{2}</span><span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></span>'
                         +'<span style="position:relative"><img src="./static/icons/clipboard.png" class="clipboard" alt="Copy to clipboard" /></span>'
-                    +'</td>'
-                    +'<td>'
-                        +'<img src="./static/icons/delete.png" class="delete" alt="delete" id="{3}" data-id="{3}"/>'
+                        +'<span><img src="./static/icons/delete.png" class="delete" alt="delete" id="{3}" data-id="{3}"/></span>'
                     +'</td>'
                 +'</tr>';
 
@@ -57,7 +55,7 @@ var View = View || [];
 
         // Show password
         $pwdtable.delegate("img[class='showpwd']", "click.pwdlist", function(e) {
-            $(e.target).prev("span").fadeToggle("slow")
+            $(e.target).parent("span").prev('span').fadeToggle("slow")
         });
 
         // Copy to clipboard
