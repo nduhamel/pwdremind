@@ -29,8 +29,6 @@
 
 <script src="./static/js/visualizer.js" type="text/javascript"></script>
 
-<script src="./static/js/widget.js"></script>
-
 <script src="./static/js/core/utils.js"></script>
 <script src="./static/js/core/pwdremind.js"></script>
 <script src="./static/js/core/pwdremind.bigint.js"></script>
@@ -41,9 +39,10 @@
 <script src="./static/js/core/pwdremind.app.js"></script>
 
 
+<script src="./static/js/core/view.visualizer.js"></script>
+<script src="./static/js/core/view.pwdlist.js"></script>
 <script src="./static/js/core/controller.js"></script>
-<script src="./static/js/core/widget.visualizer.js"></script>
-<script src="./static/js/core/widget.pwdlist.js"></script>
+
 
 <script src="./static/js/pwdremindui.js"></script>
 
@@ -66,24 +65,7 @@ $(document).ready(function() {
     var pwdremind = new Pwdremind.App();
     document.pwdremind = pwdremind;
 
-
-    $('#controler').controller({
-        pwdremind: pwdremind,
-        default_view: 'pwdlist',
-        views: {'pwdlist': {
-            elem: '#pwdlist',
-            options: {
-                pwdremind: pwdremind,
-                $pwdtable: $("#pwdlist-sites"),
-                $confirmModal: $('#confirm-modal'),
-            }},'visualizer': {
-                elem: '#visualizer',
-                options: {
-                    pwdremind: pwdremind,
-                }
-            },
-        }
-    });
+    Controller.init(pwdremind, 'pwdlist');
 
     $("#login-modal").loginModal(pwdremind);
 
@@ -218,7 +200,7 @@ $(document).ready(function() {
 
                 <a class="brand" href="#">Password remind</a>
                 <div class="nav-collapse">
-                    <ul class="nav" id="controler">
+                    <ul class="nav" id="controller">
                         <li><a href="#add">Ajouter</a></li>
                     </ul>
                     <ul class="nav pull-right">

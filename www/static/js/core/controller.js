@@ -1,81 +1,73 @@
 //
 //  App controller
 //
-(function ( $, window, document, undefined ) {
 
-    $.widget( "pwdremind.controller" , {
+var Controller = (function ($, window, document, View, undefined) {
 
-        //Options to be used as defaults
-        options: {
-        },
+    var openedView;
+    var defaultView;
+    var views;
+    var $menu;
+    var Pwdremind;
 
-        //Setup widget
-        _create: function () {
-            this.openedView = null;
-            this.default_view = this.options.default_view;
-            var views = this.options.views;
-            console.log('Start controller')
+    var init = function (pwdremind, defView){
+        $menu = $('ul#controller');
+        defaultView = defView;
+        Pwdremind = pwdremind;
+        views = {};
 
-            for (var viewname in views){
-                console.log("Controller add view: "+ viewname);
-                // Add menu entry
-                this.element.append('<li><a href="#'+viewname+'">'+$.pwdremind[viewname].menu.open+'</a></li>');
-                // Bind menu entry
-                $(this.element).find("a[href='#"+viewname+"']").click($.proxy(function (e) {
-                        e.preventDefault();
-                        var viewname = $(e.target).attr('href').slice(1);
-                        this._openview(viewname);
-                    },this));
-                // Hide section
-                $(views[viewname].elem).hide();
-            }
+        var sortView = function (a,b) {
+            return (a.order || 0) - (b.order || 0);
+        };
 
-            $(document).bind('pwdremind/login.controller', $.proxy(this._open_default, this));
-            $(document).bind('pwdremind/logout.controller', $.proxy(this._close_all, this));
-        },
+        for (var i in View.sort(sortView) ) {
+            var view = View[i];
+            // Add menu entry
+            $menu.append('<li><a href="#'+view.name+'">'+view.label+'</a></li>');
+            // Bind menu entry
+            $menu.find("a[href='#"+view.name+"']").click(function (e) {
+                e.preventDefault();
+                var viewname = $(e.target).attr('href').slice(1);
+                openView(viewname);
+            });
+            // Hide section
+            $('#'+view.name).hide();
 
-        _open_default: function (){
-            this._openview(this.default_view);
-        },
-
-        _openview: function (viewname) {
-            console.log('Controller open view:'+viewname);
-            if (this.openedView){
-                if( this.openedView[0] == viewname){
-                    return;
-                }
-                $(this.element).find("a[href='#"+this.openedView[0]+"']").closest('li').removeClass('active');
-                $(this.openedView[1].elem)[this.openedView[0]]('destroy');
-            }
-            $(this.element).find("a[href='#"+viewname+"']").closest('li').addClass('active');
-            var view = this.options.views[viewname];
-            $(view.elem)[viewname](view.options);
-            this.openedView = [viewname, view];
-        },
-
-        _close_all: function () {
-            if (this.openedView){
-                $(this.element).find("a[href='#"+this.openedView[0]+"']").closest('li').removeClass('active');
-                $(this.openedView[1].elem)[this.openedView[0]]('destroy');
-                this.openedView = null;
-            }
-        },
-
-        // Destroy an instantiated plugin and clean up
-        // modifications the widget has made to the DOM
-        destroy: function () {
-
-            $(document).unbind('.controller');
-
-            $.Widget.prototype.destroy.call(this);
-        },
-
-        // Respond to any changes the user makes to the
-        // option method
-        _setOption: function ( key, value ) {
-
-            $.Widget.prototype._setOption.apply( this, arguments );
+            // Cache view
+            views[view.name] = view;
         }
-    });
+        console.log(views)
+        $(document).bind('pwdremind/login.controller', function(){openView(defaultView);} );
+        $(document).bind('pwdremind/logout.controller', closeAll );
+    };
 
-})( jQuery, window, document );
+    var openView = function (viewname) {
+        var view = views[viewname];
+
+        if ( openedView ){
+            if( openedView.name == viewname){
+                return;
+            }
+            $menu.find("a[href='#"+openedView.name+"']").closest('li').removeClass('active');
+            openedView.destroy();
+        }
+
+        $menu.find("a[href='#"+viewname+"']").closest('li').addClass('active');
+        view.create(Pwdremind);
+        openedView = view;
+    };
+
+    var closeAll = function (){
+        if (openedView){
+            $menu.find("a[href='#"+openedView.name+"']").closest('li').removeClass('active');
+            openedView.destroy();
+            openedView = null;
+        }
+    };
+
+
+    return {
+        'init' : init,
+    };
+
+}( $, window, document, View));
