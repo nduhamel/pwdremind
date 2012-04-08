@@ -15,6 +15,7 @@
             mod.modal({
                     show: false,
                     backdrop: 'static',
+                    keyboard: false,
             });
 
             mod.find("#login-form").submit(function(event){

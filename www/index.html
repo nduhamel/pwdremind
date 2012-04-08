@@ -79,14 +79,14 @@ $(document).ready(function() {
         e.preventDefault();
         $('#add-modal').modal({
             show: true,
-            backdrop: true,
-            keyboard: true
+            backdrop: 'static',
+            keyboard: false,
         }).css({
         width: 'auto',
         'margin-left': function () {
             return -($(this).width() / 2);
         }
-    });
+        });
     });
     $("#addentry").validation();
     $("#add-modal button[type='submit']").bind('click',function(e){
