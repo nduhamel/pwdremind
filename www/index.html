@@ -43,6 +43,9 @@
 <script src="./static/js/core/view.pwdlist.js"></script>
 <script src="./static/js/core/controller.js"></script>
 
+<script src="./static/js/core/addmodal.js"></script>
+
+
 
 <script src="./static/js/pwdremindui.js"></script>
 
@@ -75,33 +78,15 @@ $(document).ready(function() {
     });
 
     // ADD modal
+    $('#add-modal').addEditModal({'pwdremind':pwdremind});
+
     $(".navbar a[href='#add']").click(function (e) {
         e.preventDefault();
-        $('#add-modal').modal({
-            show: true,
-            backdrop: 'static',
-            keyboard: false,
-        }).css({
-        width: 'auto',
-        'margin-left': function () {
-            return -($(this).width() / 2);
-        }
-        });
+        $('#add-modal').addEditModal('show');
     });
-    $("#addentry").validation();
-    $("#add-modal button[type='submit']").bind('click',function(e){
-        e.preventDefault();
-        if(!$("#addentry").validate()){
-            return false;
-        };
-        var data = $("#addentry").formToJSON();
-        data.notes = $("#addentryNote textarea").val();
-        pwdremind.add(data);
-        $('#add-modal').modal('toggle');
-        $("#addentry")[0].reset();
-        $("#addentryNote textarea").val('');
-    });
-    $(document).bind('pwdremind/logout', function(e){$('#add-modal').modal('hide')});
+
+    $(document).bind('pwdremind/logout', function(e){$('#add-modal').addEditModal('hide',false)});
+
 
     // Show/Hide password
     $("input#pwd + span>i").live("click", function() {
@@ -258,7 +243,7 @@ $(document).ready(function() {
 
     <div id="add-modal" class="modal hide fade">
         <div class="modal-header">
-            <a class="close" data-dismiss="modal">&times;</a>
+            <a class="close">&times;</a>
             <h3>Ajouter</h3>
         </div>
         <div class="modal-body">
@@ -306,10 +291,24 @@ $(document).ready(function() {
         </div>
 
         <div class="modal-footer">
+            <button type="cancel" class="btn">Annuler</button>
             <button type="submit" class="btn btn-primary">Sauvegarder</button>
-            <button type="reset" class="btn">Effacer</button>
         </div>
     </div>
+
+    <div id="add-confirm-modal" class="modal hide">
+        <div class="modal-header">
+            <h3>Confirmer</h3>
+        </div>
+        <div class="modal-body">
+            <p>Etes-vous sur de vouloir annuler?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="cancel" class="btn">Annuler</button>
+            <button type="submit" class="btn btn-primary">Confirmer</button>
+        </div>
+    </div>
+
 
     <div id="confirm-modal" class="modal hide fade">
         <div class="modal-header">
