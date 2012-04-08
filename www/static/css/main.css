@@ -137,6 +137,10 @@ span.pwd{
     margin-right: 5px;
     display: none;
 }
+
+#addentryNote textarea{
+    width: 330px;
+}
 /* Visualizer
 -------------------------------------------------- */
 #chart {
