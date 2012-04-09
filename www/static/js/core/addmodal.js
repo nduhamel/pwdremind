@@ -25,6 +25,7 @@
     var reset = function ($elem){
         $elem.find("#addentry")[0].reset();
         $elem.find("#addentryNote textarea").val('');
+        $elem.find("#addentry .control-group").removeClass('error');
     }
 
     var empty = function ($elem){
