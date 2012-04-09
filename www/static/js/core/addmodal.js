@@ -65,24 +65,6 @@
                     methods.hide.apply( $this, [true] )
                 });
 
-                $('#add-confirm-modal').modal({
-                    show: false,
-                    backdrop: 'static',
-                    keyboard: false,
-                });
-
-                $('#add-confirm-modal').find("button[type='submit']").bind('click',function(e){
-                    e.preventDefault();
-                    $('#add-confirm-modal').modal('hide');
-                    reset($this);
-                });
-
-                $('#add-confirm-modal').find("button[type='cancel']").bind('click',function(e){
-                    e.preventDefault();
-                    $('#add-confirm-modal').modal('hide');
-                    methods.show.apply( $this );
-                });
-
             });
         },
 
@@ -105,7 +87,13 @@
                 var $this = $(this);
                 $this.modal('hide');
                 if (confirm && !empty($this) ){
-                    $('#add-confirm-modal').modal('show');
+                    bootbox.confirm("Etes-vous sur de vouloir annuler?", "Revenir en arriere", "Oui", function(result) {
+                        if (result) {
+                            reset($this);
+                        } else {
+                            methods.show.apply( $this );
+                        }
+                    });
                 }else{
                     reset($this);
                 }
