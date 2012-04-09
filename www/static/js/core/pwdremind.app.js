@@ -68,7 +68,7 @@
         $document.trigger('pwdremind/logout');
     },
 
-    remove: function () {
+    remove: function (id) {
         $document.trigger('pwdremind/beforeRemove', [id]);
         session.send({'action':'remove', 'id':id}, function(response){
             if (response.status == 'OK'){

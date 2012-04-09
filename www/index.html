@@ -10,6 +10,7 @@
 
 <body>
 <script src="./static/js/sjcl.js"></script>
+<script src="./static/js/ZeroClipboard.js"></script>
 
 <script src="./static/js/jquery.js"></script>
 
@@ -52,21 +53,12 @@
 
 <script src="./static/js/pwdremindui.js"></script>
 
-<script src="./static/js/jquery.zclip.js"></script>
 <script src="./static/js/passwordstrength.js"></script>
 <script src="./static/js/pwdgen.js"></script>
 
 <script>
 
 $(document).ready(function() {
-
-    // HACK zclip
-    $('body').append('<a href="" id="hackzclip">hack</a>')
-    $('#hackzclip').zclip({
-        path: './static/media/ZeroClipboard.swf',
-        copy: 'toto',
-    }).hide();
-    // END HACK
 
     var pwdremind = new Pwdremind.App();
     document.pwdremind = pwdremind;

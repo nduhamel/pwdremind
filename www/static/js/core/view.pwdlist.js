@@ -6,6 +6,7 @@ var View = View || [];
     var dataCache;
     var searchTimerId;
     var lastSearch;
+    var zeroclip;
 
     var $section;
     var $pwdtable;
@@ -15,9 +16,10 @@ var View = View || [];
                     +'<td><a href="{0}" target="_blank">{0}</a></td>'
                     +'<td>{1}</td>'
                     +'<td>'
-                        +'<span class="pwd">{2}</span><span><img src="./static/icons/eye.png" class="showpwd" alt="Show password" /></span>'
-                        +'<span style="position:relative"><img src="./static/icons/clipboard.png" class="clipboard" alt="Copy to clipboard" /></span>'
-                        +'<span><img src="./static/icons/delete.png" class="delete" alt="delete" id="{3}" data-id="{3}"/></span>'
+                        +'<span><i class="icon-pencil"></i></span>'
+                        +'<span style="position:relative" class="copy-username" data-copy="{1}"><i class="icon-user"></i></span>'
+                        +'<span style="position:relative" class="copy-password" data-copy="{2}"><i class="icon-lock"></i></span>'
+                        +'<span><i class="icon-remove" data-id="{3}"></i></span>'
                     +'</td>'
                 +'</tr>';
 
@@ -39,45 +41,32 @@ var View = View || [];
         $(document).bind('pwdremind/afterUpdate.pwdlist', postUpdate );
 
         // Confirm modal
-        $pwdtable.delegate("img[class='delete']", "click.pwdlist", function(e) {
-            showConfirm($(e.target).data('id'));
+        $pwdtable.delegate("i[class='icon-remove']", "click.pwdlist", function(e) {
+            var id = $(e.target).data('id');
+            bootbox.confirm("Confirmez-vous la suppression?", "Annuler", "Confirmer", function(result) {
+                if (result) {
+                    Pwdremind.remove(id);
+                    $confirmModal.modal('hide');
+                } else {
+                    $confirmModal.modal('hide');
+                }
+            });
         });
-        $("#cancelDelete").bind('click.pwdlist',function(e) {
-            e.preventDefault();
-            $confirmModal.modal('hide');
-        });
-        $("#confirm").bind('submit.pwdlist', function(e){
-            e.preventDefault();
-            id = $confirmModal.data('id');
-            Pwdremind.remove(id);
-            $confirmModal.modal('hide');
-        });
-        // END Confirm modal
 
-        // Show password
-        $pwdtable.delegate("img[class='showpwd']", "click.pwdlist", function(e) {
+        // Edit mode
+        $pwdtable.delegate("i[class='icon-pencil']", "click.pwdlist", function(e) {
             var id = $(e.target).closest("tr").data('id');
             $('#add-modal').addEditModal('show', id);
         });
 
-        // Copy to clipboard
-        $pwdtable.delegate("img[class='clipboard']", "click.pwdlist", function(e) {
-            $img = $(e.target);
-            $img.attr('src','./static/icons/arrow1.png');
-            $img.removeClass('clipboard').addClass('go');
-            href = $img.closest('tr').find("a").attr('href');
-            pwd =  $img.closest('td').find('span').text();
-            $(e.target).zclip({
-                path: './static/media/ZeroClipboard.swf',
-                copy: pwd,
-                afterCopy:function(){
-                    $(this).zclip('remove');;
-                    $(this).attr('src','./static/icons/clipboard.png');
-                    $(this).removeClass('go').addClass('clipboard');
-                    window.open(href);
-                },
-                clickAfter: false,
-            });
+        ZeroClipboard.setMoviePath( './static/media/ZeroClipboard.swf' );
+        zeroclip = new ZeroClipboard.Client();
+        zeroclip.setHandCursor( true );
+
+        $pwdtable.delegate("span[class='copy-username'], span[class='copy-password']", "mouseenter.pwdlist", function(e){
+            zeroclip.destroy();
+            zeroclip.setText($(this).data('copy'));
+            zeroclip.glue(this);
         });
 
         // Sorting
