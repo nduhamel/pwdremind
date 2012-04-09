@@ -169,8 +169,8 @@ var View = View || [];
             var entry = entries[i];
             html += String.format(rowtpl,
                                   entry.data['site'],
-                                  entry.data['login'],
-                                  entry.data['pwd'],
+                                  htmlEntities(entry.data['login']),
+                                  htmlEntities(entry.data['pwd']),
                                   entry.id);
         }
         $('#pwdlist-sites > tbody:last').append(html);
