@@ -96,12 +96,42 @@
         });
     },
 
+    update : function (id, dataJSON) {
+        $document.trigger('pwdremind/beforeUpdate');
+        var data = JSON.stringify(dataJSON);
+        var encrypted_data = session.encrypt(data);
+
+        session.send({'action':'update', 'id':id, 'data':encrypted_data}, function(response){
+            if (response.status == 'OK'){
+                id = response.data;
+                user_data = user_data.map(function(entry){
+                        if (entry.id == id){
+                            entry.data = data;
+                        }
+                        return entry;
+                    });
+                $document.trigger('pwdremind/afterUpdate', [id, data]);
+            }else{
+                console.log(response);
+            }
+        });
+    },
+
     getAll : function () {
         if ( user_data == null ){
             loadData();
         }else{
             $document.trigger('pwdremind/dataLoaded', [user_data]);
         }
+    },
+
+    get : function (id) {
+        for (i in user_data){
+            if (user_data[i].id == id){
+                return user_data[i];
+            }
+        }
+        console.log('error unknown id');
     },
 
     login : function (options) {

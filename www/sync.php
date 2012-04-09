@@ -97,6 +97,12 @@ class Sync {
                 $this->_response->data($id);
                 break;
 
+                case 'update':
+                $data = stripslashes($_GET['data']);
+                $id = $this->_db->update_entry($this->_id, $data, $this->_session->get_username());
+                $this->_response->data($id);
+                break;
+
                 case 'remove':
                 $this->_id = $this->_db->delete_entry($this->_id, $this->_session->get_username());
                 $this->_response->data($this->_id);

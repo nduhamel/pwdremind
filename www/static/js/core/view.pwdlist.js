@@ -11,7 +11,7 @@ var View = View || [];
     var $pwdtable;
     var $confirmModal;
 
-    var rowtpl = '<tr>'
+    var rowtpl = '<tr id="{3}" data-id="{3}">'
                     +'<td><a href="{0}" target="_blank">{0}</a></td>'
                     +'<td>{1}</td>'
                     +'<td>'
@@ -36,6 +36,7 @@ var View = View || [];
         $(document).bind('pwdremind/afterAdd.pwdlist', postAdd );
         $(document).bind('pwdremind/dataLoaded.pwdlist', dataLoaded );
         $(document).bind('pwdremind/afterRemove.pwdlist', postRemove );
+        $(document).bind('pwdremind/afterUpdate.pwdlist', postUpdate );
 
         // Confirm modal
         $pwdtable.delegate("img[class='delete']", "click.pwdlist", function(e) {
@@ -55,7 +56,8 @@ var View = View || [];
 
         // Show password
         $pwdtable.delegate("img[class='showpwd']", "click.pwdlist", function(e) {
-            $(e.target).parent("span").prev('span').fadeToggle("slow")
+            var id = $(e.target).closest("tr").data('id');
+            $('#add-modal').addEditModal('show', id);
         });
 
         // Copy to clipboard
@@ -250,6 +252,17 @@ var View = View || [];
         dataCache.entries.push({
             'id' : id,
             'data' : entryJSON
+        });
+        $("#search input").val('');
+        search();
+    };
+
+    var postUpdate = function(e,id,data){
+        dataCache.entries = dataCache.entries.map(function(entry){
+            if (entry.id == id){
+                entry.data = JSON.parse(data);
+            }
+            return entry;
         });
         $("#search input").val('');
         search();

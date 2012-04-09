@@ -44,6 +44,12 @@ class Database {
         }
     }
 
+    public function update_entry($id,$data, $username) {
+        $req = $this->_db->prepare("UPDATE password SET data=:data WHERE id=:id AND username=:username ");
+        $req->execute(array('data'=>$data,'id'=>$id, 'username'=>$username));
+        return $id;
+    }
+
     public function delete_entry($id, $username) {
         $req = $this->_db->prepare("DELETE FROM password WHERE id=:id AND username=:username ");
         $req->execute(array('id'=>$id, 'username'=>$username));

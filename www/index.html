@@ -93,7 +93,7 @@ $(document).ready(function() {
 
     // Show/Hide password
     $("input#pwd + span>i").live("click", function() {
-        var input = $('input#pwd').clone();
+        var input = $('input#pwd').clone(true);
 
         if (input.attr('type') == 'password'){
             input.attr('type', 'text');
