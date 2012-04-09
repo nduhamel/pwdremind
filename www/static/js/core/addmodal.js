@@ -33,6 +33,7 @@
         $elem.find("#addentry")[0].reset();
         $elem.find("#addentryNote textarea").val('');
         $elem.find("#addentry .control-group").removeClass('error');
+        $elem.removeData('editmode-id');
     };
 
     var populate = function ($elem, user_data){
