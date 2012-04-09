@@ -27,6 +27,19 @@
         $elem.find("#addentryNote textarea").val('');
     }
 
+    var empty = function ($elem){
+        var isempty = true;
+        $elem.find("#addentry input").each(function(){
+            if ( $(this).val() ){
+                isempty = false;
+            }
+        });
+        if ( $elem.find("#addentryNote textarea").val() ){
+            isempty = false;
+        }
+        return isempty;
+    }
+
     var methods = {
         init : function( options ) {
             return this.each(function(){
@@ -91,7 +104,7 @@
             return this.each(function(){
                 var $this = $(this);
                 $this.modal('hide');
-                if (confirm){
+                if (confirm && !empty($this) ){
                     $('#add-confirm-modal').modal('show');
                 }else{
                     reset($this);
