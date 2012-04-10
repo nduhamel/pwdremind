@@ -118,40 +118,70 @@
 
         this.send = function (data, httpCallback) {
             if (!isOpen()){ throw "Session not opened"; }
-            $.get(options.syncUrl, data, function(responseData){
-                var result = {};
-                try {
-                    var response = JSON.parse(responseData);
-
-                    if ( response.data ){
-                        if (slowEquals(response.sig, sign(response.data))) {
-                            result.status = 'OK';
-                            result.data = JSON.parse(response.data);
-                        }else{
+            $.ajax({
+                url : options.syncUrl,
+                type : 'get',
+                data :  data,
+                dataType : 'json',
+                timeout : 20000,
+                tryCount : 0,
+                retryLimit : 3,
+                success : function(response) {
+                    var result = {};
+                    try {
+                        if ( response.data ){
+                            if (slowEquals(response.sig, sign(response.data))) {
+                                result.status = 'OK';
+                                result.data = JSON.parse(response.data);
+                            }else{
+                                result.status = 'ERROR';
+                                result.data = null;
+                                result.msg = 'MESSAGE_AUTHENTICATION_FAILURE';
+                            }
+                        } else if ( response.status == 'ERROR' ){
+                            this.tryCount++;
+                            if (this.tryCount <= this.retryLimit) {
+                                //try again
+                                $.ajax(this);
+                                return;
+                            }
                             result.status = 'ERROR';
                             result.data = null;
-                            result.msg = 'MESSAGE_AUTHENTICATION_FAILURE';
+                            result.msg = response.msg;
+                        } else if ( response.msg ){
+                            result.status = 'OK';
+                            result.data = response.msg;
+                        } else {
+                            result.status = 'ERROR';
+                            result.data = null;
+                            result.msg = 'MESSAGE_FORMAT_ERROR';
                         }
-                    } else if ( response.status == 'ERROR' ){
-                        result.status = 'ERROR';
-                        result.data = null;
-                        result.msg = response.msg;
-                    } else if ( response.msg ){
-                        result.status = 'OK';
-                        result.data = response.msg;
-                    } else {
+                    } catch (e) {
+                        console.log(e);
                         result.status = 'ERROR';
                         result.data = null;
                         result.msg = 'MESSAGE_FORMAT_ERROR';
                     }
-                } catch (e) {
-                    console.log(e);
-                    result.status = 'ERROR';
-                    result.data = null;
-                    result.msg = 'MESSAGE_FORMAT_ERROR';
-                }
 
-                httpCallback(result);
+                    httpCallback(result);
+                },
+                error : function(xhr, textStatus, errorThrown ) {
+                    if (textStatus == 'timeout') {
+                        this.tryCount++;
+                        if (this.tryCount <= this.retryLimit) {
+                            //try again
+                            $.ajax(this);
+                            return;
+                        }
+                        console.log('We have tried ' + this.retryLimit + ' times and it is still not working. We give in. Sorry.');
+                        return;
+                    }
+                    if (xhr.status == 500) {
+                        console.log('Oops! There seems to be a server problem, please try again later.');
+                    } else {
+                        console.log('Oops! There was a problem, sorry.');
+                    }
+                }
             });
         }
 

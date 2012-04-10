@@ -91,6 +91,11 @@ class Sync {
                 $this->_response->message("OK");
                 break;
 
+                case 'getinfo':
+                $info = $this->_db->get_info($this->_session->get_userid());
+                $this->_response->data($info);
+                break;
+
                 case 'add':
                 $data = stripslashes($_GET['data']);
                 $id = $this->_db->store_entry($data, $this->_session->get_userid());
@@ -115,8 +120,7 @@ class Sync {
 
             }
         }
+        session_write_close();
         $this->_response->send();
-
     }
-
 }

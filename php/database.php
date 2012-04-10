@@ -26,6 +26,12 @@ class Database {
                 return $req->fetchObject();
         }
 
+        public function get_info($user_id){
+                $req = $this->_db->prepare("SELECT category, config FROM user WHERE id = :user_id");
+                $req->execute(array('user_id'=>$user_id));
+                return $req->fetchObject();
+        }
+
         public function get_entries($user_id){
                 $req = $this->_db->prepare("SELECT id,data FROM data WHERE user_id = :user_id");
                 $req->execute(array('user_id'=>$user_id));

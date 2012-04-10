@@ -135,7 +135,12 @@
     },
 
     login : function (options) {
-        var success = function(){ $document.trigger('pwdremind/login'); };
+        var success = function(){
+            session.send({'action':'getinfo'}, function(response){
+                console.log(response);
+            });
+            $document.trigger('pwdremind/login');
+        };
 
         session.setup({
             authSuccess : success,
