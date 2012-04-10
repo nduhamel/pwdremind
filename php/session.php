@@ -7,10 +7,11 @@ class Session {
 		session_start();
 	}
 
-	protected function login($userid){
+	protected function login($username,$userid){
 		session_regenerate_id ();
 		$_SESSION['valid'] = True;
-		$_SESSION['username'] = $userid;
+		$_SESSION['username'] = $username;
+		$_SESSION['userid'] = $userid;
 		$_SESSION['LAST_ACTIVITY'] = time();
 		$this->loginState = True;
 	}
@@ -33,11 +34,7 @@ class Session {
 		session_destroy();
 		$this->loginState = False;
 	}
-
-	public function get_username(){
-		return $_SESSION['username'];
-	}
-
+	
 	private function check_activity(){
 		$time = time();
 		if( $time - $_SESSION['LAST_ACTIVITY']  <= SESSION_TIMEOUT ){
@@ -59,6 +56,9 @@ class Session {
 			return $default;
 		}
 	}
+
+	public function get_username() { return $_SESSION['username']; }
+	public function get_userid() { return $_SESSION['userid']; }
 
 	public function setValue($key, $value) {
 		$_SESSION[$key] = $value;

@@ -25,10 +25,10 @@ class Srp {
 		$this->_json = NULL;
 	}
 	
-	public function publicKeyExchange ($username, $salt, $verifier, $A){
+	public function publicKeyExchange ($username, $userid, $salt, $verifier, $A){
 		try {
 			$b = secure_random($this->_srpSession->getKeySize());
-			$this->_srpSession->initialize($username, $salt, $verifier, $A, $b);
+			$this->_srpSession->initialize($username, $userid, $salt, $verifier, $A, $b);
 			$this->_B = $this->_srpSession->getB();
 			$this->_status = 'OK';
 			$this->_salt = $salt;

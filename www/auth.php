@@ -66,7 +66,7 @@ class Authentication {
             if (empty($this->_M1)) {
                 $user_data = $this->_db->get_verifier($this->_username);
                 if (!is_null($user_data) && !is_null($user_data->verifier)) {
-                    $this->_srp->publicKeyExchange($this->_username,$user_data->salt, $user_data->verifier, $this->_A );
+                    $this->_srp->publicKeyExchange($this->_username,$user_data->id,$user_data->salt,$user_data->verifier,$this->_A );
                 }
                 else {
                     $this->_srp = new Srp('ERROR','USER_DOES_NOT_EXIST');
