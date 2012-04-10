@@ -25,25 +25,25 @@ class Database {
 	}
 
 	public function get_entries($username){
-		$req = $this->_db->prepare("SELECT id,data FROM password WHERE username = :username");
+		$req = $this->_db->prepare("SELECT id,data FROM data WHERE username = :username");
 		$req->execute(array('username'=>$username));
 		return $req->fetchall(PDO::FETCH_ASSOC);
 	}
 
 	public function store_entry($data, $username) {
-		$req = $this->_db->prepare("INSERT INTO password (data, username)  VALUES(:data, :username)");
+		$req = $this->_db->prepare("INSERT INTO data (data, username)  VALUES(:data, :username)");
 		$req->execute(array('data'=> $data,'username'=>$username));
 		return $this->_db->lastInsertId();
 	}
 
 	public function delete_entry($id, $username) {
-		$req = $this->_db->prepare("DELETE FROM password WHERE id=:id AND username=:username ");
+		$req = $this->_db->prepare("DELETE FROM data WHERE id=:id AND username=:username ");
 		$req->execute(array('id'=>$id, 'username'=>$username));
 		return $id;
 	}
 	
 	public function check_entry($id, $username) {
-		$req = $this->_db->prepare("SELECT id FROM password WHERE id=:id AND username=:username ");
+		$req = $this->_db->prepare("SELECT id FROM data WHERE id=:id AND username=:username ");
 		$req->execute(array('id'=>$id, 'username'=>$username));
 		$req = $req->fetchall(PDO::FETCH_ASSOC);
 		if (count($req) == 1)
@@ -54,7 +54,7 @@ class Database {
 
 	public function createTables() {
 		
-		$req = "CREATE TABLE password (
+		$req = "CREATE TABLE data (
 				id INTEGER PRIMARY KEY, 
 				data TEXT, 
 				username VARCHAR(128) NOT NULL)";
