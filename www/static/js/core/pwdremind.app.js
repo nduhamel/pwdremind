@@ -10,6 +10,8 @@
     var logginstate = false;
     var user_data = null;
 
+    var defaultCategory = "Principal";
+
     var session = new Pwdremind.Session();
 
     function onTimeout () {
@@ -56,6 +58,19 @@
                     user_data.push(entry);
                 }
                 $document.trigger('pwdremind/dataLoaded', [user_data]);
+            }else{
+                console.log(response);
+            }
+        });
+    }
+
+    // Be careful you need to update data category identifier before!
+    function saveCategories (categoriesObject){
+        var data = JSON.stringify(categoriesObject);
+        var encrypted_data = session.encrypt(data);
+        session.send({'action':'updatecat', 'data':encrypted_data}, function(response){
+            if (response.status == 'OK'){
+                console.log(response);
             }else{
                 console.log(response);
             }
@@ -137,9 +152,18 @@
     login : function (options) {
         var success = function(){
             session.send({'action':'getinfo'}, function(response){
-                console.log(response);
+
+                // If empty populate with default and update it
+                if ( response.data.category == '[]' ){
+                    categories = [defaultCategory];
+                    saveCategories(categories);
+                }else{
+                    categories = JSON.parse(session.decrypt(response.data.category));
+                }
+                console.log(categories);
+
+                $document.trigger('pwdremind/login');
             });
-            $document.trigger('pwdremind/login');
         };
 
         session.setup({

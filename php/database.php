@@ -32,6 +32,12 @@ class Database {
                 return $req->fetchObject();
         }
 
+        public function update_categories($cat, $user_id) {
+            $req = $this->_db->prepare("UPDATE user SET category=:category WHERE id = :user_id ");
+            $req->execute(array('category'=>$cat, 'user_id'=>$user_id));
+            return $cat;
+        }
+
         public function get_entries($user_id){
                 $req = $this->_db->prepare("SELECT id,data FROM data WHERE user_id = :user_id");
                 $req->execute(array('user_id'=>$user_id));

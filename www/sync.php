@@ -96,6 +96,12 @@ class Sync {
                 $this->_response->data($info);
                 break;
 
+                case 'updatecat':
+                $cat = stripslashes($_GET['data']);
+                $rep = $this->_db->update_categories($cat, $this->_session->get_userid());
+                $this->_response->data($rep);
+                break;
+
                 case 'add':
                 $data = stripslashes($_GET['data']);
                 $id = $this->_db->store_entry($data, $this->_session->get_userid());
