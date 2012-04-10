@@ -6,7 +6,7 @@ $driver = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
 
 if ($driver == 'pgsql') {
 	
-	$req = "CREATE TABLE password (
+	$req = "CREATE TABLE data (
 			id SERIAL PRIMARY KEY, 
 			data TEXT, 
 			username VARCHAR(128) NOT NULL)";
@@ -21,7 +21,7 @@ if ($driver == 'pgsql') {
 }
 else {
 	
-	$req = "CREATE TABLE password (
+	$req = "CREATE TABLE data (
 			id INTEGER PRIMARY KEY, 
 			data TEXT, 
 			username VARCHAR(128) NOT NULL)";
