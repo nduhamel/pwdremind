@@ -104,5 +104,5 @@ fwrite(STDOUT,"Username: $name\n");
 fwrite(STDOUT,"Salt: $salt\n");
 fwrite(STDOUT,"Verifier: $verifier\n");
 fwrite(STDOUT,"SQL: \n");
-fwrite(STDOUT, "INSERT INTO user (username, verifier, salt) VALUES ('$name', '$verifier', '$salt');");
+fwrite(STDOUT, "INSERT INTO user (username, verifier, salt, category, config) VALUES ('$name', '$verifier', '$salt', '[]', '{}');");
 ?>
