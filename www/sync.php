@@ -48,7 +48,7 @@ class Sync {
                         $this->_response->error("ITEM_ID_NOT_DEFINED");
                         $error = true;
                     }
-                    elseif (!$this->_db->check_entry($this->_id, $this->_session->get_username())) {
+                    elseif (!$this->_db->check_entry($this->_id, $this->_session->get_userid())) {
                         $this->_response->error("ID_NOT_FOUND");
                         $error = true;
                     }
@@ -93,7 +93,7 @@ class Sync {
 
                 case 'add':
                 $data = stripslashes($_GET['data']);
-                $id = $this->_db->store_entry($data, $this->_session->get_username());
+                $id = $this->_db->store_entry($data, $this->_session->get_userid());
                 $this->_response->data($id);
                 break;
 
@@ -104,12 +104,12 @@ class Sync {
                 break;
 
                 case 'remove':
-                $this->_id = $this->_db->delete_entry($this->_id, $this->_session->get_username());
+                $this->_id = $this->_db->delete_entry($this->_id, $this->_session->get_userid());
                 $this->_response->data($this->_id);
                 break;
 
                 case 'get':
-                $entries = $this->_db->get_entries($this->_session->get_username());
+                $entries = $this->_db->get_entries($this->_session->get_userid());
                 $this->_response->data($entries);
                 break;
 
