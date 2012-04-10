@@ -99,7 +99,7 @@ class Sync {
 
                 case 'update':
                 $data = stripslashes($_GET['data']);
-                $id = $this->_db->update_entry($this->_id, $data, $this->_session->get_username());
+                $id = $this->_db->update_entry($this->_id, $data, $this->_session->get_userid());
                 $this->_response->data($id);
                 break;
 
