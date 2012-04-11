@@ -15,9 +15,14 @@ if (isset($_GET['id']))
     $id = $_GET['id'];
 else
     $id = NULL;
+    
+if (isset($_GET['data']))
+    $data = stripslashes($_GET['data']);
+else
+    $data = NULL;
 //----
 
-$sync = new Sync($action,$id);
+$sync = new Sync($action,$id,$data);
 $sync->run();
 
 class Sync {
@@ -27,11 +32,13 @@ class Sync {
     private $_response;
     private $_action;
     private $_id;
+    private $_data;
     private $_isloggedin;
 
-    public function __construct($action,$id){
+    public function __construct($action,$id,$data){
         $this->_action = $action;
         $this->_id = $id;
+        $this->_data = $data;
         $this->_db = new Database();
         $this->_session = new SrpSession();
         $this->_response = new Response();
@@ -43,13 +50,20 @@ class Sync {
 
         if(isset($this->_action)) {
             if ($this->_isloggedin){
-                if ($this->_action == 'remove') {
+                if (($this->_action == 'remove') or ($this->_action == 'update')) {
                     if ( empty($this->_id) ){
                         $this->_response->error("ITEM_ID_NOT_DEFINED");
                         $error = true;
                     }
                     elseif (!$this->_db->check_entry($this->_id, $this->_session->get_userid())) {
                         $this->_response->error("ID_NOT_FOUND");
+                        $error = true;
+                    }
+                }
+                
+                if (($this->_action == 'add') or ($this->_action == 'update') or ($this->_action == 'updatecat')) {
+                    if ( empty($this->_data) ){
+                        $this->_response->error("NO_DATA");
                         $error = true;
                     }
                 }
@@ -97,20 +111,17 @@ class Sync {
                 break;
 
                 case 'updatecat':
-                $cat = stripslashes($_GET['data']);
-                $rep = $this->_db->update_categories($cat, $this->_session->get_userid());
+                $rep = $this->_db->update_categories($this->_data, $this->_session->get_userid());
                 $this->_response->data($rep);
                 break;
 
                 case 'add':
-                $data = stripslashes($_GET['data']);
-                $id = $this->_db->store_entry($data, $this->_session->get_userid());
+                $id = $this->_db->store_entry($this->_data, $this->_session->get_userid());
                 $this->_response->data($id);
                 break;
 
                 case 'update':
-                $data = stripslashes($_GET['data']);
-                $id = $this->_db->update_entry($this->_id, $data, $this->_session->get_userid());
+                $id = $this->_db->update_entry($this->_id, $this->_data, $this->_session->get_userid());
                 $this->_response->data($id);
                 break;
 
