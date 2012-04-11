@@ -32,9 +32,9 @@ class Database {
                 return $req->fetchObject();
         }
 
-        public function update_categories($cat, $user_id) {
-            $req = $this->_db->prepare("UPDATE user SET category=:category WHERE id = :user_id ");
-            $req->execute(array('category'=>$cat, 'user_id'=>$user_id));
+        public function update_categories($uuid, $user_id) {
+            $req = $this->_db->prepare("UPDATE user SET category=:uuid WHERE id = :user_id ");
+            $req->execute(array('uuid'=>$uuid, 'user_id'=>$user_id));
             return $cat;
         }
 
@@ -77,4 +77,15 @@ class Database {
                 else
                         return false;
         }
+		
+		public function check_uuid($uuid, $user_id) {
+                $req = $this->_db->prepare("SELECT id FROM data WHERE category=:uuid AND user_id=:user_id ");
+                $req->execute(array('uuid'=>$uuid, 'user_id'=>$user_id));
+                $req = $req->fetchall(PDO::FETCH_ASSOC);
+                if (count($req) == 0)
+                        return true;
+                else
+                        return false;
+        }
+
 }

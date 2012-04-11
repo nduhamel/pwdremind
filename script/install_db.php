@@ -9,7 +9,7 @@ if ($driver == 'pgsql') {
 	$req = "CREATE TABLE data (
 			id SERIAL PRIMARY KEY, 
 			data TEXT,
-			category VARCHAR(256),
+			category VARCHAR(36),
 			user_id INT NOT NULL)";
 	$db->query($req);
 	
@@ -27,7 +27,7 @@ else {
 	$req = "CREATE TABLE data (
 			id INTEGER PRIMARY KEY, 
 			data TEXT,
-			category VARCHAR(256),
+			category VARCHAR(36),
 			user_id INT NOT NULL)";
 	$db->query($req);
 	
