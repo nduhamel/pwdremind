@@ -26,7 +26,7 @@ COMMENT = '\n';
 CREATE  TABLE IF NOT EXISTS `mydb`.`data` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `data` TEXT NULL ,
-  `category` VARCHAR(256) NULL ,
+  `category` VARCHAR(36) NULL ,
   `user_id` INT NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_data_user1` (`user_id` ASC) ,
