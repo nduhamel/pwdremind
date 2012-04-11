@@ -155,7 +155,8 @@
 
                 // If empty populate with default and update it
                 if ( response.data.category == '[]' ){
-                    categories = [defaultCategory];
+                    uuid = generateUUID();
+                    categories = [{'name':defaultCategory,'uuid':uuid}];
                     saveCategories(categories);
                 }else{
                     categories = JSON.parse(session.decrypt(response.data.category));
