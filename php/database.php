@@ -68,6 +68,7 @@ class Database {
         return $id;
     }
 
+    //Return true if the entry exists 
     public function check_entry($id, $user_id) {
         $req = $this->_db->prepare("SELECT id FROM data WHERE id=:id AND user_id=:user_id ");
         $req->execute(array('id'=>$id, 'user_id'=>$user_id));
@@ -78,6 +79,7 @@ class Database {
             return false;
     }
 
+    //Return True if the UUID can be used
     public function check_uuid($uuid, $user_id) {
         $req = $this->_db->prepare("SELECT id FROM data WHERE category=:uuid AND user_id=:user_id ");
         $req->execute(array('uuid'=>$uuid, 'user_id'=>$user_id));
