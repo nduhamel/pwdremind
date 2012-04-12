@@ -135,7 +135,7 @@ function hmac($hexKey, $message) {
 
     $key = pack("H*",$hexKey);
     if( strlen($key > $sha1OutputSize) ) {
-    //$key = pack("H*", $this->srp->hash($key));
+        //$key = pack("H*", $this->srp->hash($key));
         $key = sha1($key,true);
     }
 
@@ -148,7 +148,7 @@ function hmac($hexKey, $message) {
 
     $iout = "";
     $oout = "";
-        
+
     for ($i=0; $i<strlen($ipadSha1); $i++) {
         $iout.= chr(ord($ipadSha1[$i]) ^ ord($key[$i]));
         $oout.= chr(ord($opadSha1[$i]) ^ ord($key[$i]));

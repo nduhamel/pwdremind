@@ -28,16 +28,16 @@ OTHER DEALINGS IN THE SOFTWARE.
 */
 
 interface SrpOptions {
-	public function Nhex();
-	public function Ndec();
-	public function ghex();
-	public function gdec();
-	public function khex();
-	public function kdec();
-	public function NgXorHash();
-	public function privateKeyBitSize();
-	public function hash($input);
-	public function keyHash($input);
+    public function Nhex();
+    public function Ndec();
+    public function ghex();
+    public function gdec();
+    public function khex();
+    public function kdec();
+    public function NgXorHash();
+    public function privateKeyBitSize();
+    public function hash($input);
+    public function keyHash($input);
 }
 
 class SRP_SHA1_256 implements SRPOptions {
