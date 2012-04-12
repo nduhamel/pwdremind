@@ -35,7 +35,7 @@ class Database {
     public function update_categories($uuid, $user_id) {
         $req = $this->_db->prepare("UPDATE user SET category=:uuid WHERE id = :user_id ");
         $req->execute(array('uuid'=>$uuid, 'user_id'=>$user_id));
-        return $cat;
+        return $uuid;
     }
 
     public function get_entries($user_id){
