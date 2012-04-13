@@ -27,7 +27,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-interface SrpOptions {
+interface SrpOptions
+{
     public function Nhex();
     public function Ndec();
     public function ghex();
@@ -40,7 +41,8 @@ interface SrpOptions {
     public function keyHash($input);
 }
 
-class SRP_SHA1_256 implements SRPOptions {
+class SRP_SHA1_256 implements SRPOptions
+{
 
     public function Nhex() { return '0115b8b692e0e045692cf280b436735c77a5a9e8a9e7ed56c965f87db5b2a2ece3'; }
     public function Ndec() { return '125617018995153554710546479714086468244499594888726646874671447258204721048803'; }
@@ -48,13 +50,13 @@ class SRP_SHA1_256 implements SRPOptions {
     public function gdec() { return '51'; }
     public function khex() { return '4b267b39118d47574683ec2d2e0e1f178a7f2262'; }
     public function kdec() { return '429032470359927085751846514107561340627840868962'; }
-    public function NgXorHash() { return "\xd9\x30\x20\xec\xe4\x3f\x4c\x43\x97\xbe\x1a\x48\xa8\xc9\x2b\x9b\x1c\x82\x41\x52"; }
     public function privateKeyBitSize() {return 256;}
-    public function hash($input) {
-        return sha1($input);
-    }
-    public function keyHash($input) {
-        return sha_interleave($input);
+    public function hash($input) { return sha1($input); }
+    public function keyHash($input) { return sha_interleave($input); }
+    
+    public function NgXorHash() 
+    { 
+        return "\xd9\x30\x20\xec\xe4\x3f\x4c\x43\x97\xbe\x1a\x48\xa8\xc9\x2b\x9b\x1c\x82\x41\x52"; 
     }
 }
 

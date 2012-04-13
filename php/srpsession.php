@@ -3,8 +3,8 @@ require_once('session.php');
 require_once('hermetic/crypto_util.php');
 require_once('hermetic/srp_256.php');
 
-class SrpSession extends Session {
-
+class SrpSession extends Session 
+{
     private $_Ahex, $_Bhex, $_bhex ,$_Khex, $_Shex, $_shex, $_uhex, $_vhex;
     private $_Adec, $_Bdec, $_bdec, $_Sdec, $_udec, $_vdec;
     private $_username, $_userid;
@@ -15,10 +15,11 @@ class SrpSession extends Session {
     const INITIALIZED = 1;
     const READY = 2; // Loaded from session ready for verifyM1computeM2
 
-    function __construct() {
+    function __construct() 
+    {
         parent::__construct();
         $this->_srp = new SRP_SHA1_256();
-        if ( $this->getState() == (SrpSession::INITIALIZED or SrpSession::READY) ){
+        if ( $this->getState() == (SrpSession::INITIALIZED or SrpSession::READY) ) {
             try {
                 $this->_shex = $this->getValue('SRP_shex');
                 $this->_Ahex = $this->getValue('SRP_Ahex');
@@ -27,7 +28,7 @@ class SrpSession extends Session {
                 $this->_username = $this->getValue('SRP_I');
                 $this->_userid =  $this->getValue('userid');
                 $this->setState(SrpSession::READY);
-            } catch (InvalidArgumentException $e){
+            } catch (InvalidArgumentException $e) {
                 $this->setState(SrpSession::NOT_INITIALIZED);
             }
         }
@@ -37,14 +38,16 @@ class SrpSession extends Session {
     function getState() { return $this->getValue('SRP_state'); }
     function getB() { return $this->_Bhex; }
 
-    private function computeB() {
+    private function computeB()
+    {
         $term1 = bcmul($this->_srp->kdec(), $this->_vdec);
         $term2 = bcpowmod($this->_srp->gdec(), $this->_bdec, $this->_srp->Ndec());
         $this->_Bdec = bcmod(bcadd($term1, $term2), $this->_srp->Ndec());
         $this->_Bhex = dec2hex($this->_Bdec);
     }
 
-    private function computeK() {
+    private function computeK()
+    {
         $hash_input = str_pad($this->_Ahex, strlen($this->_srp->Nhex()), "0", STR_PAD_LEFT).str_pad($this->_Bhex, strlen($this->_srp->Nhex()), "0", STR_PAD_LEFT);
         $hash_input = pack("H*",$hash_input);
         $this->_uhex = $this->_srp->hash($hash_input);
@@ -62,8 +65,8 @@ class SrpSession extends Session {
         $this->_Khex = $this->_srp->keyHash(pack("H*",$thisthis->_Shex));
     }
 
-    function initialize($username, $userid, $s, $v, $A, $b) {
-
+    function initialize($username, $userid, $s, $v, $A, $b)
+    {
         $this->_Adec = hex2dec($A);
         if ( strcmp(bcmod($this->_Adec,$this->_srp->Ndec()), '0') == 0 )
             throw new Exception('PROTOCOL_EXCEPTION');
@@ -89,7 +92,8 @@ class SrpSession extends Session {
         $this->setState(SrpSession::INITIALIZED);
     }
 
-    function verifyM1computeM2($clientM1) {
+    function verifyM1computeM2($clientM1)
+    {
         //M1 = H( H(N) xor H(g) , H (I) , s, A, B, K)
 
         $hi = byte2hex($this->_srp->NgXorHash());
