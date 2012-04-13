@@ -90,6 +90,7 @@ class Sync
             $this->_response->setKey($this->_session->getKhex());
             switch( $this->_action ) {
 
+<<<<<<< HEAD
                 case 'isloggedin':
                     $this->_response->message("AUTHENTICATED");
                     break;
@@ -132,6 +133,50 @@ class Sync
                     $entries = $this->_db->get_entries($this->_session->get_userid());
                     $this->_response->data($entries);
                     break;
+=======
+            case 'isloggedin':
+                $this->_response->message("AUTHENTICATED");
+                break;
+
+            case 'logout':
+                $this->_session->logout();
+                $this->_response->message("LOGOUT");
+                break;
+
+            case 'ping':
+                $this->_response->message("OK");
+                break;
+
+            case 'getinfo':
+                $info = $this->_db->get_info($this->_session->get_userid());
+                $this->_response->data($info);
+                break;
+
+            case 'updatecat':
+                $rep = $this->_db->update_categories($this->_data, $this->_session->get_userid());
+                $this->_response->data($rep);
+                break;
+
+            case 'add':
+                $id = $this->_db->store_entry($this->_data, $this->_session->get_userid());
+                $this->_response->data($id);
+                break;
+
+            case 'update':
+                $id = $this->_db->update_entry($this->_id, $this->_data, $this->_session->get_userid());
+                $this->_response->data($id);
+                break;
+
+            case 'remove':
+                $this->_id = $this->_db->delete_entry($this->_id, $this->_session->get_userid());
+                $this->_response->data($this->_id);
+                break;
+
+            case 'get':
+                $entries = $this->_db->get_entries($this->_session->get_userid());
+                $this->_response->data($entries);
+                break;
+>>>>>>> 138dee6ba8ce5269165efcb05e787a18567093f8
 
             }
         }
