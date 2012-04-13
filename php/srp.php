@@ -3,8 +3,8 @@
 require_once('srpsession.php');
 require_once('hermetic/crypto_util.php');
 
-class Srp {
-
+class Srp 
+{
     private $_srpSession;
     private $_B;
     private $_salt;
@@ -18,43 +18,45 @@ class Srp {
     const ERROR = 2;
     const SRP_ERROR = 3;
 
-    public function __construct($status=NULL,$msg=NULL) {
+    public function __construct($status = NULL,$msg = NULL) 
+    {
         $this->_srpSession = new SrpSession();
         $this->_status = $status;
         $this->_msg = $msg;
         $this->_json = NULL;
     }
 
-    public function publicKeyExchange ($username, $userid, $salt, $verifier, $A){
+    public function publicKeyExchange ($username, $userid, $salt, $verifier, $A)
+    {
         try {
             $b = secure_random($this->_srpSession->getKeySize());
             $this->_srpSession->initialize($username, $userid, $salt, $verifier, $A, $b);
             $this->_B = $this->_srpSession->getB();
             $this->_status = 'OK';
             $this->_salt = $salt;
-        } 
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->_msg = $e->getMessage();
         }
         return $this->_toJson(Srp::PULIC_KEY);
     }
 
-    public function sharedKeyVerification ($M1){
-        if ($this->_srpSession->getState() == SrpSession::READY){
+    public function sharedKeyVerification ($M1)
+    {
+        if ($this->_srpSession->getState() == SrpSession::READY) {
             try {
                 $this->_M2 = $this->_srpSession->verifyM1computeM2($M1);
                 $this->_status = 'OK';
             } catch (Exception $e) {
                 $this->_msg = $e->getMessage();
             }
-        }
-        else {
+        } else {
             $this->_msg = 'SRP_NOT_READY';
         }
         return $this->_toJson(Srp::SHARED_KEY);
     }
 
-    private function _toJson($case) {
+    private function _toJson($case) 
+    {
         $result = array(
             'status' => $this->_status,
             'msg' => $this->_msg
@@ -63,22 +65,19 @@ class Srp {
         if ($case == Srp::PULIC_KEY ) {
             $result['salt'] = $this->_salt;
             $result['B'] = $this->_B;
-        }
-        elseif ($case == Srp::SHARED_KEY ) {
+        } elseif ($case == Srp::SHARED_KEY ) {
             $result['M2'] = $this->_M2;
-        }
-        elseif ($case == Srp::ERROR ) {
+        } elseif ($case == Srp::ERROR ) {
             //Nothing to do
-        }
-        else {
+        } else {
             $result['status'] = 'ERROR';
             $result['msg'] = 'SRP ERROR';
         }
         $this->_json = json_encode($result);
     }
 
-    public function __toString() {
-
+    public function __toString() 
+    {
         if (is_null($this->_json)) {
             if (isset($this->_status))
                 $this->_toJson(Srp::ERROR);
@@ -87,6 +86,5 @@ class Srp {
         }
         return $this->_json;
     }
-
 }
 
