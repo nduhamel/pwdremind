@@ -8,8 +8,11 @@
 //  sqlite:../test.db
 // postgresql exemple:
 //  pgsql:host=localhost;port=5432;dbname=pwdremind;user=pwdremind;password=pwdremind
+define('PDO_DSN', 'sqlite:../test.db');
 
-define('PDO_DNS', 'sqlite:../test.db');
+//Define your db username and password
+define('PDO_USER','username');
+define('PDO_PASSWORD','password');
 
 define("SESSION_TIMEOUT", 300);
 

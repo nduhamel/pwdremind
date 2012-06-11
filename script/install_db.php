@@ -1,7 +1,7 @@
 <?php
 require_once('../config.php');
 
-$db = new PDO(PDO_DNS);
+$db = new PDO(PDO_DSN, PDO_USER, PDO_PASSWORD);
 $driver = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
 
 if ($driver == 'pgsql') {

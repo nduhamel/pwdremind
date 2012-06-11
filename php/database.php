@@ -8,7 +8,7 @@ class Database {
     public function __construct() 
     {
         try {
-            $this->_db = new PDO(PDO_DNS);
+            $this->_db = new PDO(PDO_DSN, PDO_USER, PDO_PASSWORD);
             $this->_db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $this->_driver = $this->_db->getAttribute(PDO::ATTR_DRIVER_NAME);
         } catch (PDOException $e) {
