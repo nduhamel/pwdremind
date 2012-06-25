@@ -5,7 +5,7 @@ require_once('../php/srpsession.php');
 require_once('../php/response.php');
 require_once('../config.php');
 
-//Todo
+//Input datas
 if (isset($_GET['action']))
     $action = $_GET['action'];
 else

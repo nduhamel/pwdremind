@@ -4,7 +4,7 @@ require_once('../php/srp.php');
 require_once('../php/database.php');
 require_once('../config.php');
 
-//Todo
+//Input datas
 if (isset($_POST['username']))
     $username = $_POST['username'];
 else
@@ -43,6 +43,7 @@ class Authentication
         $this->_srpOptions = new SRP_SHA1_256();
     }
 
+    //Check if request is valid
     private function _is_validRequest()
     {
         $isValid = false;
@@ -65,16 +66,23 @@ class Authentication
     public function run() 
     {
         if ( $this->_is_validRequest() ) {
+            
+            //Public key exchange
             if (empty($this->_M1)) {
-                try {
+
+                //If the user exists in database
+                if ($this->_db->check_username($this->_username)) {
                     $user_data = $this->_db->get_verifier($this->_username);
                     $this->_srp->publicKeyExchange($this->_username,$user_data->id,$user_data->salt,$user_data->verifier,$this->_A );
-                } catch (Exception $e) {
-                    $this->_srp = new Srp('ERROR', "Erreur !: " . $e->getMessage() . "<br/>");
+                } else {
+                    $this->_srp->NoKeyExchange();
                 }
+
             } else {
+                //Shared key verification
                 $this->_srp->sharedKeyVerification($this->_M1);
             }
+
         } else {
             $this->_srp = new Srp('ERROR','INVALID_REQUEST');
         }

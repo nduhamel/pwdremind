@@ -26,6 +26,14 @@ class Srp
         $this->_json = NULL;
     }
 
+    //If the user does not exist
+    public function NoKeyExchange ()
+    {
+        $this->_status = 'ERROR';
+        $this->_msg = 'NO USER FOUND';
+        return $this->_toJson(Srp::ERROR);
+    }
+
     public function publicKeyExchange ($username, $userid, $salt, $verifier, $A)
     {
         try {

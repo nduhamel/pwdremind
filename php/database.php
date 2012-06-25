@@ -29,6 +29,18 @@ class Database {
         return $req->fetchObject();
     }
 
+    //Return true if the user exists in database 
+    public function check_username($username)
+    {
+        $req = $this->_db->prepare("SELECT * FROM user WHERE username = :username");
+        $req->execute(array('username'=>$username));
+        $req = $req->fetchall(PDO::FETCH_ASSOC);
+        if (count($req) == 1)
+            return true;
+        else
+            return false;
+    }
+
     public function get_info($user_id)
     {
         $req = $this->_db->prepare("SELECT category, config FROM user WHERE id = :user_id");
