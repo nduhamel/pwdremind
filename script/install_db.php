@@ -7,14 +7,14 @@ $driver = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
 if ($driver == 'pgsql') {
 
     $req = "CREATE TABLE data (
-            id SERIAL PRIMARY KEY, 
+            id SERIAL PRIMARY KEY AUTO_INCREMENT, 
             data TEXT,
             category VARCHAR(36),
             user_id INT NOT NULL)";
     $db->query($req);
 
     $req = "CREATE TABLE user (
-            id SERIAL PRIMARY KEY, 
+            id SERIAL PRIMARY KEY AUTO_INCREMENT, 
             username VARCHAR(256) NOT NULL UNIQUE,
             verifier VARCHAR(256) NOT NULL,
             salt VARCHAR(32) NOT NULL,
@@ -25,14 +25,14 @@ if ($driver == 'pgsql') {
 else {
 
     $req = "CREATE TABLE data (
-            id INTEGER PRIMARY KEY, 
+            id INTEGER PRIMARY KEY AUTO_INCREMENT, 
             data TEXT,
             category VARCHAR(36),
             user_id INT NOT NULL)";
     $db->query($req);
 
     $req = "CREATE TABLE user (
-            id INTEGER PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTO_INCREMENT,
             username VARCHAR(256) NOT NULL UNIQUE,
             verifier VARCHAR(256) NOT NULL,
             salt VARCHAR(32) NOT NULL,

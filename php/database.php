@@ -56,7 +56,7 @@ class Database {
             $req = $this->_db->prepare("INSERT INTO data (data, user_id)  VALUES(:data, :user_id) RETURNING id");
             $req->execute(array('data'=> $data,'user_id'=>$user_id));
             return $req->fetchColumn();
-        }else{
+        } else {
             $req = $this->_db->prepare("INSERT INTO data (data, user_id)  VALUES(:data, :user_id)");
             $req->execute(array('data'=> $data,'user_id'=>$user_id));
             return $this->_db->lastInsertId();
