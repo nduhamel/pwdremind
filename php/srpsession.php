@@ -117,7 +117,7 @@ class SrpSession extends Session
         $hash_input .= pack("H*", $this->_Khex);
         $M1 = $this->_srp->hash($hi);
         $this->_M1 = $M1;
-        if (strcmp($M1,$clientM1) != 0)
+        if (strcmp($this->_M1,$clientM1) != 0)
             throw new Exception('AUTHENTICATION_FAILED');
 
         // Login the user
