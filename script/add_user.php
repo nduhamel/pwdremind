@@ -1,7 +1,13 @@
 <?php
 
     require_once('../config.php');
-    $db = new PDO(PDO_DSN, PDO_USER, PDO_PASSWORD);
+
+    if (PDO_DRIVER == 'sqlite') {
+        $db = new PDO(PDO_DSN);
+    }
+    else {
+        $db = new PDO(PDO_DSN, PDO_USER, PDO_PASSWORD);
+    }
 
     class SRPOptions {
 
@@ -110,7 +116,7 @@
 
     //Adding user to the database
     try {
-        $req = "INSERT INTO user (username, verifier, salt, category, config) 
+        $req = "INSERT INTO user (username, verifier, salt, category, config)
                 VALUES ('".$name."', '".$verifier."', '".$salt."', '[]', '{}')";
         $db->query($req);
         fwrite(STDOUT,"User added!\n");
@@ -118,4 +124,4 @@
         fwrite(STDOUT,"Error : ". $e->getMessage() ."\n");
     }
 
- 
+

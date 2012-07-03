@@ -5,12 +5,17 @@ class Database {
     private $_db;
     private $_driver;
 
-    public function __construct() 
+    public function __construct()
     {
         try {
-            $this->_db = new PDO(PDO_DSN, PDO_USER, PDO_PASSWORD);
+            if (PDO_DRIVER == 'sqlite') {
+                $this->_db = new PDO(PDO_DSN);
+            }
+            else {
+                $this->_db = new PDO(PDO_DSN, PDO_USER, PDO_PASSWORD);
+            }
             $this->_db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $this->_driver = $this->_db->getAttribute(PDO::ATTR_DRIVER_NAME);
+            $this->_driver = PDO_DRIVER;
         } catch (PDOException $e) {
             print "Erreur !: " . $e->getMessage() . "<br/>";
             die();
@@ -29,7 +34,7 @@ class Database {
         return $req->fetchObject();
     }
 
-    //Return true if the user exists in database 
+    //Return true if the user exists in database
     public function check_username($username)
     {
         $req = $this->_db->prepare("SELECT * FROM user WHERE username = :username");
@@ -89,7 +94,7 @@ class Database {
         return $id;
     }
 
-    //Return true if the entry exists 
+    //Return true if the entry exists
     public function check_entry($id, $user_id)
     {
         $req = $this->_db->prepare("SELECT id FROM data WHERE id=:id AND user_id=:user_id ");
