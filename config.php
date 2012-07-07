@@ -2,18 +2,26 @@
 /*
     CONFIG FILE
 */
-
+// Can be sqlite/mysql/pgsql
+define('PDO_DRIVER','sqlite');
 // Data Source Name for database connection see: http://www.php.net/manual/en/pdo.drivers.php
 // sqlite exemple:
 //  sqlite:../test.db
 // postgresql exemple:
 //  pgsql:host=localhost;port=5432;dbname=pwdremind;user=pwdremind;password=pwdremind
+//mysql exemple:
+//  mysql:host=127.0.0.1;port=8889;dbname=pwdremind
+// Use 127.0.0.1 instead of localhost to avoid using UNIX socket
+define('PDO_DSN', 'sqlite:../test.db');
 
-define('PDO_DNS', 'sqlite:../test.db');
+//Define your db username and password only if you don't user sqlite
+define('PDO_USER','root');
+define('PDO_PASSWORD','root');
 
+//Session timeout
 define("SESSION_TIMEOUT", 300);
 
 //Log
 ini_set("log_errors" , "1");
-ini_set("error_log" , "Errors.log.txt");
+ini_set("error_log" , "errors.log");
 ini_set("display_errors" , "0");

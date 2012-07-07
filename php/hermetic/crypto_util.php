@@ -27,7 +27,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-function isHex($input) {
+function isHex($input)
+{
     for($i=0; $i<strlen($input); $i++) {
         $digit = ord($input[$i]);
         if ($digit<48) return false;
@@ -37,7 +38,8 @@ function isHex($input) {
     return true;
 }
 
-function hex2dec($hex) {
+function hex2dec($hex)
+{
     $dec = '0';
     $pow = '1';
     for ($i=strlen($hex)-1;$i>=0;$i--) {
@@ -49,7 +51,8 @@ function hex2dec($hex) {
     return $dec;
 }
 
-function dec2hex($dec) {
+function dec2hex($dec)
+{
     $digits = array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
     $hex = '';
     do {
@@ -60,7 +63,8 @@ function dec2hex($dec) {
     return $hex;
 }
 
-function byte2hex($bytes) {
+function byte2hex($bytes)
+{
     $digits = array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
     $hex = '';
     $len = strlen($bytes);
@@ -72,7 +76,8 @@ function byte2hex($bytes) {
     return $hex;
 }
 
-function sha_interleave($input) {
+function sha_interleave($input)
+{
     while (strlen($input)>0 && ord($input[0])==0) { //remove leading zero bytes
         $input = substr($input,1);
     }
@@ -98,7 +103,8 @@ function sha_interleave($input) {
     return $result;
 }
 
-function secure_random($bits) {
+function secure_random($bits)
+{
     $result = '';
     $digits = array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
     $f = fopen("/dev/urandom","r");
@@ -116,7 +122,8 @@ function secure_random($bits) {
     return $result;
 }
 
-function stringXor($a, $b) {
+function stringXor($a, $b)
+{
     $len = min(strlen($a),strlen($b));
     $result = '';
     for ($i=0; $i<$len; $i++) {
@@ -125,7 +132,8 @@ function stringXor($a, $b) {
     return $result;
 }
 
-function hmac($hexKey, $message) {
+function hmac($hexKey, $message)
+{
 
     $opadSha1 = pack("H*","5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c");
     $ipadSha1 = pack("H*","36363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636");
@@ -135,7 +143,7 @@ function hmac($hexKey, $message) {
 
     $key = pack("H*",$hexKey);
     if( strlen($key > $sha1OutputSize) ) {
-    //$key = pack("H*", $this->srp->hash($key));
+        //$key = pack("H*", $this->srp->hash($key));
         $key = sha1($key,true);
     }
 
@@ -148,7 +156,7 @@ function hmac($hexKey, $message) {
 
     $iout = "";
     $oout = "";
-        
+
     for ($i=0; $i<strlen($ipadSha1); $i++) {
         $iout.= chr(ord($ipadSha1[$i]) ^ ord($key[$i]));
         $oout.= chr(ord($opadSha1[$i]) ^ ord($key[$i]));
@@ -158,7 +166,8 @@ function hmac($hexKey, $message) {
     return sha1($oout.sha1($iout.$message,true));
 }
 
-function slowEquals($A, $B) {
+function slowEquals($A, $B)
+{
     $equal = strlen($A)-strlen($B);
     $len = min(strlen($A),strlen($B));
 

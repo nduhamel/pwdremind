@@ -1,0 +1,13 @@
+/* Body and structure
+-------------------------------------------------- */
+body {
+  position: relative;
+  padding-top: 60px;
+  background-color: #fff;
+}
+
+@media (min-width: 980px) {
+  .span12, .container {
+    width: 940px;
+  }
+}
