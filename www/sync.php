@@ -10,7 +10,7 @@ require_once('../php/Slim/Slim.php');
 $session = new SrpSession();
 $response = new Response($session->getKhex());
 $db = new Database();
-$app = new Slim();
+$app = new Slim(array( 'log.enable' => true, 'log.path' => './errors.log', 'log.level' => 4 ));
 
 $authCheck = function () use ($app, $session) {
     if ( !$session->is_logged_in() ) {
