@@ -4,8 +4,6 @@ require_once('hermetic/crypto_util.php');
 
 class Response 
 {
-    private $_status;
-    private $_msg;
     private $_data;
     private $_macKey;
     private $_sig;
@@ -32,50 +30,35 @@ class Response
         $this->_macKey = substr($key,32,40);
     }
 
-    public function error($reason)
+    public function _error($reason)
     {
-        $this->_status = "ERROR";
-        $this->_msg = $reason;
+        header('HTTP/1.1 500 Internal Server Error');
+        print $reason;
     }
 
     public function data($data)
     {
-        $this->_status = "OK";
         $this->_data = json_encode($data);
         try { 
             $this->_sig = $this->_sign($this->_data); 
         } catch (Exception $e) {
-            echo 'ERROR : ', $e->getMessage();
+            $this->_error( $e->getMessage() );
         }
-    }
-
-    public function message($msg)
-    {
-        $this->_status = "OK";
-        $this->_msg = $msg;
     }
 
     public function send()
     {
-        $this->check_error();
-        echo $this;
-    }
-
-    public function check_error()
-    {
-        if ( is_null($this->_status) ) {
-            $this->error("INVALID_REQUEST");
-        } elseif ( is_null($this->_data) && is_null($this->_msg) ) {
-            $this->error("INTERNAL_ERROR");
+        if ( is_null($this->_data) ) {
+            $this->_error("NO_DATA");
+        } else {
+            echo $this;
         }
     }
 
     public function __toString()
     {
         $data = array(
-            'status' => $this->_status,
             'data' => $this->_data,
-            'msg' => $this->_msg,
             'sig' => $this->_sig
             );
 
