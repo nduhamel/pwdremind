@@ -5,7 +5,8 @@ define(['backbone', '../models/password'], function(Backbone, Password){
 
         initialize : function(models, args) {
             console.log('Passwords collection Constructor');
-            this.url = function() { return args.category_url + '/passwords'; };
+            console.log(args.category_url());
+            this.url = function() { return './passwords' + args.category_url(); };
         }
     });
 

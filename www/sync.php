@@ -67,6 +67,14 @@ $app->post('/category', $authCheck, function () use ($app, $db, $session, $respo
     $response->send();
 });
 
+
+// New
+$app->get('/passwords/category/:id', $authCheck, function ($id) use ($db, $session, $response) {
+    $entries = $db->get_entries($id, $session->get_userid());
+    $response->data($entries);
+    $response->send();
+});
+
 $app->run();
 
 

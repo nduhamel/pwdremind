@@ -84,10 +84,10 @@ class Database {
     }
 */
 
-    public function get_entries($user_id)
+    public function get_entries($category_id, $user_id)
     {
-        $req = $this->_db->prepare("SELECT id,data FROM data WHERE user_id = :user_id");
-        $req->execute(array('user_id'=>$user_id));
+        $req = $this->_db->prepare("SELECT id,data FROM data WHERE user_id = :user_id AND category_id = :category_id");
+        $req->execute(array('user_id'=>$user_id, 'category_id'=>$category_id));
         return $req->fetchall(PDO::FETCH_ASSOC);
     }
 

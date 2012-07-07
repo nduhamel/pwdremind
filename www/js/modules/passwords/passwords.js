@@ -9,12 +9,35 @@ define([
     './collections/categories',
 ], function($, _, Backbone, sandbox, Password, Category, Passwords, Categories){
 
-    var passwords,
-        categories,
+    var categories,
         current_cat;
 
-    var onRequestPasswords = function (callback) {
-        callback(passwords);
+    //~ var onRequestPasswords = function (callback) {
+        //~ callback(passwords);
+    //~ };
+
+    var onCategoriesFetched = function (categories) {
+        // If no cat create default:
+        if ( categories.length == 0 ) {
+            console.log('No categories, create default: General');
+            var cat = new Category({name:'General'});
+            categories.add(cat);
+            cat.save(null, { success: loadDefaultCategory, wait: true } );
+        } else {
+            loadDefaultCategory();
+        }
+    };
+
+    var loadDefaultCategory = function () {
+        console.log('loadDefaultCategory');
+        // Set current category:
+        current_cat = categories.at(0);
+        console.log(current_cat.id);
+        // Load passwords:
+        current_cat.passwords.fetch();
+
+        // Subscribe to request:
+        //~ sandbox.subscribe('request_passwords', onRequestPasswords);
     };
 
 
@@ -25,26 +48,7 @@ define([
 
             categories = new Categories();
 
-            categories.fetch({success: function (categories) {
-
-                // If no cat create default:
-                if ( categories.length == 0 ) {
-                    console.log('No categories, create default: General');
-                    var cat = new Category({name:'General'});
-                    cat.save();
-                    categories.add(cat);
-                }
-
-                // Set current category:
-                current_cat = categories.at(0);
-
-                // Load passwords:
-                current_cat.passwords.fetch();
-
-                // Subscribe to request:
-                sandbox.subscribe('request_passwords', onRequestPasswords);
-
-            }});
+            categories.fetch({success: onCategoriesFetched });
 
         },
 
