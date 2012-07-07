@@ -12,9 +12,9 @@ define([
     var categories,
         current_cat;
 
-    //~ var onRequestPasswords = function (callback) {
-        //~ callback(passwords);
-    //~ };
+    var onRequestCategories = function (callback) {
+        callback(categories);
+    };
 
     var onCategoriesFetched = function (categories) {
         // If no cat create default:
@@ -22,22 +22,17 @@ define([
             console.log('No categories, create default: General');
             var cat = new Category({name:'General'});
             categories.add(cat);
-            cat.save(null, { success: loadDefaultCategory, wait: true } );
+            cat.save(null, { success: loadDefaultCategory } );
         } else {
             loadDefaultCategory();
         }
     };
 
     var loadDefaultCategory = function () {
-        console.log('loadDefaultCategory');
         // Set current category:
         current_cat = categories.at(0);
-        console.log(current_cat.id);
         // Load passwords:
         current_cat.passwords.fetch();
-
-        // Subscribe to request:
-        //~ sandbox.subscribe('request_passwords', onRequestPasswords);
     };
 
 
@@ -48,6 +43,10 @@ define([
 
             categories = new Categories();
 
+            // Subscribe to request:
+            sandbox.subscribe('request_categories', onRequestCategories);
+
+            // Fetch
             categories.fetch({success: onCategoriesFetched });
 
         },

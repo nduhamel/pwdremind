@@ -6,7 +6,7 @@ define(['backbone', '../collections/passwords'], function(Backbone, Passwords){
 
         initialize : function () {
             console.log('Category Constructor');
-            this.passwords = new Passwords([], {category_url: this.url });
+            this.passwords = new Passwords([], {collection: this });
         }
 
     });

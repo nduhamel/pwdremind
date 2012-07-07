@@ -88,8 +88,8 @@ define(['underscore',
                     //TODO handle error
                     console.log('ERROR checksum');
                 }
-                console.log('Sucess....');
-                console.log(response_data);
+                //~ console.log('Sucess....');
+                //~ console.log(response_data);
                 if (success) success(response_data, status, xhr);
             };
 

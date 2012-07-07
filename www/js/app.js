@@ -49,9 +49,9 @@ requirejs([
     'modules/srpsession/srpsession',
     'modules/passwords/passwords',
     'widgets/login-modal/main',
-    'widgets/passwords-list/main',
+    'widgets/categories-list/main',
     'widgets/head-bar/main'
-], function (core, srpsession, passwords, loginModal, passwordsList, headBar) {
+], function (core, srpsession, passwords, loginModal, categoriesList, headBar) {
 
     console.log('hello world');
     core.start(srpsession, './authentication');
@@ -62,7 +62,7 @@ requirejs([
     core.subscribe('login', function () {
         core.stop(loginModal);
         core.start(passwords);
-        core.start(passwordsList);
+        core.start(categoriesList);
     });
 
 
