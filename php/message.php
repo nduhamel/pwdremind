@@ -1,14 +1,18 @@
 <?php
+/*
+    Message class
+    Sign data with a key and send them   
+*/
 
 require_once('hermetic/crypto_util.php');
 
-class Response 
+class Message 
 {
     private $_data;
     private $_macKey;
     private $_sig;
 
-    public function __construct($key=NULL)
+    public function __construct($key = NULL)
     {
         if (!is_null($key)) {
             $this->setKey($key);
@@ -36,7 +40,7 @@ class Response
         print $reason;
     }
 
-    public function data($data)
+    public function setData($data)
     {
         $this->_data = json_encode($data);
         try { 
