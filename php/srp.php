@@ -69,17 +69,25 @@ class Srp
             'msg' => $this->_msg
             );
 
-        if ($case == Srp::PULIC_KEY ) {
-            $result['salt'] = $this->_salt;
-            $result['B'] = $this->_B;
-        } elseif ($case == Srp::SHARED_KEY ) {
-            $result['M2'] = $this->_M2;
-        } elseif ($case == Srp::ERROR ) {
-            //Nothing to do
-        } else {
-            $result['status'] = 'ERROR';
-            $result['msg'] = 'SRP ERROR';
+        switch ($case) {
+            case Srp::PULIC_KEY:
+                $result['salt'] = $this->_salt;
+                $result['B'] = $this->_B;
+                break;
+
+            case Srp::SHARED_KEY:
+                $result['M2'] = $this->_M2;
+                break;
+
+            case Srp::ERROR;
+                break;
+            
+            default:
+                $result['status'] = 'ERROR';
+                $result['msg'] = 'SRP ERROR';
+                break;
         }
+
         $this->_json = json_encode($result);
     }
 

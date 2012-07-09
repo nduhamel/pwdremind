@@ -74,5 +74,5 @@ requirejs([
 
     });
 
-    core.broadcast('request_login','nicolas','test');
+   // core.broadcast('request_login','nicolas','test');
 });
