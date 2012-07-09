@@ -22,6 +22,7 @@ define([
         },
 
         render : function() {
+            console.log('Render passwords list');
             var renderedContent = _.template(baseTpl, { pwds : this.collection.toJSON() });
             $(this.el).html(renderedContent);
             return this;
@@ -31,25 +32,6 @@ define([
 
 
     // Facade
-    return {
-        initialize : function () {
-            console.log('Init Passwords List Widget');
-
-            sandbox.broadcast('request_passwords', function(collection){
-                var view = new PasswordsCollectionView({collection: collection});
-                view.render();
-            });
-
-        },
-
-        reload : function () {
-            console.log('Reload Passwords List Widget');
-        },
-
-        destroy : function () {
-            console.log('Destroy Passwords List Widget');
-        },
-    };
-
+    return PasswordsCollectionView;
 
 });

@@ -91,15 +91,22 @@ class Database {
         return $req->fetchall(PDO::FETCH_ASSOC);
     }
 
-    public function store_entry($data, $user_id)
+    public function lastest_entries($user_id)
+    {
+        $req = $this->_db->prepare("SELECT id,data FROM data WHERE user_id = :user_id");
+        $req->execute(array('user_id'=>$user_id));
+        return $req->fetchall(PDO::FETCH_ASSOC);
+    }
+
+    public function store_entry($data, $category_id, $user_id)
     {
         if ($this->_driver == 'pgsql'){
-            $req = $this->_db->prepare("INSERT INTO data (data, user_id)  VALUES(:data, :user_id) RETURNING id");
-            $req->execute(array('data'=> $data,'user_id'=>$user_id));
+            $req = $this->_db->prepare("INSERT INTO data (data, category_id, user_id)  VALUES(:data, :category_id, :user_id) RETURNING id");
+            $req->execute(array('data'=> $data, 'category_id'=>$category_id, 'user_id'=>$user_id));
             return $req->fetchColumn();
         } else {
-            $req = $this->_db->prepare("INSERT INTO data (data, user_id)  VALUES(:data, :user_id)");
-            $req->execute(array('data'=> $data,'user_id'=>$user_id));
+            $req = $this->_db->prepare("INSERT INTO data (data, category_id, user_id)  VALUES(:data, :category_id, :user_id)");
+            $req->execute(array('data'=> $data, 'category_id'=>$category_id, 'user_id'=>$user_id));
             return $this->_db->lastInsertId();
         }
     }

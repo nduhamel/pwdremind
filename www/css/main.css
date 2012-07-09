@@ -11,3 +11,11 @@ body {
     width: 940px;
   }
 }
+
+/*     Form input align hack
+------------------------------------------------------*/
+form#addentry input#site, 
+form#addentry input#login, 
+form#addentry select{
+    width: 262px;
+}

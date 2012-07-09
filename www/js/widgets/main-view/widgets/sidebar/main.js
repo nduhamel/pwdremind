@@ -7,7 +7,10 @@ define([
 ], function($, _, Backbone, sandbox, baseTpl){
 
     var CategoriesCollectionView = Backbone.View.extend({
-        el : 'section',
+
+        events: {
+            "click a":    "openCategory",
+        },
 
         initialize : function() {
 
@@ -25,30 +28,16 @@ define([
             var renderedContent = _.template(baseTpl, { categories : this.collection.toJSON() });
             $(this.el).html(renderedContent);
             return this;
-        }
+        },
+
+        openCategory : function (event) {
+            event.preventDefault();
+            var id_cat = $(event.currentTarget).data('id');
+            sandbox.broadcast('category:change', id_cat);
+        },
 
     });
 
-
-    // Facade
-    return {
-        initialize : function () {
-            console.log('Init Categories List Widget');
-
-            sandbox.broadcast('request_categories', function(collection){
-                var view = new CategoriesCollectionView({collection: collection});
-                view.render();
-            });
-        },
-
-        reload : function () {
-            console.log('Reload Categories List Widget');
-        },
-
-        destroy : function () {
-            console.log('Destroy Categories List Widget');
-        },
-    };
-
+    return CategoriesCollectionView;
 
 });

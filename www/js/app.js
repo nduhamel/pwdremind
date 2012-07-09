@@ -9,6 +9,10 @@ require.config({
             exports: 'Backbone'
         },
 
+        'backbone_validations' : {
+            deps: ['backbone'],
+        },
+
         'radio': {
             exports: 'radio'
         },
@@ -21,6 +25,7 @@ require.config({
     paths: {
         // vendor
         backbone: 'lib/backbone',
+        backbone_validations : 'lib/backbone.validations',
         underscore: 'lib/underscore',
         jquery: 'lib/jquery',
         radio: 'lib/radio',
@@ -45,13 +50,15 @@ if (typeof Object.create !== 'function') {
 
 // Starts main
 requirejs([
+    'backbone',
     'core',
     'modules/srpsession/srpsession',
     'modules/passwords/passwords',
     'widgets/login-modal/main',
-    'widgets/categories-list/main',
-    'widgets/head-bar/main'
-], function (core, srpsession, passwords, loginModal, categoriesList, headBar) {
+    'widgets/add-password-modal/main',
+    'widgets/main-view/main',
+    'widgets/head-bar/main',
+], function (Backbone, core, srpsession, passwords, loginModal, addPasswordModal, mainView, headBar) {
 
     console.log('hello world');
     core.start(srpsession, './authentication');
@@ -62,9 +69,10 @@ requirejs([
     core.subscribe('login', function () {
         core.stop(loginModal);
         core.start(passwords);
-        core.start(categoriesList);
-    });
+        core.start(addPasswordModal);
+        core.start(mainView);
 
+    });
 
     core.broadcast('request_login','nicolas','test');
 });

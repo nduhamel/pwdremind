@@ -10,11 +10,23 @@ define([
 ], function($, _, Backbone, sandbox, Password, Category, Passwords, Categories){
 
     var categories,
-        current_cat;
+        passwords;
 
     var onRequestCategories = function (callback) {
         callback(categories);
     };
+
+    var onRequestPasswords = function (callback) {
+        callback(passwords);
+    }
+
+    var onRequestPasswordObject = function (callback) {
+        callback(Password);
+    }
+
+    var onCategoryChange = function (category_id) {
+        passwords.setCategoryId(category_id);
+    }
 
     var onCategoriesFetched = function (categories) {
         // If no cat create default:
@@ -22,19 +34,9 @@ define([
             console.log('No categories, create default: General');
             var cat = new Category({name:'General'});
             categories.add(cat);
-            cat.save(null, { success: loadDefaultCategory } );
-        } else {
-            loadDefaultCategory();
+            cat.save();
         }
     };
-
-    var loadDefaultCategory = function () {
-        // Set current category:
-        current_cat = categories.at(0);
-        // Load passwords:
-        current_cat.passwords.fetch();
-    };
-
 
     // Facade
     return {
@@ -42,12 +44,17 @@ define([
             console.log('Init Passwords');
 
             categories = new Categories();
+            passwords = new Passwords();
 
             // Subscribe to request:
-            sandbox.subscribe('request_categories', onRequestCategories);
+            sandbox.subscribe('request:categories', onRequestCategories);
+            sandbox.subscribe('request:passwords', onRequestPasswords);
+            sandbox.subscribe('request:Password', onRequestPasswordObject);
+            sandbox.subscribe('category:change', onCategoryChange);
 
             // Fetch
             categories.fetch({success: onCategoriesFetched });
+            passwords.fetch();
 
         },
 
@@ -59,7 +66,6 @@ define([
         destroy : function () {
             console.log('Destroy Passwords');
             delete passwords;
-            sandbox.unsubscribe('request_passwords', onRequestPasswords);
             // TODO
         },
     };

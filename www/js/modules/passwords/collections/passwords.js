@@ -4,13 +4,23 @@ define(['backbone', '../models/password'], function(Backbone, Password){
 
         model : Password,
 
-        initialize : function(models, args) {
+        category_id : null,
+
+        initialize : function (models, args) {
             console.log('Passwords collection Constructor');
-            this.collection = args.collection;
         },
 
-        url : function() {
-            return './passwords' + this.collection.url().slice(1);
+        url : function () {
+            if (this.category_id) {
+                return './passwords/category/'+this.category_id;
+            } else {
+                return './passwords';
+            }
+        },
+
+        setCategoryId : function (id) {
+            this.category_id = id;
+            this.fetch();
         },
 
     });

@@ -53,10 +53,18 @@ define(['underscore',
             // Ensure that we have the appropriate request data.
             if (!options.data && model && (method == 'create' || method == 'update')) {
               params.contentType = 'application/json';
+
               var attr = model.toJSON();
-              var id = attr.id;
-              delete attr.id;
-              params.data = JSON.stringify( {id:id, data:Crypto.encrypt(key, JSON.stringify(attr) )} );
+
+              if (model.crypted) {
+                  var notCrypted = _.pick(attr, _.difference(_.keys(attr), model.crypted));
+                  var cryptedData = Crypto.encrypt(key, JSON.stringify( _.pick(attr, model.crypted) ) );
+                  var data = _.extend({}, notCrypted, {data: cryptedData});
+              } else {
+                  var data = attr;
+              }
+
+              params.data = JSON.stringify( data );
             }
 
             // Don't process data on a non-GET request.

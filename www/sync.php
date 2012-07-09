@@ -30,20 +30,7 @@ $app->post('/authentication', function () use ($app, $db) {
     $auth->run();
 });
 
-// ADD new password
-$app->post('/password', $authCheck, function () use ($app, $db, $session, $response){
-    $requestBody = $app->request()->getBody();
-    $json_a = json_decode($requestBody, true);
 
-    echo($json_a);
-});
-
-// GET all passwords
-$app->get('/passwords', $authCheck, function () use ($db, $session, $response) {
-    $entries = $db->get_entries($session->get_userid());
-    $response->data($entries);
-    $response->send();
-});
 
 $app->get('/passwords/:id', $authCheck, function ($id) {
     echo("get password $id");
@@ -75,6 +62,25 @@ $app->get('/passwords/category/:id', $authCheck, function ($id) use ($db, $sessi
     $response->send();
 });
 
+// GET 100 lastest passwords
+$app->get('/passwords', $authCheck, function () use ($db, $session, $response) {
+    $entries = $db->lastest_entries($session->get_userid());
+    $response->data($entries);
+    $response->send();
+});
+
+// ADD new password
+$app->post('/password', $authCheck, function () use ($app, $db, $session, $response){
+    $requestBody = $app->request()->getBody();
+    $json_a = json_decode($requestBody, true);
+    $id = $db->store_entry($json_a['data'], $json_a['category_id'], $session->get_userid());
+    $response->data(array(
+                    'id' => $id,
+                    'data' => $json_a['data'],
+                    'category_id' => $json_a['category_id'],
+    ));
+    $response->send();
+});
 $app->run();
 
 

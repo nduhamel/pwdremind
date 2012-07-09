@@ -8,11 +8,17 @@ define([
 
     var HeadBar = Backbone.View.extend({
 
+        el : 'header',
+
+        events : {
+            "click a" : 'onAction',
+        },
+
         logged : false,
 
         render : function() {
             var renderedContent = _.template(baseTpl, {logged: this.logged} );
-            $('header').html(renderedContent);
+            $(this.el).html(renderedContent);
             return this;
         },
 
@@ -26,6 +32,14 @@ define([
             this.logged = false;
             this.render();
         },
+
+        onAction : function (event) {
+            event.preventDefault();
+            var action = $(event.currentTarget).attr('name');
+            if (action) {
+                sandbox.broadcast('request:'+action);
+            }
+        }
 
     });
 
