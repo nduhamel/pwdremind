@@ -3,3 +3,4 @@ www/errors.log
 test.db
 config.php
 .DS_Store
+errors.log
