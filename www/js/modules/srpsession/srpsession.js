@@ -17,7 +17,7 @@ define([
     };
 
     srpSession.onFail = function () {
-        sandbox.broadcast('login_failed');
+        sandbox.broadcast('login:failed');
     };
 
     srpSession.requestLogin = function (username, password) {
@@ -40,8 +40,8 @@ define([
         initialize : function (authUrl) {
             console.log('Init SRPsession');
             srpSession.authUrl = authUrl;
-            sandbox.subscribe('request_login', srpSession.requestLogin, srpSession);
-            sandbox.subscribe('request_logout', srpSession.requestLogout, srpSession);
+            sandbox.subscribe('request:login', srpSession.requestLogin, srpSession);
+            sandbox.subscribe('request:logout', srpSession.requestLogout, srpSession);
         },
 
         reload : function () {
@@ -54,8 +54,8 @@ define([
             console.log('Destroy SRPsession');
             console.log('Remove crypted sync');
             Backbone.sync = defaultSync;
-            sandbox.unsubscribe('request_login', srpSession.requestLogin);
-            sandbox.unsubscribe('request_logout', srpSession.requestLogout);
+            sandbox.unsubscribe('request:login', srpSession.requestLogin);
+            sandbox.unsubscribe('request:logout', srpSession.requestLogout);
         },
     };
 });

@@ -50,7 +50,7 @@ define([
             var password = this.$el.find('#password').val();
             var username = this.$el.find('#username').val();
 
-            sandbox.broadcast('request_login', username, password);
+            sandbox.broadcast('request:login', username, password);
         },
 
         onError : function () {
@@ -74,7 +74,7 @@ define([
             view = new LoginModal();
             view.render();
 
-            sandbox.subscribe('login_failed', view.onError, view);
+            sandbox.subscribe('login:failed', view.onError, view);
         },
 
         reload : function () {
