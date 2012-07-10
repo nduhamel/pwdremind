@@ -5,8 +5,8 @@ define([
     'sandbox',
     'text!./tpl/base.html',
     './widgets/sidebar/main',
-    './widgets/passwords-list/main'
-], function($, _, Backbone, sandbox, baseTpl, sideBar, passwordsTable){
+    './widgets/password-app/main'
+], function($, _, Backbone, sandbox, baseTpl, sideBar, passwordApp){
 
     var MainView = Backbone.View.extend({
         el : 'section',
@@ -51,8 +51,11 @@ define([
 
             mainView.setSidebar(sideBar);
 
-            sandbox.broadcast('request:passwords', function(passwordsCollection){
-                mainView.setContent(passwordsTable, {collection : passwordsCollection});
+            sandbox.broadcast('request:categories', function(categoriesCollection){
+                sandbox.broadcast('request:passwords', function(passwordsCollection){
+                    mainView.setContent(passwordApp, {categories : categoriesCollection,
+                                                      passwords : passwordsCollection});
+                });
             });
         },
 
