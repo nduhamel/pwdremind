@@ -23,6 +23,14 @@ define([
 
     var onCategoryChange = function (category_id) {
         passwords.setCategoryId(category_id);
+        sandbox.broadcast('category:changed', category_id);
+    }
+
+    var onPasswordAdded = function (password) {
+        var cur_cat = passwords.getCategoryId();
+        if ( !cur_cat || cur_cat == password.get('category_id') ){
+            passwords.add(password,{at:0});
+        }
     }
 
     var onCategoriesFetched = function (categories) {
@@ -48,6 +56,7 @@ define([
             sandbox.subscribe('request:passwords', onRequestPasswords);
             sandbox.subscribe('request:Password', onRequestPasswordObject);
             sandbox.subscribe('category:change', onCategoryChange);
+            sandbox.subscribe('add:password', onPasswordAdded);
 
             // Fetch
             categories.fetch({success: onCategoriesFetched });

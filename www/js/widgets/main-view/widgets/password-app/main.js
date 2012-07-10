@@ -13,9 +13,10 @@ define([
         render : function() {
             this.$el.html(_.template(baseTpl));
             this.categoriesView = new CategoriesView({el : this.$('#password-app-categories'),
-                                                      categories : this.options.categories }).render();
+                                                      collection : this.options.categories,
+                                                      currentCategory : this.options.passwords.getCategoryId() }).render();
             this.passwordsView = new PasswordsView({el : this.$('#password-app-passwords'),
-                                                    passwords : this.options.passwords }).render();
+                                                    collection : this.options.passwords }).render();
             return this;
         },
 

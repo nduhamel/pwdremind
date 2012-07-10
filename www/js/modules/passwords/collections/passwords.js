@@ -19,8 +19,15 @@ define(['backbone', '../models/password'], function(Backbone, Password){
         },
 
         setCategoryId : function (id) {
-            this.category_id = id;
-            this.fetch();
+            if (id != this.category_id) {
+                this.category_id = id;
+                this.fetch();
+            }
+            return this;
+        },
+
+        getCategoryId : function () {
+            return this.category_id;
         },
 
     });

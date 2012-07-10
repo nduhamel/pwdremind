@@ -57,7 +57,7 @@ class Database {
 
     public function get_categories($user_id)
     {
-        $req = $this->_db->prepare("SELECT id, data FROM category WHERE id = :user_id");
+        $req = $this->_db->prepare("SELECT id, data FROM category WHERE user_id = :user_id");
         $req->execute(array('user_id'=>$user_id));
         return $req->fetchall(PDO::FETCH_ASSOC);
     }

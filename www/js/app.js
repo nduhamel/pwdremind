@@ -56,9 +56,10 @@ requirejs([
     'modules/passwords/passwords',
     'widgets/login-modal/main',
     'widgets/add-password-modal/main',
+    'widgets/add-category-modal/main',
     'widgets/main-view/main',
     'widgets/head-bar/main',
-], function (Backbone, core, srpsession, passwords, loginModal, addPasswordModal, mainView, headBar) {
+], function (Backbone, core, srpsession, passwords, loginModal, addPasswordModal, addCategoryModal, mainView, headBar) {
 
     console.log('Starting app');
     core.start(srpsession, './authentication');
@@ -70,12 +71,14 @@ requirejs([
         core.stop(loginModal);
         core.start(passwords);
         core.start(addPasswordModal);
+        core.start(addCategoryModal);
         core.start(mainView);
     });
 
     core.subscribe('logout', function () {
         core.stop(passwords);
         core.stop(addPasswordModal);
+        core.stop(addCategoryModal);
         core.stop(mainView);
         core.start(loginModal);
     });

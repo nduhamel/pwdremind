@@ -2,7 +2,13 @@ define(['backbone', '../collections/passwords'], function(Backbone, Passwords){
 
    var Category = Backbone.Model.extend({
 
-       crypted : ['name'],
+        validate : {
+            name : {
+                required  : true,
+            },
+        },
+
+        crypted : ['name'],
 
         url : './category',
 
