@@ -37,7 +37,7 @@ define([
             event.preventDefault();
             var action = $(event.currentTarget).attr('name');
             if (action) {
-                sandbox.broadcast('request:'+action);
+                sandbox.broadcast('request_'+action);
             }
         }
 

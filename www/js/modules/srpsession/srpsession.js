@@ -29,6 +29,7 @@ define([
     srpSession.requestLogout = function () {
         console.log('Request logout');
         console.log('Remove crypted sync');
+        sandbox.broadcast('logout');
         Backbone.sync = defaultSync;
     };
 
