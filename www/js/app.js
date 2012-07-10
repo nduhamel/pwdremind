@@ -60,7 +60,7 @@ requirejs([
     'widgets/head-bar/main',
 ], function (Backbone, core, srpsession, passwords, loginModal, addPasswordModal, mainView, headBar) {
 
-    console.log('hello world');
+    console.log('Starting app');
     core.start(srpsession, './authentication');
 
     core.start(headBar);
