@@ -130,7 +130,9 @@ define([
 
         destroy : function () {
             console.log('Destroy Add Modal Widget');
-            view.destroy();
+            if (view) {
+                view.destroy();
+            }
             view = null;
             categories = null;
             PasswordModel = null;

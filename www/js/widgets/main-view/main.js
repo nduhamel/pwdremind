@@ -32,6 +32,10 @@ define([
             return this;
         },
 
+        remove : function () {
+            this.$el.html('');
+        },
+
     });
 
     var mainView;
@@ -45,9 +49,7 @@ define([
             mainView = new MainView();
             mainView.render();
 
-            sandbox.broadcast('request:categories', function(categoriesCollection){
-                mainView.setSidebar(sideBar, {collection : categoriesCollection});
-            });
+            mainView.setSidebar(sideBar);
 
             sandbox.broadcast('request:passwords', function(passwordsCollection){
                 mainView.setContent(passwordsTable, {collection : passwordsCollection});
@@ -60,6 +62,8 @@ define([
 
         destroy : function () {
             console.log('Destroy Main view Widget');
+            mainView.remove();
+            delete mainView;
         },
     };
 

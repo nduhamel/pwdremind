@@ -71,8 +71,15 @@ requirejs([
         core.start(passwords);
         core.start(addPasswordModal);
         core.start(mainView);
-
     });
+
+    core.subscribe('logout', function () {
+        core.stop(passwords);
+        core.stop(addPasswordModal);
+        core.stop(mainView);
+        core.start(loginModal);
+    });
+
 
     //core.broadcast('request:login','nicolas','test');
 });
