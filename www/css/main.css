@@ -6,16 +6,11 @@ body {
   background-color: #fff;
 }
 
-@media (min-width: 980px) {
-  .span12, .container {
-    width: 940px;
-  }
-}
 
 /*     Form input align hack
 ------------------------------------------------------*/
-form#addentry input#site, 
-form#addentry input#login, 
+form#addentry input#site,
+form#addentry input#login,
 form#addentry select{
     width: 262px;
 }

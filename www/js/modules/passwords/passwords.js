@@ -1,13 +1,10 @@
 define([
-    'jquery',
-    'underscore',
-    'backbone',
     'sandbox',
     './models/password',
     './models/category',
     './collections/passwords',
     './collections/categories',
-], function($, _, Backbone, sandbox, Password, Category, Passwords, Categories){
+], function(sandbox, Password, Category, Passwords, Categories){
 
     var categories,
         passwords;

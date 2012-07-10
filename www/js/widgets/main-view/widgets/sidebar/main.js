@@ -8,33 +8,21 @@ define([
 
     var CategoriesCollectionView = Backbone.View.extend({
 
-        events: {
-            "click a":    "openCategory",
-        },
-
-        initialize : function() {
-
-            /*--- binding ---*/
-            _.bindAll(this, 'render');
-            this.collection.bind('change', this.render);
-            this.collection.bind('reset', this.render);
-            this.collection.bind('add', this.render);
-            this.collection.bind('remove', this.render);
-            /*---------------*/
-
-        },
+        //~ events: {
+            //~ "click a":    "openCategory",
+        //~ },
 
         render : function() {
-            var renderedContent = _.template(baseTpl, { categories : this.collection.toJSON() });
+            var renderedContent = _.template(baseTpl);
             $(this.el).html(renderedContent);
             return this;
         },
 
-        openCategory : function (event) {
-            event.preventDefault();
-            var id_cat = $(event.currentTarget).data('id');
-            sandbox.broadcast('category:change', id_cat);
-        },
+        //~ openCategory : function (event) {
+            //~ event.preventDefault();
+            //~ var id_cat = $(event.currentTarget).data('id');
+            //~ sandbox.broadcast('category:change', id_cat);
+        //~ },
 
     });
 
