@@ -27,19 +27,19 @@ class SrpSession extends Session
                 $this->_Khex = $this->getValue('SRP_Khex');
                 $this->_username = $this->getValue('SRP_I');
                 $this->_userid =  $this->getValue('userid');
-                $this->setState(SrpSession::READY);
+                $this->_setSate(SrpSession::READY);
             } catch (InvalidArgumentException $e) {
-                $this->setState(SrpSession::NOT_INITIALIZED);
+                $this->_setSate(SrpSession::NOT_INITIALIZED);
             }
         }
     }
 
-    private function setState($state) { $this->setValue('SRP_state',$state); }
-    function getState() { return $this->getValue('SRP_state'); }
-    function getB() { return $this->_Bhex; }
+    private function _setSate($state) { $this->setValue('SRP_state',$state); }
+    public function getState() { return $this->getValue('SRP_state'); }
+    public function getB() { return $this->_Bhex; }
     public function getNhex() { return $this->_srp->Nhex(); }
 
-    private function computeB()
+    private function _computeB()
     {
         $term1 = bcmul($this->_srp->kdec(), $this->_vdec);
         $term2 = bcpowmod($this->_srp->gdec(), $this->_bdec, $this->_srp->Ndec());
@@ -47,7 +47,7 @@ class SrpSession extends Session
         $this->_Bhex = dec2hex($this->_Bdec);
     }
 
-    private function computeK()
+    private function _computeK()
     {
         $hash_input = str_pad($this->_Ahex, strlen($this->_srp->Nhex()), "0", STR_PAD_LEFT).str_pad($this->_Bhex, strlen($this->_srp->Nhex()), "0", STR_PAD_LEFT);
         $hash_input = pack("H*",$hash_input);
@@ -66,7 +66,7 @@ class SrpSession extends Session
         $this->_Khex = $this->_srp->keyHash(pack("H*",$this->_Shex));
     }
 
-    function initialize($username, $userid, $s, $v, $A, $b)
+    public function initialize($username, $userid, $s, $v, $A, $b)
     {
         $this->_Adec = hex2dec($A);
         if ( strcmp(bcmod($this->_Adec,$this->_srp->Ndec()), '0') == 0 )
@@ -81,8 +81,8 @@ class SrpSession extends Session
         $this->_bhex = $b;
         $this->_bdec = hex2dec($b);
 
-        $this->computeB();
-        $this->computeK();
+        $this->_computeB();
+        $this->_computeK();
 
         $this->setValue('SRP_shex',$this->_shex);
         $this->setValue('SRP_Ahex',$this->_Ahex);
@@ -90,10 +90,10 @@ class SrpSession extends Session
         $this->setValue('SRP_Khex',$this->_Khex);
         $this->setValue('SRP_I',$this->_username);
         $this->setValue('userid', $this->_userid);
-        $this->setState(SrpSession::INITIALIZED);
+        $this->_setSate(SrpSession::INITIALIZED);
     }
 
-    function verifyM1computeM2($clientM1)
+    public function verifyM1computeM2($clientM1)
     {
         //M1 = H( H(N) xor H(g) , H (I) , s, A, B, K)
 
