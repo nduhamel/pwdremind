@@ -1,6 +1,5 @@
 <?php
 require_once('srpsession.php');
-require_once('hermetic/crypto_util.php');
 
 class Srp
 {
@@ -24,6 +23,8 @@ class Srp
         $this->_msg = $msg;
         $this->_json = NULL;
     }
+
+    public function getNhex() { return $this->_srpSession->getNhex(); }
 
     //If the user does not exist
     public function NoKeyExchange ()

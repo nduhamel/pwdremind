@@ -37,6 +37,7 @@ class SrpSession extends Session
     private function setState($state) { $this->setValue('SRP_state',$state); }
     function getState() { return $this->getValue('SRP_state'); }
     function getB() { return $this->_Bhex; }
+    public function getNhex() { return $this->_srp->Nhex(); }
 
     private function computeB()
     {
