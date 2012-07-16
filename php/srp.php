@@ -27,14 +27,14 @@ class Srp
     public function getNhex() { return $this->_srpSession->getNhex(); }
 
     //If the user does not exist
-    public function NoKeyExchange ()
+    public function noKeyExchange()
     {
         $this->_status = 'ERROR';
         $this->_msg = 'NO USER FOUND';
         return $this->_toJson(Srp::ERROR);
     }
 
-    public function publicKeyExchange ($username, $userid, $salt, $verifier, $A)
+    public function publicKeyExchange($username, $userid, $salt, $verifier, $A)
     {
         try {
             $b = secure_random($this->_srpSession->getKeySize());
@@ -48,7 +48,7 @@ class Srp
         return $this->_toJson(Srp::PULIC_KEY);
     }
 
-    public function sharedKeyVerification ($M1)
+    public function sharedKeyVerification($M1)
     {
         if ($this->_srpSession->getState() == SrpSession::READY) {
             try {
