@@ -15,7 +15,7 @@ $app = new Slim(array( 'log.enable' => true, 'log.path' => './errors.log', 'log.
 
 //Check if logged in
 $authCheck = function () use ($app, $session) {
-    if ( !$session->is_logged_in() ) {
+    if ( !$session->is_logged() ) {
         $app->halt(403);
     }
 };
@@ -79,6 +79,12 @@ $app->post('/password', $authCheck, function () use ($app, $db, $session, $messa
                     'category_id' => $json_a['category_id'],
     ));
     $message->send();
+});
+
+//Logout
+$app->get('/logout', $authCheck, function () use  ($app, $session) {
+    $session->logout();
+    $app->redirect('index.html');
 });
 
 //Run the app :)
