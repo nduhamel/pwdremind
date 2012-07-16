@@ -27,14 +27,14 @@ class SrpSession extends Session
                 $this->_Khex = $this->getValue('SRP_Khex');
                 $this->_username = $this->getValue('SRP_I');
                 $this->_userid =  $this->getValue('userid');
-                $this->_setSate(SrpSession::READY);
+                $this->_setState(SrpSession::READY);
             } catch (InvalidArgumentException $e) {
-                $this->_setSate(SrpSession::NOT_INITIALIZED);
+                $this->_setState(SrpSession::NOT_INITIALIZED);
             }
         }
     }
 
-    private function _setSate($state) { $this->setValue('SRP_state',$state); }
+    private function _setState($state) { $this->setValue('SRP_state',$state); }
     public function getState() { return $this->getValue('SRP_state'); }
     public function getB() { return $this->_Bhex; }
     public function getNhex() { return $this->_srp->Nhex(); }
@@ -90,7 +90,7 @@ class SrpSession extends Session
         $this->setValue('SRP_Khex',$this->_Khex);
         $this->setValue('SRP_I',$this->_username);
         $this->setValue('userid', $this->_userid);
-        $this->_setSate(SrpSession::INITIALIZED);
+        $this->_setState(SrpSession::INITIALIZED);
     }
 
     public function verifyM1computeM2($clientM1)

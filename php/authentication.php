@@ -22,7 +22,7 @@ class Authentication
     }
 
     //Check if request is valid
-    private function _is_validRequest()
+    private function _isValidRequest()
     {
         $isValid = false;
 
@@ -43,17 +43,17 @@ class Authentication
 
     public function run()
     {
-        if ( $this->_is_validRequest() ) {
+        if ( $this->_isValidRequest() ) {
 
             //Public key exchange
             if (empty($this->_M1)) {
 
                 //If the user exists in database
-                if ($this->_db->check_username($this->_username)) {
-                    $user_data = $this->_db->get_verifier($this->_username);
+                if ($this->_db->checkUsername($this->_username)) {
+                    $user_data = $this->_db->getVerifier($this->_username);
                     $this->_srp->publicKeyExchange($this->_username,$user_data->id,$user_data->salt,$user_data->verifier,$this->_A );
                 } else {
-                    $this->_srp->NoKeyExchange();
+                    $this->_srp->noKeyExchange();
                 }
 
             } else {

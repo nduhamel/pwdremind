@@ -37,7 +37,7 @@ class Sync
 
     //Input datas
     private $_URI;
-    private $_username, $_A, $_M1, $_raw_input;
+    private $_username, $_A, $_M1, $_rawInput;
 
     function __construct($URI, $username, $A, $M1, $raw_input)
     {
@@ -50,10 +50,10 @@ class Sync
         $this->_username = $username;
         $this->_A = $A;
         $this->_M1 = $M1;
-        $this->_raw_input = $raw_input;
+        $this->_rawInput = $raw_input;
     }
 
-    private function _is_logged() {
+    private function _isLogged() {
         if ( !$this->_session->is_logged() ) {
             header('HTTP/1.1 403 Forbidden');
             print 'Not logged';
@@ -97,12 +97,12 @@ class Sync
                 if( isset($URI[1]) && isset($URI[2]) ) {
                     //  /passwords/category/:id
                     $id = $URI[2];
-                    $entries = $this->_db->get_entries($id, $this->_session->get_userid());
+                    $entries = $this->_db->getEntries($id, $this->_session->getUserid());
                     $this->_message->setData($entries);
                     $this->_message->send();
                 } else {
                     //  /passwords
-                    $entries = $this->_db->lastest_entries($this->_session->get_userid());
+                    $entries = $this->_db->lastestEntries($this->_session->getUserid());
                     $this->_message->setData($entries);
                     $this->_message->send();
                 }
@@ -113,16 +113,16 @@ class Sync
                 /categories
             */
             case 'categories':
-                $categories = $this->_db->get_categories( $this->_session->get_userid() );
+                $categories = $this->_db->getCategories( $this->_session->getUserid() );
                 $this->_message->setData($categories);
                 $this->_message->send();
                 break;   
 
             // ADD a new password
             case 'password':
-                print_r($this->_raw_input);
-                $json_a = json_decode($this->_raw_input, true);
-                $id = $this->_db->store_entry($json_a['data'], $json_a['category_id'], $this->_session->get_userid());
+                print_r($this->_rawInput);
+                $json_a = json_decode($this->_rawInput, true);
+                $id = $this->_db->storeEntry($json_a['data'], $json_a['category_id'], $this->_session->getUserid());
                 $this->_message->setData(array(
                                 'id' => $id,
                                 'data' => $json_a['data'],
@@ -132,8 +132,8 @@ class Sync
 
             // ADD a new category
             case 'category':
-                $json_a = json_decode($this->_raw_input, true);
-                $id = $this->_db->add_category($json_a['data'], $this->_session->get_userid());
+                $json_a = json_decode($this->_rawInput, true);
+                $id = $this->_db->addCategory($json_a['data'], $this->_session->getUserid());
                 $this->_message->setData(array(
                                 'id' => $id,
                                 'data' => $json_a['data'],
@@ -154,9 +154,7 @@ class Sync
                 break;
         }
 
-
     }
-
 
 }
 
