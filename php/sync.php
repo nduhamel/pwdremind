@@ -1,33 +1,10 @@
 <?php
-require_once('../php/database.php');
-require_once('../php/srpsession.php');
-require_once('../php/message.php');
-require_once('../php/authentication.php');
+require_once('database.php');
+require_once('srpsession.php');
+require_once('message.php');
+require_once('authentication.php');
 require_once('../config.php');
 
-//Input datas
-$PATH = '/pwdremind/www/';
-$URI = str_replace($PATH, '', $_SERVER['REQUEST_URI']);
-
-$raw_input = @file_get_contents('php://input');
-if ( !$raw_input )
-    $raw_input = NULL;
-
-if (isset($_POST['username']))
-    $username = $_POST['username'];
-else
-    $username = NULL;
-
-if (isset($_POST['A']))
-    $A = $_POST['A'];
-else
-    $A = NULL;
-
-if (isset($_POST['M1']))
-    $M1 = $_POST['M1'];
-else
-    $M1 = NULL;
-//----
 
 class Sync
 {
@@ -53,13 +30,11 @@ class Sync
         $this->_rawInput = $raw_input;
     }
 
-    private function _isLogged() {
-        if ( !$this->_session->is_logged() ) {
+    private function _checkAuth() {
+        if ( !$this->_session->isLogged() ) {
             header('HTTP/1.1 403 Forbidden');
             print 'Not logged';
-            return false;
-        } else {
-            return true;
+            exit();
         }
     }
 
@@ -71,14 +46,15 @@ class Sync
         // 1 => category
         // 2 => 1
         $URI = explode('/', $this->_URI);
-
+        $URI[0] = '/'.$URI[0];
+        
         switch ($URI[0]) {
 
             /*
                 Authentication process 
                 /authentication
             */    
-            case 'authentication':
+            case '/authentication':
                 $auth = new Authentication($this->_db,$this->_username,$this->_A,$this->_M1);
                 $auth->run();
                 break;
@@ -92,8 +68,8 @@ class Sync
                 GET all passwords in a specific category
                 /passwords/category/:id
             */
-            case 'passwords':
-
+            case '/passwords':
+                $this->_checkAuth();
                 if( isset($URI[1]) && isset($URI[2]) ) {
                     //  /passwords/category/:id
                     $id = $URI[2];
@@ -112,15 +88,16 @@ class Sync
                 GET all categories
                 /categories
             */
-            case 'categories':
+            case '/categories':
+                $this->_checkAuth();
                 $categories = $this->_db->getCategories( $this->_session->getUserid() );
                 $this->_message->setData($categories);
                 $this->_message->send();
                 break;   
 
             // ADD a new password
-            case 'password':
-                print_r($this->_rawInput);
+            case '/password':
+                $this->_checkAuth();
                 $json_a = json_decode($this->_rawInput, true);
                 $id = $this->_db->storeEntry($json_a['data'], $json_a['category_id'], $this->_session->getUserid());
                 $this->_message->setData(array(
@@ -131,7 +108,8 @@ class Sync
                 break;
 
             // ADD a new category
-            case 'category':
+            case '/category':
+                $this->_checkAuth();
                 $json_a = json_decode($this->_rawInput, true);
                 $id = $this->_db->addCategory($json_a['data'], $this->_session->getUserid());
                 $this->_message->setData(array(
@@ -143,23 +121,18 @@ class Sync
 
 
             // Logout
-            case 'logout':
+            case '/logout':
                 $this->_session->logout();
-                header('Location: index.html');
                 break;
 
             // Redirect to main path
             default:
-                header('Location: index.html');
+                //Nothing to do
                 break;
         }
 
     }
 
 }
-
-$sync = new Sync($URI, $username, $A, $M1, $raw_input);
-$sync->run();
-
 
 
