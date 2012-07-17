@@ -15,7 +15,6 @@ class Session
 
     protected function login($username,$userid)
     {
-        session_regenerate_id ();
         $_SESSION['valid'] = True;
         $_SESSION['username'] = $username;
         $_SESSION['userid'] = $userid;
@@ -46,8 +45,8 @@ class Session
     {
         $time = time();
         if( $time - $_SESSION['LAST_ACTIVITY']  <= SESSION_TIMEOUT ) {
-            session_regenerate_id(true);
             $_SESSION['LAST_ACTIVITY'] = $time;
+            session_write_close();
             return True;
         } else {
             $this->logout();
