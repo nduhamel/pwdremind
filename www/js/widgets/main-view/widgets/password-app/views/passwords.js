@@ -38,7 +38,7 @@ define([
             this.collection.on('change', this.onChange, this);
             this.collection.on('remove', this.onRemove, this);
             this.collection.bind('add', this.onAdd, this);
-            this.collection.bind('reset', this.render, this);
+            this.collection.bind('reset', this.onReset, this);
             /*---------------*/
 
             ZeroClipboard.setMoviePath( './media/ZeroClipboard.swf' );
@@ -46,7 +46,6 @@ define([
             this.zeroclip.setHandCursor( true );
 
             this.lastSearch;
-
         },
 
         render : function() {
@@ -66,6 +65,21 @@ define([
             this.$('[data-id="'+model.get('id')+'"]').remove();
         },
 
+        onReset : function (collection) {
+            $tbody = this.$('tbody');
+            $tbody.html('');
+            var rowTemplate = this.rowTemplate;
+            if (_.include(_.functions(collection),'toJSON')) {
+                _.each(collection.toJSON(), function(password){
+                    $tbody.append(rowTemplate( password));
+                });
+            }else{
+                _.each(collection, function(password){
+                    $tbody.append(rowTemplate( password.toJSON()));
+                });
+            }
+        },
+
         onAdd : function (model) {
             this.$('#pwdlist tbody').prepend(this.rowTemplate(model.toJSON()));
         },
@@ -81,30 +95,16 @@ define([
         doSearch : function () {
             var filtered,
                 phrase = this.$(".form-search input").val().toLowerCase().split(" ");
-
             if ( phrase && phrase != this.lastSearch) {
                 this.lastSearch = phrase;
-                filtered = _(this.collection.filter(function(model){
+                filtered = this.collection.filter(function(model){
                     return (has_words(model.get('site'),phrase) || has_words(model.get('login'),phrase));
-                }));
-                this.doFilter(filtered);
+                });
             }else if ( !phrase ){
                 this.lastSearch = '';
-                filtered = this.collection;
-                this.doFilter(filtered);
+                filtered = this.collection.toJSON();
             }
-        },
-
-        doFilter : function (filtered) {
-            filtered = filtered.pluck('id');
-            this.$('tbody tr').each(function(){
-                $this = $(this);
-                if ( _.include(filtered, $this.data('id').toString()) ) {
-                    $this.show();
-                }else{
-                    $this.hide();
-                }
-                });
+            this.onReset(filtered);
         },
 
         doAddModal : function (event) {
