@@ -86,14 +86,14 @@ class Database {
 
     public function get_entries($category_id, $user_id)
     {
-        $req = $this->_db->prepare("SELECT id,data FROM data WHERE user_id = :user_id AND category_id = :category_id");
+        $req = $this->_db->prepare("SELECT id,data, category_id FROM data WHERE user_id = :user_id AND category_id = :category_id");
         $req->execute(array('user_id'=>$user_id, 'category_id'=>$category_id));
         return $req->fetchall(PDO::FETCH_ASSOC);
     }
 
     public function lastest_entries($user_id)
     {
-        $req = $this->_db->prepare("SELECT id,data FROM data WHERE user_id = :user_id");
+        $req = $this->_db->prepare("SELECT id, data, category_id FROM data WHERE user_id = :user_id");
         $req->execute(array('user_id'=>$user_id));
         return $req->fetchall(PDO::FETCH_ASSOC);
     }
@@ -111,10 +111,10 @@ class Database {
         }
     }
 
-    public function update_entry($id,$data, $user_id)
+    public function update_entry($id, $data, $category_id, $user_id)
     {
-        $req = $this->_db->prepare("UPDATE data SET data=:data WHERE id=:id AND user_id=:user_id ");
-        $req->execute(array('data'=>$data,'id'=>$id, 'user_id'=>$user_id));
+        $req = $this->_db->prepare("UPDATE data SET data=:data, category_id=:category_id WHERE id=:id AND user_id=:user_id ");
+        $req->execute(array('data'=>$data,'id'=>$id, 'category_id'=>$category_id, 'user_id'=>$user_id));
         return $id;
     }
 

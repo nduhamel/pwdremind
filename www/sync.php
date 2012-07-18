@@ -81,6 +81,18 @@ $app->post('/password', $authCheck, function () use ($app, $db, $session, $messa
     $message->send();
 });
 
+// ADD new password
+$app->put('/password', $authCheck, function () use ($app, $db, $session, $message){
+    $requestBody = $app->request()->getBody();
+    $json_a = json_decode($requestBody, true);
+    $db->update_entry($json_a['id'], $json_a['data'], $json_a['category_id'], $session->get_userid());
+    $message->setData(array(
+                    'id' => $json_a['id'],
+                    'data' => $json_a['data'],
+                    'category_id' => $json_a['category_id'],
+    ));
+    $message->send();
+});
 //Run the app :)
 $app->run();
 

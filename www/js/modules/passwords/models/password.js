@@ -1,13 +1,13 @@
-define(['backbone', 'backbone_validations'], function(Backbone){
+define(['backbone', 'backbone_validation'], function(Backbone){
 
     var Password = Backbone.Model.extend({
 
         url : './password',
 
-        validate : {
+        validation : {
             site : {
                 required  : true,
-                type: "url",
+                pattern: "url",
             },
             login : {
                 required  : true,
@@ -17,7 +17,6 @@ define(['backbone', 'backbone_validations'], function(Backbone){
             },
             category_id : {
                 required : true,
-                type: "number",
             },
             // TODO maxlength
             //~ notes : {},
@@ -25,9 +24,9 @@ define(['backbone', 'backbone_validations'], function(Backbone){
 
         crypted : ['site', 'login', 'pwd', 'notes'],
 
-        initialize : function () {
-            console.log('Password Constructor');
-        }
+        //~ initialize : function () {
+            //~ console.log('Password Constructor');
+        //~ }
     });
 
     return Password;

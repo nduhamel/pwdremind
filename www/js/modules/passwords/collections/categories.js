@@ -5,9 +5,19 @@ define(['backbone', '../models/category'], function(Backbone, Category){
 
         url : './categories',
 
-        initialize : function() {
-            console.log('Categories collection Constructor');
-        }
+        currentCat : 1,
+
+        setCurrentCatId : function (id) {
+            if (id != this.currentCat) {
+                this.currentCat = id;
+            }
+            return this;
+        },
+
+        getCurrentCatId : function () {
+            return this.currentCat;
+        },
+
     });
 
     return Categories;

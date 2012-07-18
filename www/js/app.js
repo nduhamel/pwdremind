@@ -9,7 +9,7 @@ require.config({
             exports: 'Backbone'
         },
 
-        'backbone_validations' : {
+        'backbone_validation' : {
             deps: ['backbone'],
         },
 
@@ -20,16 +20,22 @@ require.config({
         'bootstrap_modal': {
             deps: ['jquery'],
         },
+
+        'zeroclipboard' : {
+            exports : 'ZeroClipboard',
+        },
     },
 
     paths: {
         // vendor
         backbone: 'lib/backbone',
-        backbone_validations : 'lib/backbone.validations',
+        backbone_validation : 'lib/backbone.validation',
+        backbone_model_binder : 'lib/Backbone.ModelBinder',
         underscore: 'lib/underscore',
         jquery: 'lib/jquery',
         radio: 'lib/radio',
         bootstrap_modal: 'lib/bootstrap-modal',
+        zeroclipboard : 'lib/ZeroClipboard',
 
         // core
         core: 'core/core',
@@ -84,5 +90,5 @@ requirejs([
     });
 
 
-    //core.broadcast('request:login','nicolas','test');
+    core.broadcast('request:login','nicolas','test');
 });

@@ -23,6 +23,7 @@ define([
 
     var onCategoryChange = function (category_id) {
         passwords.setCategoryId(category_id);
+        categories.setCurrentCatId(category_id);
         sandbox.broadcast('category:changed', category_id);
     }
 

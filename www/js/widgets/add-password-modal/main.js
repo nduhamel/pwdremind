@@ -5,6 +5,7 @@ define([
     'sandbox',
     'text!./tpl/base.html',
     'bootstrap_modal',
+    'backbone_model_binder',
 ], function($, _, Backbone, sandbox, baseTpl){
 
     var AddModal = Backbone.View.extend({
@@ -17,16 +18,18 @@ define([
             "click a.close" : "onCancel",
         },
 
-        initialize : function (categories, password) {
+        initialize : function () {
             console.log('Init add modal');
-            this.categories = categories;
-            this.password = password;
-            this.password.bind('error', this.onError, this);
+            this.modelBinder = new Backbone.ModelBinder();
+
+            // If not new save attributes for cancel
+            if (!this.model.isNew()) {
+                this._revertAttributes = this.model.toJSON();
+            }
         },
 
         render : function() {
-            console.log(this.categories);
-            var renderedContent = _.template(baseTpl, {categories : this.categories.toJSON() });
+            var renderedContent = _.template(baseTpl, {categories : this.collection.toJSON()});
             this.$el.append(renderedContent);
 
             this.setElement('#add-modal');
@@ -35,40 +38,34 @@ define([
                 show: true,
                 backdrop: 'static',
                 keyboard: false,
-            }).css({
+            })
+            .css({
                 width: 'auto',
                 'margin-left': function () {
                     return -($(this).width() / 2);
                 }
             });
 
+            Backbone.Validation.bind(this, {forceUpdate: true});
+            this.modelBinder.bind(this.model, this.el);
+
             return this;
         },
 
         destroy : function () {
             this.$el.modal('hide');
+            this.modelBinder.unbind();
+            Backbone.Validation.unbind(this)
+            this.unbind();
             this.remove();
         },
 
         onSubmit : function (event) {
             event.preventDefault();
 
-            // Retrive form data
-            var obj = {};
-            this.$("#addentry").find('input').each(function () {
-                obj[$(this).attr('name')] = $(this).val();
-            })
-            obj.notes = this.$('#addentryNote textarea').val();
-
-            obj.category_id = this.$("#addentry select#category option:selected").data('id');
-
-            // Update model
-            this.password.set(obj);
-
-            if ( this.password.isValid() ) {
-                this.password.save();
-                // TODO wait for saved
-                sandbox.broadcast('add:password', this.password);
+            if (this.model.isValid(true)) {
+                this.model.save();
+                sandbox.broadcast('add:password', this.model);
                 this.destroy();
             }
 
@@ -76,18 +73,10 @@ define([
 
         onCancel : function (event) {
             event.preventDefault();
-            console.log('cancel');
-            if (this.password.isNew()) {
-                this.destroy();
+            if (!this.model.isNew()) {
+                this.model.set(this._revertAttributes);
             }
-        },
-
-        onError : function (model, errs) {
-            _.each( _.keys(errs), function (name) {
-                this.$('input[name='+name+']')
-                    .closest('.control-group')
-                    .addClass('error');
-            }, this);
+            this.destroy();
         },
 
     });
@@ -97,11 +86,13 @@ define([
         PasswordModel;
 
     var addPassword = function () {
-        view = new AddModal(categories, new PasswordModel() );
+        view = new AddModal({collection : categories, model : new PasswordModel({category_id: categories.getCurrentCatId() }) } );
         view.render();
     };
 
-    var editPassword = function () {
+    var editPassword = function (password) {
+        view = new AddModal({collection : categories, model : password });
+        view.render();
     };
 
 
@@ -116,6 +107,7 @@ define([
                     PasswordModel = Password;
                     // Subscribe to request:
                     sandbox.subscribe('request:add-password', addPassword);
+                    sandbox.subscribe('request:edit-password', editPassword);
                 });
             });
 
