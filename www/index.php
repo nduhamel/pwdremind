@@ -6,7 +6,8 @@ $inputs = array();
 $post = array();
 
 //URI Data
-$inputs['URI'] = @str_replace(PATH, '', $_SERVER['REQUEST_URI']);
+$scriptName = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']) ); 
+$inputs['URI'] = substr_replace($_SERVER['REQUEST_URI'], '', 0, strlen($scriptName));
 
 //Method
 // POST PUT GET

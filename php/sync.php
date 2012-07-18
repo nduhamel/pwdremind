@@ -56,6 +56,7 @@ class Sync
         // 1 => category
         // 2 => 1
         $URI = explode('/', $this->_URI);
+        array_shift($URI);
         $URI[0] = '/'.$URI[0];
         
         switch ($URI[0]) {
