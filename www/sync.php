@@ -11,7 +11,7 @@ $session = new SrpSession();
 $message = new Message($session->getKhex());
 $db = new Database();
 
-$app = new Slim(array( 'log.enable' => true, 'log.path' => './errors.log', 'log.level' => 4 ));
+$app = new Slim();
 
 //Check if logged in
 $authCheck = function () use ($app, $session) {
@@ -81,17 +81,29 @@ $app->post('/password', $authCheck, function () use ($app, $db, $session, $messa
     $message->send();
 });
 
-// ADD new password
+// update password
 $app->put('/password', $authCheck, function () use ($app, $db, $session, $message){
     $requestBody = $app->request()->getBody();
     $json_a = json_decode($requestBody, true);
-    $db->updateEntry($json_a['id'], $json_a['data'], $json_a['category_id'], $session->get_userid());
+    $db->updateEntry($json_a['id'], $json_a['data'], $json_a['category_id'], $session->getUserid());
     $message->setData(array(
                     'id' => $json_a['id'],
                     'data' => $json_a['data'],
                     'category_id' => $json_a['category_id'],
     ));
     $message->send();
+});
+
+// delete password
+$app->delete('/password', $authCheck, function () use ($app, $db, $session, $message){
+    $requestBody = $app->request()->getBody();
+    $json_a = json_decode($requestBody, true);
+    $db->deleteEntry($json_a['id'], $session->getUserid());
+    $message->setData(array(
+                    'id' => $json_a['id'],
+    ));
+    $message->send();
+
 });
 
 //Logout

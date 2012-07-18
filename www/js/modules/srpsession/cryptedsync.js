@@ -51,7 +51,7 @@ define(['underscore',
             }
 
             // Ensure that we have the appropriate request data.
-            if (!options.data && model && (method == 'create' || method == 'update')) {
+            if (!options.data && model && (method == 'create' || method == 'update' || method == 'delete')) {
               params.contentType = 'application/json';
 
               var attr = model.toJSON();
@@ -67,10 +67,10 @@ define(['underscore',
               params.data = JSON.stringify( data );
             }
 
-            // Don't process data on a non-GET request.
-            //~ if (params.type !== 'GET') {
-              //~ params.processData = false;
-            //~ }
+            // Don't process data on a DELETE request.
+            if (params.type !== 'DELETE') {
+              params.processData = false;
+            }
 
             // Wrap sucess callback
             var success = options.success;
@@ -80,17 +80,13 @@ define(['underscore',
                 if ( slowEquals(resp.sig, sign(resp.data, macKey)) ){
                     var response_data = JSON.parse(resp.data);
 
-                    if ( response_data.data ){
-                        var tmp = JSON.parse(Crypto.decrypt(key, response_data.data));
-                        _.extend(response_data, tmp);
-                        delete response_data.data;
-                    } else {
-                        _.each(response_data, function (e) {
+                    _.each(response_data, function (e) {
+                        if (e.data) {
                             var tmp = JSON.parse(Crypto.decrypt(key, e.data));
                             _.extend(e, tmp);
                             delete e.data;
-                        });
-                    }
+                        }
+                    });
 
                 } else {
                     //TODO handle error

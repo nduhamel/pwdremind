@@ -64,8 +64,9 @@ define([
             event.preventDefault();
 
             if (this.model.isValid(true)) {
-                this.model.save();
-                sandbox.broadcast('add:password', this.model);
+                this.model.save(null,{success: function (model) {
+                    sandbox.broadcast('add:password', model);
+                }});
                 this.destroy();
             }
 

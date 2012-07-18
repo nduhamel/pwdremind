@@ -122,7 +122,6 @@ class Database {
     {
         $req = $this->_db->prepare("DELETE FROM data WHERE id=:entry_id AND user_id=:user_id ");
         $req->execute(array('entry_id'=>$entry_id, 'user_id'=>$user_id));
-        return $id;
     }
 
     //Return true if the entry exists
