@@ -18,19 +18,21 @@ class Sync
     private $_rawInput;             //Raw input 
     private $_username, $_A, $_M1;  //Login infos
 
-    function __construct($URI, $username, $A, $M1, $raw_input, $method)
+    function __construct($inputs)
     {
         $this->_session = new SrpSession();
         $this->_message = new Message($this->_session->getKhex());
         $this->_db = new Database();
 
-        //Input datas
-        $this->_URI = $URI;
-        $this->_username = $username;
-        $this->_A = $A;
-        $this->_M1 = $M1;
-        $this->_rawInput = $raw_input;
-        $this->_method = $method;
+        //HTTP inputs
+        $this->_URI =       $this->_checkKey('URI', $inputs);
+        $this->_rawInput =  $this->_checkKey('raw_input', $inputs);
+        $this->_method =    $this->_checkKey('method', $inputs);
+
+        //Auth inputs
+        $this->_username =  $this->_checkKey('username', $inputs);
+        $this->_A =         $this->_checkKey('A', $inputs);
+        $this->_M1 =        $this->_checkKey('M1', $inputs);
     }
 
     private function _checkAuth() {
@@ -39,6 +41,11 @@ class Sync
             print 'Not logged';
             exit();
         }
+    }
+
+    //Return NULL if the key does not exist
+    private function _checkKey($key, $array){
+        return array_key_exists($key, $array) ? $array[$key] : NULL;
     }
 
     public function run(){
@@ -115,14 +122,14 @@ class Sync
 
                     //UPDATE
                     case 'PUT':
-                        $this->_db->deleteEntry($json_a['id'], $this->_session->getUserid());
+                        $this->_db->updateEntry($json_a['id'], $json_a['data'], $json_a['category_id'], $this->_session->getUserid());
                         $this->_message->setData(array(
-                                        'id' => $id,
+                                        'id' => $json_a['id'],
                                         'data' => $json_a['data'],
                                         'category_id' => $json_a['category_id'],
                         ));
                         break;
-                        
+
                     //DELETE
                     case 'DELETE':
                         $this->_db->deleteEntry($json_a['id'], $this->_session->getUserid());
@@ -131,6 +138,7 @@ class Sync
                         ));
                         break;
                 }
+                $this->_message->send();
                 break;
 
             // ADD a new category
