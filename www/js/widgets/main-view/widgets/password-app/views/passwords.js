@@ -8,6 +8,17 @@ define([
     'text!../tpl/password.html',
 ], function($, _, Backbone, sandbox, ZeroClipboard, baseTpl, rowTpl) {
 
+    function has_words(text, words) {
+        text = text.toLowerCase();
+        for (var i=0; i < words.length; i++) {
+          if (words[i].charAt(0) == '-') {
+            if (text.indexOf(words[i].substr(1)) != -1) return false; // Negated word must not be in text
+          } else if (text.indexOf(words[i]) == -1) return false; // Normal word must be in text
+        }
+
+        return true;
+    }
+
     var PasswordsView = Backbone.View.extend({
 
         rowTemplate : _.template(rowTpl, null, { variable: 'password'}),
@@ -18,6 +29,7 @@ define([
             "click i[class='icon-pencil']" : 'doEdit',
             "mouseover span[class='copy-username']" : 'doCopyUsername',
             "mouseover span[class='copy-password']" : 'doCopyPassword',
+            "keyup .form-search" : 'onKeyup',
         },
 
         initialize : function() {
@@ -32,6 +44,8 @@ define([
             ZeroClipboard.setMoviePath( './media/ZeroClipboard.swf' );
             this.zeroclip = new ZeroClipboard.Client();
             this.zeroclip.setHandCursor( true );
+
+            this.lastSearch;
 
         },
 
@@ -54,6 +68,43 @@ define([
 
         onAdd : function (model) {
             this.$('#pwdlist tbody').prepend(this.rowTemplate(model.toJSON()));
+        },
+
+        onKeyup : function (event) {
+            if (event.keyCode == 13){
+                this.doSearch();
+            }else{
+                _.throttle(_.bind(this.doSearch, this), 500)();
+            }
+        },
+
+        doSearch : function () {
+            var filtered,
+                phrase = this.$(".form-search input").val().toLowerCase().split(" ");
+
+            if ( phrase && phrase != this.lastSearch) {
+                this.lastSearch = phrase;
+                filtered = _(this.collection.filter(function(model){
+                    return (has_words(model.get('site'),phrase) || has_words(model.get('login'),phrase));
+                }));
+                this.doFilter(filtered);
+            }else if ( !phrase ){
+                this.lastSearch = '';
+                filtered = this.collection;
+                this.doFilter(filtered);
+            }
+        },
+
+        doFilter : function (filtered) {
+            filtered = filtered.pluck('id');
+            this.$('tbody tr').each(function(){
+                $this = $(this);
+                if ( _.include(filtered, $this.data('id').toString()) ) {
+                    $this.show();
+                }else{
+                    $this.hide();
+                }
+                });
         },
 
         doAddModal : function (event) {
