@@ -7,6 +7,10 @@ require_once('../php/sync.php');
 //URI Data
 $URI = str_replace(PATH, '', $_SERVER['REQUEST_URI']);
 
+//Method
+// POST PUT GET
+$method = $_SERVER['REQUEST_METHOD'];
+
 //Raw input for post requests
 $raw_input = @file_get_contents('php://input');
 if ( !$raw_input )
@@ -32,7 +36,7 @@ else
 
 
 //Start sync
-$sync = new Sync($URI, $username, $A, $M1, $raw_input);
+$sync = new Sync($URI, $username, $A, $M1, $raw_input, $method);
 $sync->run();
 
 

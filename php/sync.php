@@ -13,10 +13,12 @@ class Sync
     private $_db;
 
     //Input datas
-    private $_URI;
-    private $_username, $_A, $_M1, $_rawInput;
+    private $_URI;                  //URI - /password/cat/id
+    private $_method;               //GET POST DELETE
+    private $_rawInput;             //Raw input 
+    private $_username, $_A, $_M1;  //Login infos
 
-    function __construct($URI, $username, $A, $M1, $raw_input)
+    function __construct($URI, $username, $A, $M1, $raw_input, $method)
     {
         $this->_session = new SrpSession();
         $this->_message = new Message($this->_session->getKhex());
@@ -28,6 +30,7 @@ class Sync
         $this->_A = $A;
         $this->_M1 = $M1;
         $this->_rawInput = $raw_input;
+        $this->_method = $method;
     }
 
     private function _checkAuth() {
@@ -95,16 +98,39 @@ class Sync
                 $this->_message->send();
                 break;   
 
-            // ADD a new password
+            // ADD | UPDATE | DELETE - password
             case '/password':
                 $this->_checkAuth();
                 $json_a = json_decode($this->_rawInput, true);
-                $id = $this->_db->storeEntry($json_a['data'], $json_a['category_id'], $this->_session->getUserid());
-                $this->_message->setData(array(
-                                'id' => $id,
-                                'data' => $json_a['data'],
-                                'category_id' => $json_a['category_id'],
-                ));
+                switch ($this->_method) {
+                    //ADD
+                    case 'POST':
+                        $id = $this->_db->storeEntry($json_a['data'], $json_a['category_id'], $this->_session->getUserid());
+                        $this->_message->setData(array(
+                                        'id' => $id,
+                                        'data' => $json_a['data'],
+                                        'category_id' => $json_a['category_id'],
+                        ));
+                        break;
+
+                    //UPDATE
+                    case 'PUT':
+                        $this->_db->deleteEntry($json_a['id'], $this->_session->getUserid());
+                        $this->_message->setData(array(
+                                        'id' => $id,
+                                        'data' => $json_a['data'],
+                                        'category_id' => $json_a['category_id'],
+                        ));
+                        break;
+                        
+                    //DELETE
+                    case 'DELETE':
+                        $this->_db->deleteEntry($json_a['id'], $this->_session->getUserid());
+                        $this->_message->setData(array(
+                                        'id' => $json_a['id'],
+                        ));
+                        break;
+                }
                 break;
 
             // ADD a new category
