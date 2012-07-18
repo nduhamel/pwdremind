@@ -21,6 +21,9 @@ define('PDO_PASSWORD','root');
 //Session timeout
 define("SESSION_TIMEOUT", 300);
 
+//Application base path
+define('PATH', '/pwdremind/www/');
+
 //Log
 ini_set("log_errors" , "1");
 ini_set("error_log" , "errors.log");

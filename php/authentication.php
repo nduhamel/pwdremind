@@ -11,7 +11,6 @@ class Authentication
     private $_M1;
     private $_db;
     private $_srp;
-    private $_srpOptions;
 
     public function __construct(Database $db,$username,$A,$M1)
     {
@@ -20,16 +19,15 @@ class Authentication
         $this->_M1 = $M1;
         $this->_db = $db;
         $this->_srp = new Srp();
-        $this->_srpOptions = new SRP_SHA1_256();
     }
 
     //Check if request is valid
-    private function _is_validRequest()
+    private function _isValidRequest()
     {
         $isValid = false;
 
         if ( isset($this->_username) && isset($this->_A) ) {
-            if ( strlen($this->_A)==strlen($this->_srpOptions->Nhex()) && isHex($this->_A)) {
+            if ( strlen($this->_A)==strlen($this->_srp->getNhex()) && isHex($this->_A)) {
                 $isValid = true;
                 if ( isset($this->_M1)) {
                     if (strlen($this->_M1) == 40 && isHex($this->_M1)) { // 40hex digits = 160bits
@@ -45,17 +43,17 @@ class Authentication
 
     public function run()
     {
-        if ( $this->_is_validRequest() ) {
+        if ( $this->_isValidRequest() ) {
 
             //Public key exchange
             if (empty($this->_M1)) {
 
                 //If the user exists in database
-                if ($this->_db->check_username($this->_username)) {
-                    $user_data = $this->_db->get_verifier($this->_username);
+                if ($this->_db->checkUsername($this->_username)) {
+                    $user_data = $this->_db->getVerifier($this->_username);
                     $this->_srp->publicKeyExchange($this->_username,$user_data->id,$user_data->salt,$user_data->verifier,$this->_A );
                 } else {
-                    $this->_srp->NoKeyExchange();
+                    $this->_srp->noKeyExchange();
                 }
 
             } else {
