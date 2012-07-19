@@ -24,9 +24,6 @@ define(['backbone', 'backbone_validation'], function(Backbone){
 
         crypted : ['site', 'login', 'pwd', 'notes'],
 
-        //~ initialize : function () {
-            //~ console.log('Password Constructor');
-        //~ }
     });
 
     return Password;

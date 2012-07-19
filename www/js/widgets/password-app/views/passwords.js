@@ -161,6 +161,5 @@ define([
 
     });
 
-
     return PasswordsView;
 });
