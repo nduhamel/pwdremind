@@ -63,29 +63,41 @@ requirejs([
     'widgets/login-modal/main',
     'widgets/add-password-modal/main',
     'widgets/add-category-modal/main',
-    'widgets/main-view/main',
     'widgets/head-bar/main',
-], function (Backbone, core, srpsession, passwords, loginModal, addPasswordModal, addCategoryModal, mainView, headBar) {
+    'widgets/password-app/main',
+    'widgets/sidebar/main',
+], function (Backbone,
+             core,
+             srpsession,
+             passwords,
+             loginModal,
+             addPasswordModal,
+             addCategoryModal,
+             headBar,
+             passwordApp,
+             sidebar) {
 
     console.log('Starting app');
     core.start(srpsession, './authentication');
 
     core.start(headBar);
     core.start(loginModal);
+    core.start(sidebar);
+    core.start(passwordApp);
 
     core.subscribe('login', function () {
         core.stop(loginModal);
         core.start(passwords);
         core.start(addPasswordModal);
         core.start(addCategoryModal);
-        core.start(mainView);
+        core.broadcast('start:PasswordApp','#main-view-content');
+        core.broadcast('start:SidebarView','#main-view-sidebar');
     });
 
     core.subscribe('logout', function () {
         core.stop(passwords);
         core.stop(addPasswordModal);
         core.stop(addCategoryModal);
-        core.stop(mainView);
         core.start(loginModal);
     });
 

@@ -24,9 +24,36 @@ define([
             this.$el.html('');
         },
 
+        destroy : function () {
+            this.remove();
+        },
+
     });
 
+    var passwordApp;
 
-    return PasswordApp;
+    // Facade
+    return {
+        initialize : function () {
+            console.log('Init PasswordApp');
+
+            sandbox.subscribe('start:PasswordApp', function(el){
+                sandbox.broadcast('request:categories', function(categoriesCollection){
+                    sandbox.broadcast('request:passwords', function(passwordsCollection){
+                        passwordApp = new PasswordApp({el : el, categories : categoriesCollection, passwords : passwordsCollection});
+                        passwordApp.render();
+                    });
+                });
+            });
+        },
+
+        reload : function () {
+            console.log('Reload PasswordApp');
+        },
+
+        destroy : function () {
+            console.log('Destroy PasswordApp');
+        },
+    };
 
 });

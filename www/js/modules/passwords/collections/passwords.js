@@ -6,10 +6,6 @@ define(['backbone', '../models/password'], function(Backbone, Password){
 
         category_id : null,
 
-        initialize : function (models, args) {
-            console.log('Passwords collection Constructor');
-        },
-
         url : function () {
             if (this.category_id) {
                 return './passwords/category/'+this.category_id;
