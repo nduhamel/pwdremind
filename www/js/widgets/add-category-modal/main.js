@@ -5,6 +5,7 @@ define([
     'sandbox',
     'text!./tpl/base.html',
     'bootstrap_modal',
+    'backbone_model_binder',
 ], function($, _, Backbone, sandbox, baseTpl){
 
     var AddCategoryModal = Backbone.View.extend({
@@ -17,6 +18,14 @@ define([
             "click a.close" : "onCancel",
         },
 
+        initialize : function () {
+            this.modelBinder = new Backbone.ModelBinder();
+            // If not new save attributes for cancel
+            if (!this.model.isNew()) {
+                this._revertAttributes = this.model.toJSON();
+            }
+        },
+
         render : function() {
             this.$el.append(_.template(baseTpl));
             this.setElement('#add-category-modal');
@@ -27,33 +36,28 @@ define([
                 keyboard: false,
             })
 
+            Backbone.Validation.bind(this, {forceUpdate: true});
+            this.modelBinder.bind(this.model, this.el);
+
             return this;
         },
 
         destroy : function () {
             this.$el.modal('hide');
+            this.modelBinder.unbind();
+            Backbone.Validation.unbind(this)
+            this.unbind();
             this.remove();
         },
 
         onSubmit : function (event) {
             event.preventDefault();
 
-
-            // Retrive form data
-            var obj = {};
-            this.$('input').each(function () {
-                obj[$(this).attr('name')] = $(this).val();
-            })
-
-            console.log(obj);
-            this.model.set(obj);
-
-            console.log(this.model);
-
-            if ( this.model.isValid() ) {
-                this.model.save();
-                // TODO wait for saved
-                this.collection.add(this.model);
+            if (this.model.isValid(true)) {
+                var collection = this.collection;
+                this.model.save(null, {success: function (model) {
+                    collection.add(model);
+                }});
                 this.destroy();
             }
 
@@ -61,18 +65,10 @@ define([
 
         onCancel : function (event) {
             event.preventDefault();
-            console.log('cancel');
-            if (this.model.isNew()) {
-                this.destroy();
+            if (!this.model.isNew()) {
+                this.model.set(this._revertAttributes);
             }
-        },
-
-        onError : function (model, errs) {
-            _.each( _.keys(errs), function (name) {
-                this.$('input[name='+name+']')
-                    .closest('.control-group')
-                    .addClass('error');
-            }, this);
+            this.destroy();
         },
 
     });

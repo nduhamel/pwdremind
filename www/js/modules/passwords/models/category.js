@@ -1,8 +1,8 @@
-define(['backbone', '../collections/passwords'], function(Backbone, Passwords){
+define(['backbone', 'backbone_validation'], function(Backbone){
 
    var Category = Backbone.Model.extend({
 
-        validate : {
+        validation : {
             name : {
                 required  : true,
             },
