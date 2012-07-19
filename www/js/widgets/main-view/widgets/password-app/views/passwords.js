@@ -45,7 +45,7 @@ define([
             this.zeroclip = new ZeroClipboard.Client();
             this.zeroclip.setHandCursor( true );
 
-            this.lastSearch;
+            this.lastSearch = '';
         },
 
         render : function() {
@@ -81,7 +81,17 @@ define([
         },
 
         onAdd : function (model) {
-            this.$('#pwdlist tbody').prepend(this.rowTemplate(model.toJSON()));
+            var splited;
+            if (this.lastSearch) {
+                console.log('Check filter');
+                splited = this.lastSearch.split();
+                if (has_words(model.get('site'),splited) || has_words(model.get('login'),splited)) {
+                    console.log('Ok add ..');
+                    this.$('#pwdlist tbody').prepend(this.rowTemplate(model.toJSON()));
+                }
+            } else {
+                this.$('#pwdlist tbody').prepend(this.rowTemplate(model.toJSON()));
+            }
         },
 
         onKeyup : function (event) {
@@ -94,15 +104,22 @@ define([
 
         doSearch : function () {
             var filtered,
-                phrase = this.$(".form-search input").val().toLowerCase().split(" ");
+                splited,
+                phrase = this.$(".form-search input").val().toLowerCase().trim();
             if ( phrase && phrase != this.lastSearch) {
+                console.log('phrase');
                 this.lastSearch = phrase;
+                splited = phrase.split(" ");
                 filtered = this.collection.filter(function(model){
-                    return (has_words(model.get('site'),phrase) || has_words(model.get('login'),phrase));
+                    return (has_words(model.get('site'),splited) || has_words(model.get('login'),splited));
                 });
-            }else if ( !phrase ){
+            }else if ( !phrase && this.lastSearch){
+                console.log('not phrase but previous so reset');
                 this.lastSearch = '';
-                filtered = this.collection.toJSON();
+                filtered = this.collection;
+            }else{
+                console.log('no change...');
+                return;
             }
             this.onReset(filtered);
         },
