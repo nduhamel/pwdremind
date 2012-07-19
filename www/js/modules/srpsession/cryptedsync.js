@@ -2,8 +2,9 @@ define(['underscore',
         'backbone',
         './libsrp/sha1',
         './libsrp/bigint',
-        './libsrp/crypto',],
-    function(_, Backbone, SHA1, BigInt, Crypto){
+        './libsrp/crypto',
+        'sandbox',],
+    function(_, Backbone, SHA1, BigInt, Crypto, sandbox){
 
     var getValue = function(object, prop) {
         if (!(object && object[prop])) return null;
@@ -95,6 +96,15 @@ define(['underscore',
                 //~ console.log('Sucess....');
                 //~ console.log(response_data);
                 if (success) success(response_data, status, xhr);
+            };
+
+            var error = options.error;
+            options.error = function (resp, status, xhr) {
+                if (resp.status == 403) {
+                    sandbox.broadcast('logout');
+                }else if (error) {
+                    error(resp, status, xhr);
+                }
             };
 
             // Make the request, allowing the user to override any Ajax options.

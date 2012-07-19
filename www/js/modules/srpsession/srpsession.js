@@ -30,6 +30,9 @@ define([
         console.log('Request logout');
         console.log('Remove crypted sync');
         sandbox.broadcast('logout');
+    };
+
+    srpSession.onLogout = function () {
         Backbone.sync = defaultSync;
     };
 
@@ -42,6 +45,7 @@ define([
             srpSession.authUrl = authUrl;
             sandbox.subscribe('request:login', srpSession.requestLogin, srpSession);
             sandbox.subscribe('request:logout', srpSession.requestLogout, srpSession);
+            sandbox.subscribe('logout', srpSession.onLogout, srpSession);
         },
 
         reload : function () {

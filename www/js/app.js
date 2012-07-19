@@ -85,8 +85,8 @@ requirejs([
     core.start(headBar);
     core.start(loginModal);
     core.start(applications);
-    core.start(sidebar);
     core.start(passwordApp);
+    core.start(sidebar);
 
     core.subscribe('login', function () {
         core.stop(loginModal);
