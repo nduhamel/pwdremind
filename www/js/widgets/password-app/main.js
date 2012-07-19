@@ -37,6 +37,8 @@ define([
         initialize : function () {
             console.log('Init PasswordApp');
 
+            sandbox.broadcast('register:application', {name : 'PasswordApp', label : 'Passwords', icon : 'icon-briefcase', type : 'master'});
+
             sandbox.subscribe('start:PasswordApp', function(el){
                 sandbox.broadcast('request:categories', function(categoriesCollection){
                     sandbox.broadcast('request:passwords', function(passwordsCollection){

@@ -60,6 +60,7 @@ requirejs([
     'core',
     'modules/srpsession/srpsession',
     'modules/passwords/passwords',
+    'modules/applications/main',
     'widgets/login-modal/main',
     'widgets/add-password-modal/main',
     'widgets/add-category-modal/main',
@@ -70,6 +71,7 @@ requirejs([
              core,
              srpsession,
              passwords,
+             applications,
              loginModal,
              addPasswordModal,
              addCategoryModal,
@@ -82,6 +84,7 @@ requirejs([
 
     core.start(headBar);
     core.start(loginModal);
+    core.start(applications);
     core.start(sidebar);
     core.start(passwordApp);
 

@@ -1,46 +1,35 @@
 <div class="well sidebar-nav">
     <ul class="nav nav-list">
 
+    <% if (master.length) { %>
         <li class="nav-header">My stuff</li>
-        <li class="active"><a href="#">
-            <i class="icon-briefcase"></i>
-            Passwords
+        <% _.each(master, function(app) { %>
+        <li><a>
+            <i class="<%=app.icon%>"></i>
+            <%=app.label%>
         </a></li>
-        <li><a href="#">
-            <i class="icon-file"></i>
-            Notes
-        </a></li>
-        <li><a href="#">
-            <i class="icon-tags"></i>
-            Categories
-        </a></li>
+        <% });  %>
+    <% }%>
 
+    <% if (extend.length) { %>
         <li class="nav-header">My Apps</li>
-        <li><a href="#">
-            <i class="icon-resize-full"></i>
-            Visualizer
+        <% _.each(extend, function(app) { %>
+        <li><a>
+            <i class="<%=app.icon%>"></i>
+            <%=app.label%>
         </a></li>
-        <li><a href="#">
-            <i class="icon-warning-sign"></i>
-            Strengh calculator
-        </a></li>
-        <li><a href="#">
-            <i class="icon-share"></i>
-            Exporter
-        </a></li>
+        <% });  %>
+    <% }%>
 
-
+    <% if (setting.length) { %>
         <li class="nav-header">Settings</li>
-        <li><a href="#">
-            <i class="icon-wrench"></i>
-            User settings
+        <% _.each(setting, function(app) { %>
+        <li><a>
+            <i class="<%=app.icon%>"></i>
+            <%=app.label%>
         </a></li>
-
-        <li class="divider"></li>
-        <li><a href="#">
-            <i class="icon-flag"></i>
-            Help
-        </a></li>
+        <% });  %>
+    <% }%>
 
     </ul>
 </div><!--/.well -->
