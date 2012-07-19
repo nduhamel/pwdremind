@@ -9,6 +9,7 @@ define([
 ], function($, _, Backbone, sandbox, ZeroClipboard, baseTpl, rowTpl) {
 
     function has_words(text, words) {
+        words = words.split(" ");
         text = text.toLowerCase();
         for (var i=0; i < words.length; i++) {
           if (words[i].charAt(0) == '-') {
@@ -81,11 +82,9 @@ define([
         },
 
         onAdd : function (model) {
-            var splited;
             if (this.lastSearch) {
                 console.log('Check filter');
-                splited = this.lastSearch.split();
-                if (has_words(model.get('site'),splited) || has_words(model.get('login'),splited)) {
+                if (has_words(model.get('site'),this.lastSearch) || has_words(model.get('login'),this.lastSearch)) {
                     console.log('Ok add ..');
                     this.$('#pwdlist tbody').prepend(this.rowTemplate(model.toJSON()));
                 }
@@ -104,14 +103,12 @@ define([
 
         doSearch : function () {
             var filtered,
-                splited,
                 phrase = this.$(".form-search input").val().toLowerCase().trim();
             if ( phrase && phrase != this.lastSearch) {
                 console.log('phrase');
                 this.lastSearch = phrase;
-                splited = phrase.split(" ");
                 filtered = this.collection.filter(function(model){
-                    return (has_words(model.get('site'),splited) || has_words(model.get('login'),splited));
+                    return (has_words(model.get('site'),phrase) || has_words(model.get('login'),phrase));
                 });
             }else if ( !phrase && this.lastSearch){
                 console.log('not phrase but previous so reset');
