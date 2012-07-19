@@ -6,7 +6,7 @@ require_once('authentication.php');
 require_once('router.php');
 require_once('../config.php');
 
-class Sync
+class App
 {
     //Input datas
     private $_URI;                  //URI - /password/cat/id
@@ -42,11 +42,13 @@ class Sync
 
     public function run() {
 
+        //Objects
         $session = new SrpSession();
         $message = new Message($session->getKhex());
         $db = new Database();
         $auth = new Authentication($db, $this->_username, $this->_A, $this->_M1);
 
+        //Http cleaned infos
         $URI = $this->_URI;
         $rawInput = json_decode($this->_rawInput, true);
         $method = $this->_method;

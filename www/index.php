@@ -1,5 +1,5 @@
 <?php
-require_once('../php/sync.php');
+require_once('../php/app.php');
 
 //Empty arrays
 $inputs = array();
@@ -23,9 +23,9 @@ $inputs['raw_input'] = @file_get_contents('php://input');
 $inputs = array_merge($inputs,$post);
 
 
-//Start sync
-$sync = new Sync($inputs);
-$sync->run();
+//Start the app
+$app = new App($inputs);
+$app->run();
 
 
 
