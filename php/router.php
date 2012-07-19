@@ -20,8 +20,9 @@ class Router
 		$this->_matchingRoutes = array();
 	}
 
-	public function addRoute($method, $pattern, $function) {
-		array_push($this->_routes, new Route($method, $pattern, $function));
+	public function addRoute() {
+		$args = func_get_args();
+		array_push($this->_routes, new Route($args));
 	}
 
 	//Starting the router with the HTTP infos

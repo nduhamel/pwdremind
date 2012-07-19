@@ -3,17 +3,22 @@
 class Route
 {
 	
-	private $_method;	// HTTP Method - POST | PUT | GET | DELETE
-	private $_pattern;	// Pattern to match (ie. '/user/profile/[id]')
-	private $_function; // Function to call 
-	private $_param; 	// Parameter for the function
+	private $_method;				// HTTP Method - POST | PUT | GET | DELETE
+	private $_pattern;				// Pattern to match (ie. '/user/profile/[id]')
+	private $_optionalFunctions; 	// Optional functions to execute
+	private $_function; 			// Function to call 
+	private $_param; 				// Parameter for the function
 
-	function __construct($method, $pattern,$function)
+	// args = method, pettern, optional functions, function
+	function __construct($args)
 	{
-		$this->_method = $method;
-		$this->_pattern = $pattern;
-		$this->_function = $function;
+		$this->_method = array_shift($args);
+		$this->_pattern = array_shift($args);
+		$this->_function = array_pop($args);
+		$this->_optionalFunctions = $args;
 		$this->_param = array();
+
+		//print_r($this->_optionalFunctions);
 	}
 
 	public function methodMatches($method) {
@@ -56,6 +61,13 @@ class Route
 
 	public function run() {
 
+		//Run the optional functions
+		foreach ($this->_optionalFunctions as $function) {
+			if (is_callable($function))
+				call_user_func($function);
+		}
+
+		//Run the main function
 		if (is_callable($this->_function)) {
 		    call_user_func_array($this->_function, array_values($this->_param));
 		    return true;
