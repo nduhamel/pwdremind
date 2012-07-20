@@ -11,7 +11,7 @@ class App
     //Input datas
     private $_URI;                  //URI - /password/cat/id
     private $_method;               //GET POST DELETE
-    private $_rawInput;             //Raw input 
+    private $_rawInput, $_sig;      //Raw input 
     private $_username, $_A, $_M1;  //Login infos
 
     function __construct($inputs)
@@ -25,6 +25,15 @@ class App
         $this->_username =  $this->_checkKey('username', $inputs);
         $this->_A =         $this->_checkKey('A', $inputs);
         $this->_M1 =        $this->_checkKey('M1', $inputs);
+
+        $rawInputs = json_decode($this->_rawInput, true);
+        if ( is_array($rawInputs) && array_key_exists('sig', $rawInputs) ) { 
+            $this->_rawInput = $this->_checkKey('data', $rawInputs);
+            $this->_sig = $this->_checkKey('sig', $rawInputs);
+            $this->_rawInput = json_decode($this->_rawInput, true);
+        } else {
+            $this->_sig = NULL;
+        }
     }
 
     //Return NULL if the key does not exist
@@ -42,7 +51,10 @@ class App
 
         //Http cleaned infos
         $URI = $this->_URI;
-        $rawInput = json_decode($this->_rawInput, true);
+
+        // Inputs
+        $rawInput = $this->_rawInput;
+        $sig = $this->_sig;
         $method = $this->_method;
 
         //Start the router
