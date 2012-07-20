@@ -64,8 +64,11 @@ define(['underscore',
               } else {
                   var data = attr;
               }
+              //Sign data
+              var JSONdata = JSON.stringify(data);
+              var sig = sign(JSONdata, macKey);
 
-              params.data = JSON.stringify( data );
+              params.data = JSON.stringify( {data:JSONdata, sig: sig} );
             }
 
             // Don't process data on a DELETE request.
