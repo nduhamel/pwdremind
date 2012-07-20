@@ -66,7 +66,7 @@
         $req = "CREATE TABLE data (
                 id INTEGER PRIMARY KEY AUTO_INCREMENT,
                 data TEXT,
-                category_id NT NOT NULL,
+                category_id INT NOT NULL,
                 user_id INT NOT NULL)";
         $db->query($req);
         fwrite(STDOUT,"Data table created!\n");
