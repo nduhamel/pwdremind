@@ -67,6 +67,7 @@ requirejs([
     'widgets/head-bar/main',
     'widgets/password-app/main',
     'widgets/sidebar/main',
+    'widgets/notify/main',
 ], function (Backbone,
              core,
              srpsession,
@@ -77,12 +78,14 @@ requirejs([
              addCategoryModal,
              headBar,
              passwordApp,
-             sidebar) {
+             sidebar,
+             notify) {
 
     console.log('Starting app');
     core.start(srpsession, './authentication');
 
     core.start(headBar);
+    core.start(notify);
     core.start(loginModal);
     core.start(applications);
     core.start(passwordApp);
@@ -93,6 +96,7 @@ requirejs([
         core.start(passwords);
         core.start(addPasswordModal);
         core.start(addCategoryModal);
+        core.broadcast('start:Notify');
         core.broadcast('start:PasswordApp','#main-view-content');
         core.broadcast('start:SidebarView','#main-view-sidebar');
     });
