@@ -10,6 +10,7 @@ class Router
 
 	private $_routes;
 	private $_matchingRoutes;
+	private $_defaultRoute;
 	
 	function __construct()
 	{
@@ -18,11 +19,18 @@ class Router
 
 		//Contains the matching routes
 		$this->_matchingRoutes = array();
+
+		$this->_defaultRoute = NULL;
 	}
 
 	public function addRoute() {
 		$args = func_get_args();
 		array_push($this->_routes, new Route($args));
+	}
+
+	// If nothing match the default route apply
+	public function setDefaultRoute($route) {
+		$this->_defaultRoute = $route;
 	}
 
 	//Starting the router with the HTTP infos
@@ -34,9 +42,16 @@ class Router
 		//In previous matching routes find the ones matching the pattern
 		$this->_findMatchingPattern($this->_matchingRoutes, $URI);
 
-		//Run the matching routes
-		foreach ($this->_matchingRoutes as $route) {
-			$route->run();
+		if (count($this->_matchingRoutes) == 0) {
+			//If no route match
+			if ( !is_null($this->_matchingRoutes) )
+				header('Location: '.$this->_defaultRoute);
+
+		} else {
+			//Run the matching routes
+			foreach ($this->_matchingRoutes as $route) {
+				$route->run();
+			}
 		}
 
 	}
