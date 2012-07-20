@@ -4,6 +4,7 @@ require_once('srpsession.php');
 require_once('message.php');
 require_once('authentication.php');
 require_once('router.php');
+require_once('hermetic/crypto_util.php');
 require_once('../config.php');
 
 class App
@@ -13,6 +14,8 @@ class App
     private $_method;               //GET POST DELETE
     private $_rawInput, $_sig;      //Raw input 
     private $_username, $_A, $_M1;  //Login infos
+
+    private $_session;
 
     function __construct($inputs)
     {
@@ -26,11 +29,22 @@ class App
         $this->_A =         $this->_checkKey('A', $inputs);
         $this->_M1 =        $this->_checkKey('M1', $inputs);
 
+        $this->_session = new SrpSession();
+
         $rawInputs = json_decode($this->_rawInput, true);
         if ( is_array($rawInputs) && array_key_exists('sig', $rawInputs) ) { 
             $this->_rawInput = $this->_checkKey('data', $rawInputs);
+
+            //Checking the signatures
+            $calculatedSig = $this->_sign($this->_rawInput, $this->_session->getKhex());
             $this->_sig = $this->_checkKey('sig', $rawInputs);
-            $this->_rawInput = json_decode($this->_rawInput, true);
+            if ($calculatedSig == $this->_sig) {
+                $this->_rawInput = json_decode($this->_rawInput, true);
+            } else {
+                header('HTTP/1.1 400 Bad Request');
+                print 'Checksum error!';
+                exit();
+            }
         } else {
             $this->_sig = NULL;
         }
@@ -41,10 +55,15 @@ class App
         return array_key_exists($key, $array) ? $array[$key] : NULL;
     }
 
+    private function _sign($data, $key) {
+        $key = substr($key,32,40);
+        return hmac($key, $data);
+    }
+
     public function run() {
 
         //Objects
-        $session = new SrpSession();
+        $session = $this->_session;
         $message = new Message($session->getKhex());
         $db = new Database();
         $auth = new Authentication($db, $this->_username, $this->_A, $this->_M1);
