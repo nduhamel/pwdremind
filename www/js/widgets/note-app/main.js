@@ -20,13 +20,12 @@ define([
             return this;
         },
 
-        remove : function () {
+        destroy : function () {
+            this.unbind();
+            this.categoriesView.destroy();
+            this.notesView.destroy();
             this.$el.html('');
         },
-
-        destroy : function () {
-            this.remove();
-        }
 
     });
 
@@ -42,8 +41,12 @@ define([
             sandbox.subscribe('start:NoteApp', function(el){
                 sandbox.broadcast('request:noteCategories', function(categoriesCollection){
                     sandbox.broadcast('request:notes', function(notesCollection){
-                        NoteApp = new NoteApp({el : el, categories : categoriesCollection, notes : notesCollection});
-                        NoteApp.render();
+                        noteApp = new NoteApp({el : el, categories : categoriesCollection, notes : notesCollection});
+                        noteApp.render();
+                        sandbox.subscribe('stop:NoteApp', function () {
+                            noteApp.destroy();
+                            delete noteApp;
+                        });
                     });
                 });
             });

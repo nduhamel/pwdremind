@@ -54,7 +54,9 @@ define([
             return this;
         },
 
-        remove : function () {
+        destroy : function () {
+            this.unbind();
+            this.zeroclip = undefined;
             this.$el.html('');
         },
 

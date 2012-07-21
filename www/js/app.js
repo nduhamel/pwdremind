@@ -94,27 +94,25 @@ requirejs([
     core.start(loginModal);
     core.start(applications);
     core.start(passwordApp);
-    //core.start(noteApp);
+    core.start(noteApp);
     core.start(sidebar);
 
     core.subscribe('login', function () {
         core.stop(loginModal);
         core.start(passwords);
-        //core.start(notes);
+        core.start(notes);
         core.start(addPasswordModal);
-        //core.start(addNoteModal);
+        core.start(addNoteModal);
         core.start(addCategoryModal);
         core.broadcast('start:Notify');
-        core.broadcast('start:PasswordApp','#main-view-content');
-        //core.broadcast('start:NoteApp','#main-view-content');
         core.broadcast('start:SidebarView','#main-view-sidebar');
     });
 
     core.subscribe('logout', function () {
         core.stop(passwords);
         core.stop(addPasswordModal);
-        //core.stop(notes);
-        //core.stop(addNoteModal);
+        core.stop(notes);
+        core.stop(addNoteModal);
         core.stop(addCategoryModal);
         core.start(loginModal);
     });

@@ -34,7 +34,8 @@ define([
             return this;
         },
 
-        remove : function () {
+        destroy : function () {
+            this.unbind();
             this.$el.html('');
         },
 

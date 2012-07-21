@@ -20,12 +20,11 @@ define([
             return this;
         },
 
-        remove : function () {
-            this.$el.html('');
-        },
-
         destroy : function () {
-            this.remove();
+            this.unbind();
+            this.categoriesView.destroy();
+            this.passwordsView.destroy();
+            this.$el.html('');
         },
 
     });
@@ -44,6 +43,10 @@ define([
                     sandbox.broadcast('request:passwords', function(passwordsCollection){
                         passwordApp = new PasswordApp({el : el, categories : categoriesCollection, passwords : passwordsCollection});
                         passwordApp.render();
+                        sandbox.subscribe('stop:PasswordApp', function () {
+                            passwordApp.destroy();
+                            delete passwordApp;
+                        });
                     });
                 });
             });

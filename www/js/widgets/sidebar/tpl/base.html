@@ -4,7 +4,7 @@
     <% if (master.length) { %>
         <li class="nav-header">My stuff</li>
         <% _.each(master, function(app) { %>
-        <li><a>
+        <li><a name="<%=app.name%>">
             <i class="<%=app.icon%>"></i>
             <%=app.label%>
         </a></li>
@@ -14,7 +14,7 @@
     <% if (extend.length) { %>
         <li class="nav-header">My Apps</li>
         <% _.each(extend, function(app) { %>
-        <li><a>
+        <li><a name="<%=app.name%>">
             <i class="<%=app.icon%>"></i>
             <%=app.label%>
         </a></li>
@@ -24,7 +24,7 @@
     <% if (setting.length) { %>
         <li class="nav-header">Settings</li>
         <% _.each(setting, function(app) { %>
-        <li><a>
+        <li><a name="<%=app.name%>">
             <i class="<%=app.icon%>"></i>
             <%=app.label%>
         </a></li>
