@@ -15,6 +15,7 @@
         $req = "CREATE TABLE data (
                 id SERIAL PRIMARY KEY AUTO_INCREMENT,
                 data TEXT,
+                type_id INT NOT NULL,
                 category_id INT NOT NULL,
                 user_id INT NOT NULL)";
         $db->query($req);
@@ -40,6 +41,7 @@
         $req = "CREATE TABLE data (
                 id INTEGER PRIMARY KEY,
                 data TEXT,
+                type_id INT NOT NULL,
                 category_id INT NOT NULL,
                 user_id INT NOT NULL)";
         $db->query($req);
@@ -66,6 +68,7 @@
         $req = "CREATE TABLE data (
                 id INTEGER PRIMARY KEY AUTO_INCREMENT,
                 data TEXT,
+                type_id INT NOT NULL,
                 category_id INT NOT NULL,
                 user_id INT NOT NULL)";
         $db->query($req);
