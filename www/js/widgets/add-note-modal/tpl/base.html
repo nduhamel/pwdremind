@@ -1,0 +1,54 @@
+<div id="add-modal" class="modal hide fade">
+    <div class="modal-header">
+        <a class="close">&times;</a>
+        <h3>Ajouter</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+        <div class="span6">
+            <form action="" class="form-horizontal">
+                <fieldset>
+
+                    <div class="control-group">
+                        <label class="control-label" for="name">Nom</label>
+                        <div class="controls">
+                            <input type="text" name="name"/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="category">Categorie</label>
+                        <div class="controls">
+                            <select name="category_id">
+                            <% _.each(categories, function(category) {%>
+                                <option value="<%=category.id%>"><%=category.name%></option>
+                            <% }); %>
+                            </select>
+                        </div>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+        
+        <div class="span4">
+            <form action="">
+            <fieldset>
+                <div class="control-group">
+                    <div class="controls">
+                        <textarea name="notes" rows="6" placeholder="Notes..."></textarea>
+                    </div>
+                </div>
+            </fieldset>
+            </form>
+        </div>
+
+
+            </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="cancel" class="btn">Annuler</button>
+        <button type="submit" class="btn btn-primary">Sauvegarder</button>
+    </div>
+</div>

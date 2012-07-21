@@ -10,7 +10,7 @@ require.config({
         },
 
         'backbone_validation' : {
-            deps: ['backbone'],
+            deps: ['backbone']
         },
 
         'radio': {
@@ -18,12 +18,12 @@ require.config({
         },
 
         'bootstrap_modal': {
-            deps: ['jquery'],
+            deps: ['jquery']
         },
 
         'zeroclipboard' : {
-            exports : 'ZeroClipboard',
-        },
+            exports : 'ZeroClipboard'
+        }
     },
 
     paths: {
@@ -39,8 +39,7 @@ require.config({
 
         // core
         core: 'core/core',
-        sandbox: 'core/sandbox',
-
+        sandbox: 'core/sandbox'
 
     }
 
@@ -60,24 +59,30 @@ requirejs([
     'core',
     'modules/srpsession/srpsession',
     'modules/passwords/passwords',
+    'modules/notes/notes',
     'modules/applications/main',
     'widgets/login-modal/main',
     'widgets/add-password-modal/main',
     'widgets/add-category-modal/main',
+    'widgets/add-note-modal/main',
     'widgets/head-bar/main',
     'widgets/password-app/main',
+    'widgets/note-app/main',
     'widgets/sidebar/main',
-    'widgets/notify/main',
+    'widgets/notify/main'
 ], function (Backbone,
              core,
              srpsession,
              passwords,
+             notes,
              applications,
              loginModal,
              addPasswordModal,
              addCategoryModal,
+             addNoteModal,
              headBar,
              passwordApp,
+             noteApp,
              sidebar,
              notify) {
 
@@ -89,21 +94,27 @@ requirejs([
     core.start(loginModal);
     core.start(applications);
     core.start(passwordApp);
+    //core.start(noteApp);
     core.start(sidebar);
 
     core.subscribe('login', function () {
         core.stop(loginModal);
         core.start(passwords);
+        //core.start(notes);
         core.start(addPasswordModal);
+        //core.start(addNoteModal);
         core.start(addCategoryModal);
         core.broadcast('start:Notify');
         core.broadcast('start:PasswordApp','#main-view-content');
+        //core.broadcast('start:NoteApp','#main-view-content');
         core.broadcast('start:SidebarView','#main-view-sidebar');
     });
 
     core.subscribe('logout', function () {
         core.stop(passwords);
         core.stop(addPasswordModal);
+        //core.stop(notes);
+        //core.stop(addNoteModal);
         core.stop(addCategoryModal);
         core.start(loginModal);
     });

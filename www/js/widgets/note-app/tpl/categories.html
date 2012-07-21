@@ -1,0 +1,10 @@
+<p>
+    <ul class="nav nav-pills">
+        <li <% if (!currentCategory) {%> class="active" <%}%>><a href="">Derniers</a></li>
+        <%  _.each(categories, function(category) { %>
+        <li <% if (category.id == currentCategory) {%> class="active" <%}%>><a href="" name="<%=category.id%>"><%= category.name %></a></li>
+        <% }); %>
+        <li><a href="" name="add"><i class="icon-plus"></i></a></li>
+    </ul>
+</p>
+<hr>

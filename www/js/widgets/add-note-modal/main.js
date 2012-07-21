@@ -8,7 +8,7 @@ define([
     'backbone_model_binder'
 ], function($, _, Backbone, sandbox, baseTpl){
 
-    var AddCategoryModal = Backbone.View.extend({
+    var AddModal = Backbone.View.extend({
 
         el : 'body',
 
@@ -19,7 +19,9 @@ define([
         },
 
         initialize : function () {
+            console.log('Init add note modal');
             this.modelBinder = new Backbone.ModelBinder();
+
             // If not new save attributes for cancel
             if (!this.model.isNew()) {
                 this._revertAttributes = this.model.toJSON();
@@ -27,13 +29,21 @@ define([
         },
 
         render : function() {
-            this.$el.append(_.template(baseTpl));
-            this.setElement('#add-category-modal');
+            var renderedContent = _.template(baseTpl, {categories : this.collection.toJSON()});
+            this.$el.append(renderedContent);
+
+            this.setElement('#add-modal');
 
             this.$el.modal({
                 show: true,
                 backdrop: 'static',
                 keyboard: false
+            })
+            .css({
+                width: 'auto',
+                'margin-left': function () {
+                    return -($(this).width() / 2);
+                }
             });
 
             Backbone.Validation.bind(this, {forceUpdate: true});
@@ -52,11 +62,12 @@ define([
 
         onSubmit : function (event) {
             event.preventDefault();
-
+            console.log('Submitted');
+            console.log(this.model);
+            console.log(this.model.isValid(true));
             if (this.model.isValid(true)) {
-                var collection = this.collection;
-                this.model.save(null, {success: function (model) {
-                    collection.add(model);
+                this.model.save(null,{success: function (model) {
+                    sandbox.broadcast('add:note', model);
                 }});
                 this.destroy();
             }
@@ -74,39 +85,51 @@ define([
     });
 
     var view,
-        categories;
+        categories,
+        NoteModel;
 
-    var addCategory= function () {
-        view = new AddCategoryModal({collection : categories, model : new categories.model() } );
+    var addNote = function () {
+        view = new AddModal({collection : categories, model : new NoteModel({category_id: categories.getCurrentCatId() }) } );
         view.render();
     };
+
+    var editNote = function (note) {
+        view = new AddModal({collection : categories, model : note });
+        view.render();
+    };
+
 
     // Facade
     return {
         initialize : function () {
-            console.log('Init Add Category Modal Widget');
+            console.log('Init Add Note Modal Widget');
 
-            sandbox.broadcast('request:categories', function(categoriesCollection){
-                categories = categoriesCollection;
-                // Subscribe to request:
-                sandbox.subscribe('request:add-category', addCategory);
+            sandbox.broadcast('request:noteCategories', function(categoriesCollection){
+                sandbox.broadcast('request:Note', function(Note){
+                    categories = categoriesCollection;
+                    NoteModel = Note;
+                    // Subscribe to request:
+                    sandbox.subscribe('request:add-note', addNote);
+                    sandbox.subscribe('request:edit-note', editNote);
+                });
             });
 
         },
 
         reload : function () {
-            console.log('Reload Add Modal Widget');
+            console.log('Reload Add Note Modal Widget');
             destroy();
             initialize();
         },
 
         destroy : function () {
-            console.log('Destroy Add Modal Widget');
+            console.log('Destroy Add Note Modal Widget');
             if (view) {
                 view.destroy();
             }
             view = null;
             categories = null;
+            NoteModel = null;
         }
     };
 });

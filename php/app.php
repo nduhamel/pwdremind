@@ -167,6 +167,31 @@ class App
             $message->send();
         });
 
+        // ADD a new note
+        $router->addRoute('POST', '/note', $authCheck, function() use ($db, $message, $session, $rawInput) {
+            $id = $db->storeEntry($rawInput['data'], App::NOTE, $rawInput['category_id'], $session->getUserid());
+            $message->setData(array(
+                            'id' => $id,
+                            'data' => $rawInput['data'],
+                            'category_id' => $rawInput['category_id'],
+            ));
+            $message->send();
+        });
+
+        // GET all lastest notes
+        $router->addRoute('GET', '/notes', $authCheck, function() use ($db, $message, $session) {
+            $entries = $db->lastestEntries(App::NOTE, $session->getUserid());
+            $message->setData($entries);
+            $message->send();
+        });        
+
+        // GET notes in a specific category
+        $router->addRoute('GET', '/notes/category/:id', $authCheck, function($id) use ($db, $message, $session) {
+            $entries = $db->getEntries(App::NOTE, $id, $session->getUserid());
+            $message->setData($entries);
+            $message->send();
+        }); 
+
         // Logout
         $router->addRoute('GET', '/logout', $authCheck, function() use ($session) {
             $session->logout();
