@@ -68,7 +68,7 @@ define([
         var view;
 
         return {
-            meta : {startAfter: 'bootstrap', stopAfter: 'login'},
+            meta : {startOn: 'bootstrap', stopOn: 'login:after'},
 
             start : function () {
                 view = new LoginModal();

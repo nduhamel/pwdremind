@@ -65,18 +65,12 @@ define(['radio', 'underscore'], function(radio, _){
                         obj.startWidget(name);
                     });
                 }
-                if (_.has(instance.meta, 'startAfter')){
-                    obj.subscribe(instance.meta.startAfter+':after',function(){
-                        obj.startWidget(name);
-                    });
-                }
-                if (_.has(instance.meta, 'stopAfter')) {
-                    obj.subscribe(instance.meta.stopAfter+':after',function(){
+                if (_.has(instance.meta, 'stopOn')) {
+                    obj.subscribe(instance.meta.stopOn,function(){
                         obj.stopWidget(name);
                     });
                 }
                 if (_.has(instance.meta, 'type') && instance.meta.type === 'application') {
-                    console.log('application!!');
                     obj.broadcast('register:application', name, instance.meta);
                 }
                 return true

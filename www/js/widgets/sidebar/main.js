@@ -68,7 +68,7 @@ define([
 
         return {
 
-            meta : {startAfter: 'login'},
+            meta : {startOn: 'login:after'},
 
             start : function () {
                 console.log('Start sidebar');

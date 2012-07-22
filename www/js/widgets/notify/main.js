@@ -66,7 +66,7 @@ define([
         var notify;
 
         return {
-            meta : {startAfter:'bootstrap'},
+            meta : {startOn:'bootstrap'},
 
             start : function (el) {
                 notify = new Notify();

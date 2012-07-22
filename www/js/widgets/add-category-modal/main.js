@@ -82,7 +82,7 @@ define([
         };
 
         return {
-            meta : {startAfter: 'login'},
+            meta : {startOn: 'login:after'},
 
             start : function () {
                 sandbox.subscribe('request:add-category', addCategory);
