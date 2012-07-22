@@ -26,9 +26,9 @@ define([
 
         render : function() {
             var JSON = this.collection.toJSON();
-            var master = _.filter(JSON, function (model){return model.type == 'master';});
-            var extend = _.filter(JSON, function (model){return model.type == 'extend';});
-            var setting = _.filter(JSON, function (model){return model.type == 'setting';});
+            var master = _.filter(JSON, function (model){return model.cat == 'master';});
+            var extend = _.filter(JSON, function (model){return model.cat == 'extend';});
+            var setting = _.filter(JSON, function (model){return model.cat == 'setting';});
 
             var renderedContent = _.template(baseTpl, {master:master, extend:extend, setting:setting});
             this.$el.html(renderedContent);
@@ -47,11 +47,11 @@ define([
                 if (this.startedAppName === appName) {
                     return;
                 } else {
-                    sandbox.broadcast('stop:'+this.startedAppName);
+                    sandbox.stopWidget(this.startedAppName);
                     this.$('a[name="'+this.startedAppName+'"]').closest('li').removeClass("active");
                 }
             }
-            sandbox.broadcast('start:'+appName,'#main-view-content');
+            sandbox.startWidget(appName,'#main-view-content');
             this.$('a[name="'+appName+'"]').closest('li').addClass("active");
             this.startedAppName = appName;
         },
@@ -67,10 +67,12 @@ define([
         var sidebarView;
 
         return {
-            meta : {},
 
-            start : function (el) {
-                sidebarView = new SidebarView({el:el,collection:applications});
+            meta : {startAfter: 'login'},
+
+            start : function () {
+                console.log('Start sidebar');
+                sidebarView = new SidebarView({el:'#main-view-sidebar',collection:applications});
                 sidebarView.render();
             },
 

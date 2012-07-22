@@ -54,12 +54,31 @@ define(['radio', 'underscore'], function(radio, _){
             widget = getWidget(name);
 
         deps = getDeps(widget.deps);
-
         if (deps) {
             instance = widget.callback.apply(null, deps);
-            if (checkWidgetAPI) {
+            if (checkWidgetAPI(instance)) {
+                console.log('Init: '+name);
                 widget.instance = instance;
                 widget.status = 'init';
+                if (_.has(instance.meta, 'startOn')){
+                    obj.subscribe(instance.meta.startOn,function(){
+                        obj.startWidget(name);
+                    });
+                }
+                if (_.has(instance.meta, 'startAfter')){
+                    obj.subscribe(instance.meta.startAfter+':after',function(){
+                        obj.startWidget(name);
+                    });
+                }
+                if (_.has(instance.meta, 'stopAfter')) {
+                    obj.subscribe(instance.meta.stopAfter+':after',function(){
+                        obj.stopWidget(name);
+                    });
+                }
+                if (_.has(instance.meta, 'type') && instance.meta.type === 'application') {
+                    console.log('application!!');
+                    obj.broadcast('register:application', name, instance.meta);
+                }
                 return true
             }
         }
@@ -74,6 +93,8 @@ define(['radio', 'underscore'], function(radio, _){
         var ch = radio(channel),
             args = Array.prototype.slice.call(arguments);
         args.shift();
+        ch.broadcast.apply(ch,args);
+        ch = radio(channel+':after');
         ch.broadcast.apply(ch,args);
     };
 
@@ -100,13 +121,21 @@ define(['radio', 'underscore'], function(radio, _){
         }else if (_.include(_.keys(registeredDeps), name)){
             throw "dependency already registered";
         }
-
         registeredDeps[name] = callback;
 
         // Check for widget which can be started
+        _.each(registeredWidgets, function(widget, name){
+            var deps;
+            if (widget.status === 'registered') {
+                deps = getDeps(widget.deps);
+                if (deps) {
+                    tryIniWidget(name);
+                }
+            }
+        });
     };
 
-    obj.defineWidget = function (name, options, deps, callback) {
+    obj.defineWidget = function (name, deps, callback) {
         var missed,
             widget = {};
 
@@ -117,31 +146,13 @@ define(['radio', 'underscore'], function(radio, _){
             throw "Name already registered"
         }
 
-        //options is optional
-        //all:
-        if (_.isObject(options) && _.isArray(deps) && _.isFunction(callback)){
-        //no options but deps and callback:
-        } else if ( _.isArray(options) && _.isFunction(deps)) {
-            console.log("no options but deps and callback");
-            deps = options;
-            callback = deps;
-            options = {};
-        //options but no deps:
-        } else if (_.isObject(options) && !_.isArray(options) && _.isFunction(deps) ){
-            console.log("");
+        //This module may not have dependencies
+        if (!_.isArray(deps)) {
             callback = deps;
             deps = [];
-        //no options and no deps:
-        } else if (_.isFunction(options)) {
-            console.log("no options and no deps");
-            callback = options;
-            options = {};
-            deps = [];
-        } else {
-            throw 'Invalid arguments';
         }
 
-        widget = {callback:callback, deps:deps, status:'registered', instance: null, options:options};
+        widget = {callback:callback, deps:deps, status:'registered', instance: null};
         registeredWidgets[name] = widget;
 
         tryIniWidget(name);
@@ -170,7 +181,8 @@ define(['radio', 'underscore'], function(radio, _){
         var widget = getWidget(name),
             args = _.toArray(arguments).slice(1);
 
-        widget.stop.apply(widget,args);
+        widget.instance.stop.apply(widget,args);
+        widget.status = 'stoped';
     };
 
     obj.destroyWidget = function (name) {

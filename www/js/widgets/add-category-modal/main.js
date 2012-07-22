@@ -73,40 +73,31 @@ define([
 
     });
 
-    var view,
-        categories;
+    sandbox.defineWidget('CategoryModal', ['passwordCategories'], function(categories){
+        var view;
 
-    var addCategory= function () {
-        view = new AddCategoryModal({collection : categories, model : new categories.model() } );
-        view.render();
-    };
+        var addCategory= function () {
+            view = new AddCategoryModal({collection : categories, model : new categories.model() } );
+            view.render();
+        };
 
-    // Facade
-    return {
-        initialize : function () {
-            console.log('Init Add Category Modal Widget');
+        return {
+            meta : {startAfter: 'login'},
 
-            sandbox.broadcast('request:categories', function(categoriesCollection){
-                categories = categoriesCollection;
-                // Subscribe to request:
+            start : function () {
                 sandbox.subscribe('request:add-category', addCategory);
-            });
+            },
 
-        },
+            stop : function () {
+                sandbox.unsibscribe('request:add-category',addCategory);
+                if (view) {
+                    view.destroy();
+                }
+            },
 
-        reload : function () {
-            console.log('Reload Add Modal Widget');
-            destroy();
-            initialize();
-        },
-
-        destroy : function () {
-            console.log('Destroy Add Modal Widget');
-            if (view) {
-                view.destroy();
-            }
-            view = null;
-            categories = null;
-        }
-    };
+            destroy : function () {
+                this.stop();
+            },
+        };
+    });
 });

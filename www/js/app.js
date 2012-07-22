@@ -77,71 +77,24 @@ requirejs([
              srpsession,
              passwords,
              notes,
-             applications,
-             loginModal,
-             addPasswordModal,
-             addCategoryModal,
-             addNoteModal,
-             headBar,
-             passwordApp,
-             noteApp,
-             sidebar,
-             notify) {
+             applications) {
 
     console.log('Starting app');
-
-    sandbox.provide('coucou', function(){return 'toto';});
-//~ //~
-    sandbox.defineWidget('test',{type:'app'},['coucou','coucou2'],function(coucou, coucou2){
-        console.log('INIT');
-        console.log(arguments);
-        return {
-            start : function (test,test2) {
-                console.log('Hello World');
-                console.log(test+test2);
-                console.log(arguments);
-            },
-            stop: function () {},
-            destroy : function () {},
-            meta : {}
-        };
-    });
-//~ //~
-    sandbox.provide('coucou2', function(){return 'toto2';});
-//~ //~
-    sandbox.startWidget('test', 'prout', 'caca');
-
-
+    core.start(applications);
     core.start(srpsession, './authentication');
 
-    //~ core.start(headBar);
-    //~ core.start(notify);
-    //~ core.start(loginModal);
-    //~ core.start(applications);
-    //~ core.start(passwordApp);
-    //~ core.start(noteApp);
-    //~ core.start(sidebar);
+    core.broadcast('bootstrap');
 
-    //~ core.subscribe('login', function () {
-        //~ core.stop(loginModal);
-        //~ core.start(passwords);
-        //~ core.start(notes);
-        //~ core.start(addPasswordModal);
-        //~ core.start(addNoteModal);
-        //~ core.start(addCategoryModal);
-        //~ core.broadcast('start:Notify');
-        //~ core.broadcast('start:SidebarView','#main-view-sidebar');
-    //~ });
-//~
+    core.subscribe('login', function () {
+        core.start(passwords);
+        core.start(notes);
+    });
+
     //~ core.subscribe('logout', function () {
         //~ core.stop(passwords);
-        //~ core.stop(addPasswordModal);
         //~ core.stop(notes);
-        //~ core.stop(addNoteModal);
-        //~ core.stop(addCategoryModal);
-        //~ core.start(loginModal);
+        //~ core.stop(applications);
     //~ });
-//~
-//~
-    //~ core.broadcast('request:login','nicolas','test');
+
+    core.broadcast('request:login','nicolas','test');
 });

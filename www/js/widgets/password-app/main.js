@@ -34,7 +34,7 @@ define([
         var passwordApp;
 
         return {
-            meta : {label : 'Passwords', icon : 'icon-briefcase', type : 'master'},
+            meta : {label : 'Passwords', icon : 'icon-briefcase', type : 'application', cat : 'master'},
 
             start : function (el) {
                 passwordApp = new PasswordApp({el : el, categories : categories, passwords : passwords});

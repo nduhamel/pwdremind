@@ -33,7 +33,7 @@ define([
         var noteApp;
 
         return {
-            meta : {label : 'Notes', icon : 'icon-pencil', type : 'master'},
+            meta : {label : 'Notes', icon : 'icon-pencil', type : 'application', cat : 'master'},
 
             start : function (el) {
                 noteApp = new NoteApp({el : el, categories : categories, notes : notes});

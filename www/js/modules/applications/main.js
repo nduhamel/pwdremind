@@ -6,8 +6,8 @@ define([
 
     var applications;
 
-    var registerApplication = function (appInfo) {
-        applications.add(appInfo);
+    var registerApplication = function (name, meta) {
+        applications.add(_.extend({name:name}, meta));
     };
 
     // Facade
@@ -16,10 +16,9 @@ define([
             console.log('Init Applications');
 
             applications = new Applications();
+            sandbox.provide('applications', function(){return applications;});
             sandbox.subscribe('register:application', registerApplication);
-            sandbox.subscribe('request:applications', function (callback) {
-                callback(applications);
-            });
+
         },
 
         reload : function () {

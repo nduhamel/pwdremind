@@ -64,28 +64,29 @@ define([
 
     });
 
-    var view;
+    sandbox.defineWidget('LoginModal', function(){
+        var view;
 
-    // Facade
-    return {
-        initialize : function () {
-            console.log('Init Login Modal Widget');
+        return {
+            meta : {startAfter: 'bootstrap', stopAfter: 'login'},
 
-            view = new LoginModal();
-            view.render();
+            start : function () {
+                view = new LoginModal();
+                view.render();
+                sandbox.subscribe('login:failed', view.onError, view);
+            },
 
-            sandbox.subscribe('login:failed', view.onError, view);
-        },
+            stop : function () {
+                if (view) {
+                    view.destroy();
+                }
+                sandbox.unsubscribe('login:failed', view.onError);
+                delete view;
+            },
 
-        reload : function () {
-            console.log('Reload Login Modal Widget');
-            destroy();
-            initialize();
-        },
-
-        destroy : function () {
-            console.log('Destroy Login Modal Widget');
-            view.destroy();
-        },
-    };
+            destroy : function () {
+                this.stop();
+            },
+        };
+    });
 });

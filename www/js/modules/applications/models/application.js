@@ -5,9 +5,9 @@ define(['backbone'], function(Backbone){
     //~ name
     //~ label
     //~ icon class
-    //~ type master, extend, setting
+    //~ cat master, extend, setting
         defaults: {
-            "type":  "extend",
+            "cat":  "extend",
         },
     });
 

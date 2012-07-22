@@ -43,26 +43,32 @@ define([
 
     });
 
-    // Facade
-    return {
-        initialize : function () {
-            console.log('Init Head Bar Widget');
-            var view = new HeadBar();
-            view.render();
 
-            sandbox.subscribe('login', view.onLogin, view);
-            sandbox.subscribe('logout', view.onLogout, view);
-        },
+    sandbox.defineWidget('HeadBar', function(){
+        var view;
 
-        reload : function () {
-            console.log('Reload Head Bar List Widget');
-        },
+        return {
+            meta : {startOn: 'bootstrap'},
 
-        destroy : function () {
-            console.log('Destroy Head Bar List Widget');
-            sandbox.unsubscribe('login', view.onLogin);
-            sandbox.unsubscribe('logout', view.onLogout);
-            delete view;
-        },
-    };
+            start : function () {
+                view = new HeadBar();
+                view.render();
+                sandbox.subscribe('login', view.onLogin, view);
+                sandbox.subscribe('logout', view.onLogout, view);
+            },
+
+            stop : function () {
+                if (view) {
+                    view.destroy();
+                }
+                sandbox.unsubscribe('login', view.onLogin);
+                sandbox.unsubscribe('logout', view.onLogout)
+                delete view;
+            },
+
+            destroy : function () {
+                this.stop();
+            },
+        };
+    });
 });
