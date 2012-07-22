@@ -24,6 +24,11 @@ define([
             return this;
         },
 
+        destroy : function () {
+            this.unbind();
+            this.remove();
+        },
+
         error : function (html) {
             this.show(html, 'error');
         },
@@ -57,29 +62,29 @@ define([
 
     });
 
-    var notify;
+    sandbox.defineWidget('Notify', ['noteCategories','notes'], function(categories, notes){
+        var notify;
 
-    // Facade
-    return {
-        initialize : function () {
-            console.log('Init Notify');
+        return {
+            meta : {startOn:'bootstrap'},
 
-            sandbox.subscribe('start:Notify', function(){
+            start : function (el) {
                 notify = new Notify();
                 notify.render();
                 sandbox.subscribe('notify:error', notify.error, notify);
                 sandbox.subscribe('notify:info', notify.info, notify);
                 sandbox.subscribe('notify:success', notify.success, notify);
-            });
-        },
+            },
 
-        reload : function () {
-            console.log('Reload Notify');
-        },
+            stop : function () {
+                notify.destroy();
+                delete notify;
+            },
 
-        destroy : function () {
-            console.log('Destroy Notify');
-        },
-    };
+            destroy : function () {
+                this.stop();
+            },
+        };
+    });
 
 });

@@ -13,17 +13,27 @@ require.config({
             deps: ['backbone']
         },
 
-        'radio': {
-            exports: 'radio'
-        },
-
         'bootstrap_modal': {
             deps: ['jquery']
         },
 
         'zeroclipboard' : {
             exports : 'ZeroClipboard'
-        }
+        },
+
+        'd3' : {
+            exports : 'd3'
+        },
+
+        'd3_geom' : {
+            deps: ['d3'],
+            exports : 'd3'
+        },
+
+        'd3_layout' : {
+            deps: ['d3', 'd3_geom'],
+            exports : 'd3'
+        },
     },
 
     paths: {
@@ -33,9 +43,11 @@ require.config({
         backbone_model_binder : 'lib/Backbone.ModelBinder',
         underscore: 'lib/underscore',
         jquery: 'lib/jquery',
-        radio: 'lib/radio',
         bootstrap_modal: 'lib/bootstrap-modal',
         zeroclipboard : 'lib/ZeroClipboard',
+        d3 : 'lib/d3',
+        d3_geom : 'lib/d3.geom',
+        d3_layout : 'lib/d3.layout',
 
         // core
         core: 'core/core',
@@ -57,6 +69,7 @@ if (typeof Object.create !== 'function') {
 requirejs([
     'backbone',
     'core',
+    'sandbox',
     'modules/srpsession/srpsession',
     'modules/passwords/passwords',
     'modules/notes/notes',
@@ -69,54 +82,31 @@ requirejs([
     'widgets/password-app/main',
     'widgets/note-app/main',
     'widgets/sidebar/main',
-    'widgets/notify/main'
+    'widgets/notify/main',
+    'widgets/passwords-vizualizer/main',
+    'widgets/exporter/main',
 ], function (Backbone,
              core,
+             sandbox,
              srpsession,
              passwords,
              notes,
-             applications,
-             loginModal,
-             addPasswordModal,
-             addCategoryModal,
-             addNoteModal,
-             headBar,
-             passwordApp,
-             noteApp,
-             sidebar,
-             notify) {
+             applications) {
 
     console.log('Starting app');
+    core.start(applications);
     core.start(srpsession, './authentication');
 
-    core.start(headBar);
-    core.start(notify);
-    core.start(loginModal);
-    core.start(applications);
-    core.start(passwordApp);
-    core.start(noteApp);
-    core.start(sidebar);
+    core.broadcast('bootstrap');
 
     core.subscribe('login', function () {
-        core.stop(loginModal);
         core.start(passwords);
         core.start(notes);
-        core.start(addPasswordModal);
-        core.start(addNoteModal);
-        core.start(addCategoryModal);
-        core.broadcast('start:Notify');
-        core.broadcast('start:SidebarView','#main-view-sidebar');
     });
 
-    core.subscribe('logout', function () {
-        core.stop(passwords);
-        core.stop(addPasswordModal);
-        core.stop(notes);
-        core.stop(addNoteModal);
-        core.stop(addCategoryModal);
-        core.start(loginModal);
+    core.subscribe('logout:after', function () {
+        location.reload();
     });
-
 
     core.broadcast('request:login','nicolas','test');
 });

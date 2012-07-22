@@ -82,52 +82,41 @@ define([
 
     });
 
-    var view,
-        categories,
-        PasswordModel;
 
-    var addPassword = function () {
-        view = new AddModal({collection : categories, model : new PasswordModel({category_id: categories.getCurrentCatId() }) } );
-        view.render();
-    };
+    sandbox.defineWidget('PasswordModal', ['passwordCategories', 'Password'], function(categories, PasswordModel){
+        var view;
 
-    var editPassword = function (password) {
-        view = new AddModal({collection : categories, model : password });
-        view.render();
-    };
+        var addPassword = function () {
+            view = new AddModal({collection : categories, model : new PasswordModel({category_id: categories.getCurrentCatId() }) } );
+            view.render();
+        };
+
+        var editPassword = function (password) {
+            view = new AddModal({collection : categories, model : password });
+            view.render();
+        };
 
 
-    // Facade
-    return {
-        initialize : function () {
-            console.log('Init Add Modal Widget');
+        return {
+            meta : {startOn: 'login:after'},
 
-            sandbox.broadcast('request:categories', function(categoriesCollection){
-                sandbox.broadcast('request:Password', function(Password){
-                    categories = categoriesCollection;
-                    PasswordModel = Password;
-                    // Subscribe to request:
-                    sandbox.subscribe('request:add-password', addPassword);
-                    sandbox.subscribe('request:edit-password', editPassword);
-                });
-            });
+            start : function () {
+                sandbox.subscribe('request:add-password', addPassword);
+                sandbox.subscribe('request:edit-password', editPassword);
+            },
 
-        },
+            stop : function () {
+                sandbox.unsubscribe('request:add-password', addPassword);
+                sandbox.unsubscribe('request:edit-password', editPassword);
+                if (view) {
+                    view.destroy();
+                }
+                view = null;
+            },
 
-        reload : function () {
-            console.log('Reload Add Modal Widget');
-            destroy();
-            initialize();
-        },
-
-        destroy : function () {
-            console.log('Destroy Add Modal Widget');
-            if (view) {
-                view.destroy();
-            }
-            view = null;
-            categories = null;
-            PasswordModel = null;
-        },
-    };
+            destroy : function () {
+                this.stop();
+            },
+        };
+    });
 });

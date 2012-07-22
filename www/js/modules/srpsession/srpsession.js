@@ -21,7 +21,7 @@ define([
     };
 
     srpSession.requestLogin = function (username, password) {
-        //~ console.log('Request login: '+username+':'+password);
+        console.log('Request login: '+username+':'+password);
         var auth = new Authenticator(srpSession.authUrl, _.bind(srpSession.onLogin, srpSession ), srpSession.onFail);
         auth.start(username, password);
     };

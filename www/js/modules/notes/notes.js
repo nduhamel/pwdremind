@@ -8,18 +8,6 @@ define([
 
     var categories, notes;
 
-    var onRequestNotesCategories = function (callback) {
-        callback(categories);
-    };
-
-    var onRequestNotes = function (callback) {
-        callback(notes);
-    };
-
-    var onRequestNoteObject = function (callback) {
-        callback(Note);
-    };
-
     var onCategoryChange = function (category_id) {
         notes.setCategoryId(category_id);
         categories.setCurrentCatId(category_id);
@@ -46,17 +34,16 @@ define([
     // Facade
     return {
         initialize : function () {
-            console.log('Init Notes');
 
             categories = new Categories();
             notes = new Notes();
 
-            // Subscribe to request:
-            sandbox.subscribe('request:noteCategories', onRequestNotesCategories);
-            sandbox.subscribe('request:notes', onRequestNotes);
-            sandbox.subscribe('request:Note', onRequestNoteObject);
             sandbox.subscribe('noteCategory:change', onCategoryChange);
             sandbox.subscribe('add:note', onNoteAdded);
+
+            sandbox.provide('noteCategories', function () {return categories;});
+            sandbox.provide('notes', function () {return notes;});
+            sandbox.provide('Note', function () {return Note;});
 
             // Fetch
             categories.fetch({success: onCategoriesFetched });
