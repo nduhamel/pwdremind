@@ -29,36 +29,27 @@ define([
 
     });
 
-    var passwordApp;
 
-    // Facade
-    return {
-        initialize : function () {
-            console.log('Init PasswordApp');
+    sandbox.defineWidget('PasswordApp', ['passwordCategories','passwords'], function(categories, passwords){
+        var passwordApp;
 
-            sandbox.broadcast('register:application', {name : 'PasswordApp', label : 'Passwords', icon : 'icon-briefcase', type : 'master'});
+        return {
+            meta : {label : 'Passwords', icon : 'icon-briefcase', type : 'master'},
 
-            sandbox.subscribe('start:PasswordApp', function(el){
-                sandbox.broadcast('request:categories', function(categoriesCollection){
-                    sandbox.broadcast('request:passwords', function(passwordsCollection){
-                        passwordApp = new PasswordApp({el : el, categories : categoriesCollection, passwords : passwordsCollection});
-                        passwordApp.render();
-                        sandbox.subscribe('stop:PasswordApp', function () {
-                            passwordApp.destroy();
-                            delete passwordApp;
-                        });
-                    });
-                });
-            });
-        },
+            start : function (el) {
+                passwordApp = new PasswordApp({el : el, categories : categories, passwords : passwords});
+                passwordApp.render();
+            },
 
-        reload : function () {
-            console.log('Reload PasswordApp');
-        },
+            stop : function () {
+                passwordApp.destroy();
+                delete passwordApp;
+            },
 
-        destroy : function () {
-            console.log('Destroy PasswordApp');
-        },
-    };
+            destroy : function () {
+                this.stop();
+            },
+        };
+    });
 
 });

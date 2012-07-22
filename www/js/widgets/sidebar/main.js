@@ -63,28 +63,25 @@ define([
 
     });
 
-    var sidebarView;
+    sandbox.defineWidget('Sidebar', ['applications'], function(applications){
+        var sidebarView;
 
-    // Facade
-    return {
-        initialize : function () {
-            console.log('Init SidebarView');
+        return {
+            meta : {},
 
-            sandbox.subscribe('start:SidebarView', function(el){
-                sandbox.broadcast('request:applications', function(applications){
-                    sidebarView = new SidebarView({el:el,collection:applications});
-                    sidebarView.render();
-                });
-            });
-        },
+            start : function (el) {
+                sidebarView = new SidebarView({el:el,collection:applications});
+                sidebarView.render();
+            },
 
-        reload : function () {
-            console.log('Reload SidebarView');
-        },
+            stop : function () {
+                sidebarView.destroy();
+                delete sidebarView;
+            },
 
-        destroy : function () {
-            console.log('Destroy SidebarView');
-        },
-    };
-
+            destroy : function () {
+                this.stop();
+            },
+        };
+    });
 });

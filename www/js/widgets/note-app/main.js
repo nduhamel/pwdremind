@@ -29,36 +29,25 @@ define([
 
     });
 
-    var noteApp;
+    sandbox.defineWidget('NoteApp', ['noteCategories','notes'], function(categories, notes){
+        var noteApp;
 
-    // Facade
-    return {
-        initialize : function () {
-            console.log('Init NoteApp');
+        return {
+            meta : {label : 'Notes', icon : 'icon-pencil', type : 'master'},
 
-            sandbox.broadcast('register:application', {name : 'NoteApp', label : 'Notes', icon : 'icon-pencil', type : 'master'});
+            start : function (el) {
+                noteApp = new NoteApp({el : el, categories : categories, notes : notes});
+                noteApp.render();
+            },
 
-            sandbox.subscribe('start:NoteApp', function(el){
-                sandbox.broadcast('request:noteCategories', function(categoriesCollection){
-                    sandbox.broadcast('request:notes', function(notesCollection){
-                        noteApp = new NoteApp({el : el, categories : categoriesCollection, notes : notesCollection});
-                        noteApp.render();
-                        sandbox.subscribe('stop:NoteApp', function () {
-                            noteApp.destroy();
-                            delete noteApp;
-                        });
-                    });
-                });
-            });
-        },
+            stop : function () {
+                noteApp.destroy();
+                delete noteApp;
+            },
 
-        reload : function () {
-            console.log('Reload NoteApp');
-        },
-
-        destroy : function () {
-            console.log('Destroy NoteApp');
-        }
-    };
-
+            destroy : function () {
+                this.stop();
+            },
+        };
+    });
 });

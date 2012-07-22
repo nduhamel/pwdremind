@@ -57,6 +57,7 @@ if (typeof Object.create !== 'function') {
 requirejs([
     'backbone',
     'core',
+    'sandbox',
     'modules/srpsession/srpsession',
     'modules/passwords/passwords',
     'modules/notes/notes',
@@ -72,6 +73,7 @@ requirejs([
     'widgets/notify/main'
 ], function (Backbone,
              core,
+             sandbox,
              srpsession,
              passwords,
              notes,
@@ -87,36 +89,59 @@ requirejs([
              notify) {
 
     console.log('Starting app');
+
+    sandbox.provide('coucou', function(){return 'toto';});
+//~ //~
+    sandbox.defineWidget('test',{type:'app'},['coucou','coucou2'],function(coucou, coucou2){
+        console.log('INIT');
+        console.log(arguments);
+        return {
+            start : function (test,test2) {
+                console.log('Hello World');
+                console.log(test+test2);
+                console.log(arguments);
+            },
+            stop: function () {},
+            destroy : function () {},
+            meta : {}
+        };
+    });
+//~ //~
+    sandbox.provide('coucou2', function(){return 'toto2';});
+//~ //~
+    sandbox.startWidget('test', 'prout', 'caca');
+
+
     core.start(srpsession, './authentication');
 
-    core.start(headBar);
-    core.start(notify);
-    core.start(loginModal);
-    core.start(applications);
-    core.start(passwordApp);
-    core.start(noteApp);
-    core.start(sidebar);
+    //~ core.start(headBar);
+    //~ core.start(notify);
+    //~ core.start(loginModal);
+    //~ core.start(applications);
+    //~ core.start(passwordApp);
+    //~ core.start(noteApp);
+    //~ core.start(sidebar);
 
-    core.subscribe('login', function () {
-        core.stop(loginModal);
-        core.start(passwords);
-        core.start(notes);
-        core.start(addPasswordModal);
-        core.start(addNoteModal);
-        core.start(addCategoryModal);
-        core.broadcast('start:Notify');
-        core.broadcast('start:SidebarView','#main-view-sidebar');
-    });
-
-    core.subscribe('logout', function () {
-        core.stop(passwords);
-        core.stop(addPasswordModal);
-        core.stop(notes);
-        core.stop(addNoteModal);
-        core.stop(addCategoryModal);
-        core.start(loginModal);
-    });
-
-
-    core.broadcast('request:login','nicolas','test');
+    //~ core.subscribe('login', function () {
+        //~ core.stop(loginModal);
+        //~ core.start(passwords);
+        //~ core.start(notes);
+        //~ core.start(addPasswordModal);
+        //~ core.start(addNoteModal);
+        //~ core.start(addCategoryModal);
+        //~ core.broadcast('start:Notify');
+        //~ core.broadcast('start:SidebarView','#main-view-sidebar');
+    //~ });
+//~
+    //~ core.subscribe('logout', function () {
+        //~ core.stop(passwords);
+        //~ core.stop(addPasswordModal);
+        //~ core.stop(notes);
+        //~ core.stop(addNoteModal);
+        //~ core.stop(addCategoryModal);
+        //~ core.start(loginModal);
+    //~ });
+//~
+//~
+    //~ core.broadcast('request:login','nicolas','test');
 });

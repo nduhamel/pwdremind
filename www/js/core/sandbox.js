@@ -14,13 +14,24 @@ define(['core'], function(core) {
         core.unsubscribe(channel, callback);
     };
 
-    // TODO
-    sandbox.addCss = function (url) {
-        var link = document.createElement("link");
-        link.type = "text/css";
-        link.rel = "stylesheet";
-        link.href = './widgets/'+url;
-        document.getElementsByTagName("head")[0].appendChild(link);
+    sandbox.provide = function () {
+        core.provide.apply(core, arguments);
+    };
+
+    sandbox.defineWidget = function () {
+        core.defineWidget.apply(core, arguments);
+    };
+
+    sandbox.startWidget = function () {
+        core.startWidget.apply(core, arguments);
+    };
+
+    sandbox.stopWidget = function () {
+        core.stopWidget.apply(core, arguments);
+    };
+
+    sandbox.destroyWidget = function () {
+        core.destroyWidget.apply(core, arguments);
     };
 
     return sandbox;

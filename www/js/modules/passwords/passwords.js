@@ -53,11 +53,16 @@ define([
             passwords = new Passwords();
 
             // Subscribe to request:
-            sandbox.subscribe('request:categories', onRequestCategories);
-            sandbox.subscribe('request:passwords', onRequestPasswords);
-            sandbox.subscribe('request:Password', onRequestPasswordObject);
+            //~ sandbox.subscribe('request:categories', onRequestCategories);
+            //~ sandbox.subscribe('request:passwords', onRequestPasswords);
+            //~ sandbox.subscribe('request:Password', onRequestPasswordObject);
             sandbox.subscribe('category:change', onCategoryChange);
             sandbox.subscribe('add:password', onPasswordAdded);
+
+            sandbox.provide('passwordCategories', function () {return categories;});
+            sandbox.provide('passwords', function () {return passwords;});
+            sandbox.provide('Password', function () {return Password;});
+
 
             // Fetch
             categories.fetch({success: onCategoriesFetched });
