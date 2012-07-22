@@ -10,7 +10,7 @@ define(['backbone', 'backbone_validation'], function(Backbone){
 
         crypted : ['name'],
 
-        url : './category'
+        url : './notes/category'
 
     });
 

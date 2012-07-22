@@ -62,9 +62,6 @@ define([
 
         onSubmit : function (event) {
             event.preventDefault();
-            console.log('Submitted');
-            console.log(this.model);
-            console.log(this.model.isValid(true));
             if (this.model.isValid(true)) {
                 this.model.save(null,{success: function (model) {
                     sandbox.broadcast('add:note', model);

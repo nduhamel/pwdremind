@@ -4,13 +4,13 @@ define(['backbone', 'backbone_validation'], function(Backbone){
 
         validation : {
             name : {
-                required  : true,
-            },
+                required  : true
+            }
         },
 
         crypted : ['name'],
 
-        url : './category',
+        url : './passwords/category'
 
     });
 

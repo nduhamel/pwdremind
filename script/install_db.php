@@ -24,6 +24,7 @@
         $req = "CREATE TABLE category (
                 id SERIAL PRIMARY KEY AUTO_INCREMENT,
                 data TEXT NOT NULL,
+                type_id INT NOT NULL,
                 user_id INT NOT NULL)";
         $db->query($req);
         fwrite(STDOUT,"Category table created!\n");
@@ -50,6 +51,7 @@
         $req = "CREATE TABLE category (
                 id INTEGER PRIMARY KEY,
                 data TEXT NOT NULL,
+                type_id INT NOT NULL,
                 user_id INT NOT NULL)";
         $db->query($req);
         fwrite(STDOUT,"Category table created!\n");
@@ -77,6 +79,7 @@
         $req = "CREATE TABLE category (
                 id INTEGER PRIMARY KEY AUTO_INCREMENT,
                 data TEXT NOT NULL,
+                type_id INT NOT NULL,
                 user_id INT NOT NULL)";
         $db->query($req);
         fwrite(STDOUT,"Category table created!\n");

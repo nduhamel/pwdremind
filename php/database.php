@@ -46,26 +46,27 @@ class Database {
             return false;
     }
 
-    public function getCategories($user_id)
+    public function getCategories($type_id, $user_id)
     {
         $req = $this->_db->prepare("SELECT id, data 
                                     FROM category 
-                                    WHERE user_id = :user_id");
-        $req->execute(array('user_id'=>$user_id));
+                                    WHERE user_id = :user_id
+                                    AND type_id = :type_id");
+        $req->execute(array('user_id'=>$user_id, 'type_id'=>$type_id));
         return $req->fetchall(PDO::FETCH_ASSOC);
     }
 
-    public function addCategory($data, $user_id)
+    public function addCategory($data, $type_id, $user_id)
     {
         if ($this->_driver == 'pgsql'){
-            $req = $this->_db->prepare("INSERT INTO category (data, user_id)  
-                                        VALUES(:data, :user_id) RETURNING id");
-            $req->execute(array('data'=> $data,'user_id'=>$user_id));
+            $req = $this->_db->prepare("INSERT INTO category (data, type_id, user_id)  
+                                        VALUES(:data, :type_id, :user_id) RETURNING id");
+            $req->execute(array('data'=> $data, 'type_id'=>$type_id, 'user_id'=>$user_id));
             return $req->fetchColumn();
         } else {
-            $req = $this->_db->prepare("INSERT INTO category (data, user_id)  
-                                        VALUES(:data, :user_id)");
-            $req->execute(array('data'=> $data,'user_id'=>$user_id));
+            $req = $this->_db->prepare("INSERT INTO category (data, type_id, user_id)  
+                                        VALUES(:data, :type_id, :user_id)");
+            $req->execute(array('data'=> $data, 'type_id'=>$type_id, 'user_id'=>$user_id));
             return $this->_db->lastInsertId();
         }
     }

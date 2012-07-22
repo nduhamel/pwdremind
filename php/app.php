@@ -119,9 +119,16 @@ class App
             $message->send();
         }); 
 
-        //GET all categories
-        $router->addRoute('GET', '/categories', $authCheck, function() use ($db, $message, $session) {
-            $categories = $db->getCategories( $session->getUserid() );
+        //GET password categories
+        $router->addRoute('GET', '/passwords/categories', $authCheck, function() use ($db, $message, $session) {
+            $categories = $db->getCategories(App::PASSWORD, $session->getUserid() );
+            $message->setData($categories);
+            $message->send();
+        });
+
+        //GET note categories
+        $router->addRoute('GET', '/notes/categories', $authCheck, function() use ($db, $message, $session) {
+            $categories = $db->getCategories(App::NOTE, $session->getUserid() );
             $message->setData($categories);
             $message->send();
         });
@@ -157,9 +164,19 @@ class App
             $message->send();
         });
 
-        // ADD a new category
-        $router->addRoute('POST', '/category', $authCheck, function() use ($db, $message, $session, $rawInput) {
-            $id = $db->addCategory($rawInput['data'], $session->getUserid());
+        // ADD a new password category
+        $router->addRoute('POST', '/passwords/category', $authCheck, function() use ($db, $message, $session, $rawInput) {
+            $id = $db->addCategory($rawInput['data'], App::PASSWORD, $session->getUserid());
+            $message->setData(array(
+                            'id' => $id,
+                            'data' => $rawInput['data'],
+            ));
+            $message->send();
+        });
+
+        // ADD a new note category
+        $router->addRoute('POST', '/notes/category', $authCheck, function() use ($db, $message, $session, $rawInput) {
+            $id = $db->addCategory($rawInput['data'], App::NOTE, $session->getUserid());
             $message->setData(array(
                             'id' => $id,
                             'data' => $rawInput['data'],
