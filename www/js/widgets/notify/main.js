@@ -27,7 +27,7 @@ define([
         destroy : function () {
             this.unbind();
             this.remove();
-        }
+        },
 
         error : function (html) {
             this.show(html, 'error');

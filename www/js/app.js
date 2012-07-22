@@ -96,5 +96,5 @@ requirejs([
         //~ core.stop(applications);
     //~ });
 
-    core.broadcast('request:login','nicolas','test');
+    //~ core.broadcast('request:login','nicolas','test');
 });
