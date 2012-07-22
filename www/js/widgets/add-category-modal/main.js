@@ -52,7 +52,6 @@ define([
 
         onSubmit : function (event) {
             event.preventDefault();
-
             if (this.model.isValid(true)) {
                 var collection = this.collection;
                 this.model.save(null, {success: function (model) {
@@ -73,11 +72,16 @@ define([
 
     });
 
-    sandbox.defineWidget('CategoryModal', ['passwordCategories'], function(categories){
+    sandbox.defineWidget('CategoryModal', ['passwordCategories','noteCategories'], function(passwordCategories, noteCategories){
         var view;
 
-        var addCategory= function () {
-            view = new AddCategoryModal({collection : categories, model : new categories.model() } );
+        var addPasswordCategory= function () {
+            view = new AddCategoryModal({collection : passwordCategories, model : new passwordCategories.model() } );
+            view.render();
+        };
+
+        var addNoteCategory= function () {
+            view = new AddCategoryModal({collection : noteCategories, model : new noteCategories.model() } );
             view.render();
         };
 
@@ -85,11 +89,13 @@ define([
             meta : {startOn: 'login:after'},
 
             start : function () {
-                sandbox.subscribe('request:add-category', addCategory);
+                sandbox.subscribe('request:addPasswordCategory', addPasswordCategory);
+                sandbox.subscribe('request:addNoteCategory', addNoteCategory);
             },
 
             stop : function () {
-                sandbox.unsibscribe('request:add-category',addCategory);
+                sandbox.unsibscribe('request:addPasswordCategory',addPasswordCategory);
+                sandbox.unsibscribe('request:addNoteCategory',addNoteCategory);
                 if (view) {
                     view.destroy();
                 }
@@ -97,7 +103,7 @@ define([
 
             destroy : function () {
                 this.stop();
-            },
+            }
         };
     });
 });

@@ -3,14 +3,13 @@ define([
     'underscore',
     'backbone',
     'sandbox',
-    'text!../tpl/categories.html',
+    'text!../tpl/categories.html'
 ], function($, _, Backbone, sandbox, baseTpl) {
 
     var CategoriesView = Backbone.View.extend({
 
         events : {
-            'click a' : 'onClick',
-
+            'click a' : 'onClick'
         },
 
         initialize : function() {
@@ -25,7 +24,7 @@ define([
 
             this.currentCategory = this.options.currentCategory;
 
-            sandbox.subscribe('category:changed', function(cat_id) {
+            sandbox.subscribe('passwordCategory:changed', function(cat_id) {
                 this.currentCategory = cat_id;
                 this.render();
             }, this);
@@ -45,8 +44,8 @@ define([
         onClick : function (event) {
             event.preventDefault();
             var name = $(event.currentTarget).attr('name');
-            sandbox.broadcast('category:change', name);
-        },
+            sandbox.broadcast('passwordCategory:change', name);
+        }
 
     });
 

@@ -68,8 +68,8 @@ define([
 
         doAddModal : function (event) {
             event.preventDefault();
-            sandbox.broadcast('request:add-note');
-            console.log('request:add-note');
+            sandbox.broadcast('request:addNote');
+            console.log('request:addNote');
         },
 
         doRemove : function (event) {
@@ -79,7 +79,7 @@ define([
 
         doEdit : function (event) {
             var id = $(event.target).closest('tr').data('id');
-            sandbox.broadcast('request:edit-note', this.collection.get(id));
+            sandbox.broadcast('request:editNote', this.collection.get(id));
         }
     });
 

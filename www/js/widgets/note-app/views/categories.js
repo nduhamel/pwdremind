@@ -24,7 +24,7 @@ define([
 
             this.currentCategory = this.options.currentCategory;
 
-            sandbox.subscribe('category:changed', function(cat_id) {
+            sandbox.subscribe('noteCategory:changed', function(cat_id) {
                 this.currentCategory = cat_id;
                 this.render();
             }, this);
@@ -45,9 +45,9 @@ define([
             event.preventDefault();
             var name = $(event.currentTarget).attr('name');
             if (name === 'add') {
-                sandbox.broadcast('request:add-category');
+                sandbox.broadcast('request:addNoteCategory');
             } else {
-                sandbox.broadcast('category:change', name);
+                sandbox.broadcast('noteCategory:change', name);
             }
         }
 

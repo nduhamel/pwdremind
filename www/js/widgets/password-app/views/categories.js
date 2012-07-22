@@ -3,14 +3,13 @@ define([
     'underscore',
     'backbone',
     'sandbox',
-    'text!../tpl/categories.html',
+    'text!../tpl/categories.html'
 ], function($, _, Backbone, sandbox, baseTpl) {
 
     var CategoriesView = Backbone.View.extend({
 
         events : {
-            'click a' : 'onClick',
-
+            'click a' : 'onClick'
         },
 
         initialize : function() {
@@ -25,7 +24,7 @@ define([
 
             this.currentCategory = this.options.currentCategory;
 
-            sandbox.subscribe('category:changed', function(cat_id) {
+            sandbox.subscribe('passwordCategory:changed', function(cat_id) {
                 this.currentCategory = cat_id;
                 this.render();
             }, this);
@@ -46,12 +45,12 @@ define([
             event.preventDefault();
             var name = $(event.currentTarget).attr('name');
             if (name === 'add') {
-                sandbox.broadcast('request:add-category');
-            }else{
-                sandbox.broadcast('category:change', name);
+                sandbox.broadcast('request:addPasswordCategory');
+            } else {
+                sandbox.broadcast('passwordCategory:change', name);
             }
-        },
-
+        }
+        
     });
 
 

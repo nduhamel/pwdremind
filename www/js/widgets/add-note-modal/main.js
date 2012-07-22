@@ -98,13 +98,13 @@ define([
             meta : {startOn: 'login:after'},
 
             start : function () {
-                sandbox.subscribe('request:add-note', addNote);
-                sandbox.subscribe('request:edit-note', editNote);
+                sandbox.subscribe('request:addNote', addNote);
+                sandbox.subscribe('request:editNote', editNote);
             },
 
             stop : function () {
-                sandbox.unsubscribe('request:add-note', addNote);
-                sandbox.unsubscribe('request:edit-note', editNote);
+                sandbox.unsubscribe('request:addNote', addNote);
+                sandbox.unsubscribe('request:editNote', editNote);
                 if (view) {
                     view.destroy();
                 }
@@ -113,7 +113,7 @@ define([
 
             destroy : function () {
                 this.stop();
-            },
+            }
         };
     });
 });

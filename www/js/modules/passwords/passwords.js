@@ -3,7 +3,7 @@ define([
     './models/password',
     './models/category',
     './collections/passwords',
-    './collections/categories',
+    './collections/categories'
 ], function(sandbox, Password, Category, Passwords, Categories){
 
     var categories,
@@ -12,15 +12,15 @@ define([
     var onCategoryChange = function (category_id) {
         passwords.setCategoryId(category_id);
         categories.setCurrentCatId(category_id);
-        sandbox.broadcast('category:changed', category_id);
-    }
+        sandbox.broadcast('passwordCategory:changed', category_id);
+    };
 
     var onPasswordAdded = function (password) {
         var cur_cat = passwords.getCategoryId();
         if ( !cur_cat || cur_cat == password.get('category_id') ){
             passwords.add(password,{at:0});
         }
-    }
+    };
 
     var onCategoriesFetched = function (categories) {
         // If no cat create default:
@@ -40,7 +40,7 @@ define([
             categories = new Categories();
             passwords = new Passwords();
 
-            sandbox.subscribe('category:change', onCategoryChange);
+            sandbox.subscribe('passwordCategory:change', onCategoryChange);
             sandbox.subscribe('add:password', onPasswordAdded);
 
             sandbox.provide('passwordCategories', function () {return categories;});
@@ -63,6 +63,6 @@ define([
             console.log('Destroy Passwords');
             delete passwords;
             // TODO
-        },
+        }
     };
 });
