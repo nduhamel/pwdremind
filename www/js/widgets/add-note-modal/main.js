@@ -84,52 +84,39 @@ define([
 
     });
 
-    var view,
-        categories,
-        NoteModel;
+    sandbox.defineWidget('NoteModal', ['noteCategories', 'Note'], function(noteCategories, Note){
+        var view;
 
-    var addNote = function () {
-        view = new AddModal({collection : categories, model : new NoteModel({category_id: categories.getCurrentCatId() }) } );
-        view.render();
-    };
+        var addNote = function () {
+            view = new AddModal({collection : noteCategories, model : new Note({category_id: categories.getCurrentCatId() }) } );
+            view.render();
+        };
 
-    var editNote = function (note) {
-        view = new AddModal({collection : categories, model : note });
-        view.render();
-    };
+        var editNote = function (note) {
+            view = new AddModal({collection : noteCategories, model : note });
+            view.render();
+        };
 
+        return {
+            meta : {startAfter: 'login'},
 
-    // Facade
-    return {
-        initialize : function () {
-            console.log('Init Add Note Modal Widget');
+            start : function () {
+                sandbox.subscribe('request:add-note', addNote);
+                sandbox.subscribe('request:edit-note', editNote);
+            },
 
-            sandbox.broadcast('request:noteCategories', function(categoriesCollection){
-                sandbox.broadcast('request:Note', function(Note){
-                    categories = categoriesCollection;
-                    NoteModel = Note;
-                    // Subscribe to request:
-                    sandbox.subscribe('request:add-note', addNote);
-                    sandbox.subscribe('request:edit-note', editNote);
-                });
-            });
+            stop : function () {
+                sandbox.unsubscribe('request:add-note', addNote);
+                sandbox.unsubscribe('request:edit-note', editNote);
+                if (view) {
+                    view.destroy();
+                }
+                view = null;
+            },
 
-        },
-
-        reload : function () {
-            console.log('Reload Add Note Modal Widget');
-            destroy();
-            initialize();
-        },
-
-        destroy : function () {
-            console.log('Destroy Add Note Modal Widget');
-            if (view) {
-                view.destroy();
-            }
-            view = null;
-            categories = null;
-            NoteModel = null;
-        }
-    };
+            destroy : function () {
+                this.stop();
+            },
+        };
+    });
 });
