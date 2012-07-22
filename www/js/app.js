@@ -85,11 +85,9 @@ requirejs([
         core.start(notes);
     });
 
-    //~ core.subscribe('logout', function () {
-        //~ core.stop(passwords);
-        //~ core.stop(notes);
-        //~ core.stop(applications);
-    //~ });
+    core.subscribe('logout:after', function () {
+        location.reload();
+    });
 
     core.broadcast('request:login','nicolas','test');
 });
