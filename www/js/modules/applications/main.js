@@ -16,8 +16,8 @@ define([
             console.log('Init Applications');
 
             applications = new Applications();
-            sandbox.provide('applications', function(){return applications;});
             sandbox.subscribe('register:application', registerApplication);
+            sandbox.provide('applications', function(){return applications;});
 
         },
 

@@ -84,6 +84,7 @@ requirejs([
     'widgets/sidebar/main',
     'widgets/notify/main',
     'widgets/passwords-vizualizer/main',
+    'widgets/exporter/main',
 ], function (Backbone,
              core,
              sandbox,
