@@ -19,7 +19,21 @@ require.config({
 
         'zeroclipboard' : {
             exports : 'ZeroClipboard'
-        }
+        },
+
+        'd3' : {
+            exports : 'd3'
+        },
+
+        'd3_geom' : {
+            deps: ['d3'],
+            exports : 'd3'
+        },
+
+        'd3_layout' : {
+            deps: ['d3', 'd3_geom'],
+            exports : 'd3'
+        },
     },
 
     paths: {
@@ -31,6 +45,9 @@ require.config({
         jquery: 'lib/jquery',
         bootstrap_modal: 'lib/bootstrap-modal',
         zeroclipboard : 'lib/ZeroClipboard',
+        d3 : 'lib/d3',
+        d3_geom : 'lib/d3.geom',
+        d3_layout : 'lib/d3.layout',
 
         // core
         core: 'core/core',
@@ -65,7 +82,8 @@ requirejs([
     'widgets/password-app/main',
     'widgets/note-app/main',
     'widgets/sidebar/main',
-    'widgets/notify/main'
+    'widgets/notify/main',
+    'widgets/passwords-vizualizer/main',
 ], function (Backbone,
              core,
              sandbox,
