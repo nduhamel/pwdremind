@@ -13,10 +13,6 @@ require.config({
             deps: ['backbone']
         },
 
-        'radio': {
-            exports: 'radio'
-        },
-
         'bootstrap_modal': {
             deps: ['jquery']
         },
@@ -33,7 +29,6 @@ require.config({
         backbone_model_binder : 'lib/Backbone.ModelBinder',
         underscore: 'lib/underscore',
         jquery: 'lib/jquery',
-        radio: 'lib/radio',
         bootstrap_modal: 'lib/bootstrap-modal',
         zeroclipboard : 'lib/ZeroClipboard',
 
@@ -96,5 +91,5 @@ requirejs([
         //~ core.stop(applications);
     //~ });
 
-    //~ core.broadcast('request:login','nicolas','test');
+    core.broadcast('request:login','nicolas','test');
 });

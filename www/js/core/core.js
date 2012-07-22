@@ -1,8 +1,9 @@
-define(['radio', 'underscore'], function(radio, _){
+define(['underscore', 'backbone'], function( _, Backbone){
 
     var obj = {},
         registeredDeps = {},
-        registeredWidgets = {};
+        registeredWidgets = {},
+        dispatcher = _.clone(Backbone.Events);
 
     // Return deps or false if they are not available
     function getDeps (deps) {
@@ -80,20 +81,19 @@ define(['radio', 'underscore'], function(radio, _){
     };
 
     obj.subscribe = function (channel, callback, context) {
-        radio(channel).subscribe([callback,context]);
+        dispatcher.on(channel, callback, context);
     };
 
     obj.broadcast = function (channel) {
-        var ch = radio(channel),
-            args = Array.prototype.slice.call(arguments);
-        args.shift();
-        ch.broadcast.apply(ch,args);
-        ch = radio(channel+':after');
-        ch.broadcast.apply(ch,args);
+        var args = _.toArray(arguments);
+        dispatcher.trigger.apply(dispatcher, args);
+        args.slice(1);
+        args.unshift(channel+':after');
+        dispatcher.trigger.apply(dispatcher, args);
     };
 
-    obj.unsubscribe = function (channel, callback) {
-        radio(channel).unsubscribe(callback);
+    obj.unsubscribe = function (channel, callback, context) {
+        dispatcher.off(channel, callback, context);
     };
 
     obj.start = function (module) {
