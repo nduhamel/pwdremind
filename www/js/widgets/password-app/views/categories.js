@@ -50,7 +50,7 @@ define([
                 sandbox.broadcast('passwordCategory:change', name);
             }
         }
-        
+
     });
 
 
