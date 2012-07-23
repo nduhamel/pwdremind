@@ -3,6 +3,7 @@ define(['underscore', 'backbone'], function( _, Backbone){
     var obj = {},
         registeredDeps = {},
         registeredWidgets = {},
+        requireQueue = [],
         dispatcher = _.clone(Backbone.Events);
 
     // Return deps or false if they are not available
@@ -127,6 +128,28 @@ define(['underscore', 'backbone'], function( _, Backbone){
                 }
             }
         });
+        // Check for callback which can be called
+        requireQueue = _.filter(requireQueue, function (func) {
+            var deps = getDeps(func.deps);
+            if (deps) {
+                func.callback.apply(null, deps);
+                return false;
+            }else{
+                return true;
+            }
+        });
+    };
+
+    // Wait for deps call callback when available
+    obj.require = function (deps, callback) {
+        var availableDeps,
+
+        availableDeps = getDeps(deps);
+        if (availableDeps) {
+            callback.apply(null, availableDeps);
+        }else{
+            requireQueue.push({deps:deps, callback:callback});
+        }
     };
 
     obj.defineWidget = function (name, deps, callback) {

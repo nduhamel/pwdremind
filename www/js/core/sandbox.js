@@ -18,6 +18,10 @@ define(['core'], function(core) {
         core.provide.apply(core, arguments);
     };
 
+    sandbox.require = function () {
+        core.require.apply(core, arguments);
+    };
+
     sandbox.defineWidget = function () {
         core.defineWidget.apply(core, arguments);
     };
