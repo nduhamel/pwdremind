@@ -44,6 +44,7 @@ require.config({
         underscore: 'lib/underscore',
         jquery: 'lib/jquery',
         bootstrap_modal: 'lib/bootstrap-modal',
+        bootstrap_button : 'lib/bootstrap-button',
         zeroclipboard : 'lib/ZeroClipboard',
         d3 : 'lib/d3',
         d3_geom : 'lib/d3.geom',

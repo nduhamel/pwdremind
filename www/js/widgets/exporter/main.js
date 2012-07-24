@@ -19,10 +19,14 @@ define([
             stop : function () {
                 exporter.destroy();
                 delete exporter;
+                exporter = undefined;
+                console.log(exporter);
             },
 
             destroy : function () {
-                this.stop();
+                exporter.destroy();
+                delete exporter;
+                console.log(exporter);
             },
         };
     });

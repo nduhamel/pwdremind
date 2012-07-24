@@ -29,21 +29,29 @@ define([
 
     });
 
-
+var test;
     sandbox.defineWidget('PasswordApp', ['passwordCategories','passwords'], function(categories, passwords){
         var passwordApp;
+
 
         return {
             meta : {label : 'Passwords', icon : 'icon-briefcase', type : 'application', cat : 'master'},
 
             start : function (el) {
+                console.log(passwordApp);
                 passwordApp = new PasswordApp({el : el, categories : categories, passwords : passwords});
                 passwordApp.render();
+                test = 'coucu';
             },
 
             stop : function () {
+                console.log(passwordApp);
                 passwordApp.destroy();
-                delete passwordApp;
+                passwordApp = undefined;
+                //~ delete passwordApp;
+                delete test;
+                console.log(passwordApp);
+                console.log(delete test);
             },
 
             destroy : function () {

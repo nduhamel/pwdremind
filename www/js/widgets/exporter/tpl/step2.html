@@ -1,0 +1,22 @@
+<div class="row-fluid" id='exporter-step'>
+    <div class="span2"></div>
+    <div class="span6 well">
+        <h2>Step 2 <small>Select categories</small></h2>
+        <% _.each(dataType, function(type){ %>
+        <hr>
+        <div class="row-fluid">
+            <div class="span3">
+                <h3><%=type[0]%>:</h3>
+            </div>
+            <div class="span9">
+                <% type[1].forEach(function(cat){ %>
+                    <a class="btn" href="" data-type="<%=type[0]%>" data-id="<%=cat.get('id')%>"><%=cat.get('name')%></a>
+                <% });%>
+            </div>
+        </div>
+        <% });%>
+        <hr/>
+        <a class="btn btn-primary disabled" style='float:right;' href="" name="next">Next</a>
+    </div>
+    <div class="span4"></div>
+</div>
