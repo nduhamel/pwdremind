@@ -18,15 +18,11 @@ define([
 
             stop : function () {
                 exporter.destroy();
-                delete exporter;
                 exporter = undefined;
-                console.log(exporter);
             },
 
             destroy : function () {
-                exporter.destroy();
-                delete exporter;
-                console.log(exporter);
+                this.stop();
             },
         };
     });

@@ -81,7 +81,7 @@ define([
                     view.destroy();
                 }
                 sandbox.unsubscribe('login:failed', view.onError);
-                delete view;
+                view = undefined;
             },
 
             destroy : function () {

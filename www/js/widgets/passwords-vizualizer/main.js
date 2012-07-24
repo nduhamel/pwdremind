@@ -19,7 +19,7 @@ define([
 
             stop : function () {
                 passwordVizualizer.destroy();
-                delete passwordVizualizer;
+                passwordVizualizer = undefined;
             },
 
             destroy : function () {

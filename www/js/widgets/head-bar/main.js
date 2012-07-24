@@ -18,8 +18,12 @@ define([
 
         render : function() {
             var renderedContent = _.template(baseTpl, {logged: this.logged} );
-            $(this.el).html(renderedContent);
+            this.$el.html(renderedContent);
             return this;
+        },
+
+        destroy : function () {
+            this.$el.html('');
         },
 
         onLogin : function () {
@@ -63,7 +67,7 @@ define([
                 }
                 sandbox.unsubscribe('login', view.onLogin);
                 sandbox.unsubscribe('logout', view.onLogout)
-                delete view;
+                view = undefined;
             },
 
             destroy : function () {

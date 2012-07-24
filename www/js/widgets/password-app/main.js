@@ -21,7 +21,6 @@ define([
         },
 
         destroy : function () {
-            this.unbind();
             this.categoriesView.destroy();
             this.passwordsView.destroy();
             this.$el.html('');
@@ -45,13 +44,8 @@ var test;
             },
 
             stop : function () {
-                console.log(passwordApp);
                 passwordApp.destroy();
                 passwordApp = undefined;
-                //~ delete passwordApp;
-                delete test;
-                console.log(passwordApp);
-                console.log(delete test);
             },
 
             destroy : function () {

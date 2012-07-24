@@ -13,7 +13,6 @@ define([
         },
 
         destroy : function () {
-            this.unbind();
             this.$el.remove();
         },
 

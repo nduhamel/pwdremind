@@ -25,7 +25,6 @@ define([
         },
 
         destroy : function () {
-            this.unbind();
             this.remove();
         },
 
@@ -78,7 +77,7 @@ define([
 
             stop : function () {
                 notify.destroy();
-                delete notify;
+                notify = undefined;
             },
 
             destroy : function () {

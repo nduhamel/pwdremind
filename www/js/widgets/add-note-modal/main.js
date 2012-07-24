@@ -56,7 +56,6 @@ define([
             this.$el.modal('hide');
             this.modelBinder.unbind();
             Backbone.Validation.unbind(this);
-            this.unbind();
             this.remove();
         },
 
@@ -108,7 +107,7 @@ define([
                 if (view) {
                     view.destroy();
                 }
-                view = null;
+                view = undefined;
             },
 
             destroy : function () {

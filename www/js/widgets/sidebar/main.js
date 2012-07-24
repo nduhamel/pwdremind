@@ -78,7 +78,7 @@ define([
 
             stop : function () {
                 sidebarView.destroy();
-                delete sidebarView;
+                sidebarView = undefined;
             },
 
             destroy : function () {

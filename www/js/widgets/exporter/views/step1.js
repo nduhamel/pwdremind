@@ -21,7 +21,6 @@ define([
         },
 
         destroy : function () {
-            this.unbind();
             this.remove();
         },
 

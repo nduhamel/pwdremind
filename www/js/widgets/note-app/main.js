@@ -21,7 +21,6 @@ define([
         },
 
         destroy : function () {
-            this.unbind();
             this.categoriesView.destroy();
             this.notesView.destroy();
             this.$el.html('');
@@ -42,7 +41,7 @@ define([
 
             stop : function () {
                 noteApp.destroy();
-                delete noteApp;
+                noteApp = undefined;
             },
 
             destroy : function () {

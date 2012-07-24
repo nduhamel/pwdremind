@@ -36,6 +36,7 @@ define([
         },
 
         onSelect : function (event) {
+            console.log(this);
             var $el, type, id;
             event.preventDefault();
             $el =  $(event.target);
