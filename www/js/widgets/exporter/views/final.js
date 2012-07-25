@@ -1,19 +1,15 @@
 define([
+    'sandbox',
     'backbone',
     'sandbox',
     'text!../tpl/final.html',
-], function(Backbone, sandbox, baseTpl){
+], function(sandbox, Backbone, sandbox, baseTpl){
 
-    return Backbone.View.extend({
+    return sandbox.WidgetView.extend({
 
         render : function() {
-            this.$el.append(_.template(baseTpl));
-            this.setElement('#exporter-step');
+            this.$el.html(_.template(baseTpl));
             return this;
-        },
-
-        destroy : function () {
-            this.$el.remove();
         },
 
     });

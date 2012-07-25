@@ -38,6 +38,36 @@ define(['core'], function(core) {
         core.destroyWidget.apply(core, arguments);
     };
 
+    sandbox.WidgetView = Backbone.View.extend({
+
+        constructor : function (options) {
+            this.cid = _.uniqueId('widget');
+            this._configure(options || {});
+            if (options['appendToEl']) {
+                this.setElement(options['appendToEl']);
+                this._createWrapper();
+            }else{
+                this._ensureElement();
+            }
+            this.initialize.apply(this, arguments);
+            this.delegateEvents();
+        },
+
+
+        _createWrapper : function () {
+            var newEl = this.make("div", {"id": this.cid});
+            this.$el.append(newEl);
+            this.setElement(newEl);
+        },
+
+        destroy : function () {
+            this.remove();
+            if (this.onDestroy) {
+                this.onDestroy();
+            }
+        },
+    });
+
     return sandbox;
 
 });
