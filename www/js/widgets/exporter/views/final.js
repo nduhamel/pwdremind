@@ -23,6 +23,11 @@ define([
             this.exporter.start();
         },
 
+        onDestroy : function () {
+            this.files.off();
+            this.exporter.off();
+        },
+
         render : function () {
             this.$el.html(_.template(baseTpl));
             return this;
