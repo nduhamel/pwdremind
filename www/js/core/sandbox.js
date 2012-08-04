@@ -41,10 +41,12 @@ define(['core'], function(core) {
     sandbox.WidgetView = Backbone.View.extend({
 
         constructor : function (options) {
+            var options = options || {};
+            var appendToEl = options['appendToEl'] || this.appendToEl;
             this.cid = _.uniqueId('widget');
-            this._configure(options || {});
-            if (options['appendToEl']) {
-                this.setElement(options['appendToEl']);
+            this._configure(options);
+            if (appendToEl) {
+                this.setElement(appendToEl);
                 this._createWrapper();
             }else{
                 this._ensureElement();
@@ -61,10 +63,10 @@ define(['core'], function(core) {
         },
 
         destroy : function () {
-            this.remove();
             if (this.onDestroy) {
                 this.onDestroy();
             }
+            this.remove();
         },
     });
 

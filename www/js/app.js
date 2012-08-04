@@ -34,6 +34,15 @@ require.config({
             deps: ['d3', 'd3_geom'],
             exports : 'd3'
         },
+
+        'blobbuilder' : {
+            exports : 'BlobBuilder',
+        },
+
+        'filesaver' : {
+            deps: ['blobbuilder'],
+            exports : 'saveAs',
+        },
     },
 
     paths: {
@@ -49,6 +58,8 @@ require.config({
         d3 : 'lib/d3',
         d3_geom : 'lib/d3.geom',
         d3_layout : 'lib/d3.layout',
+        filesaver: 'lib/FileSaver',
+        blobbuilder: 'lib/BlobBuilder',
 
         // core
         core: 'core/core',
