@@ -41,7 +41,12 @@ define([
 
         startApp : function (appName) {
             if (appName === undefined) {
-                appName = this.collection.at(0).get('name');
+                var app = this.collection.where({cat : 'master'});
+                if (app.length === 0) {
+                    return;
+                } else {
+                    appName = app[0].get('name');
+                }
             }
             if (this.startedAppName !== null) {
                 if (this.startedAppName === appName) {
