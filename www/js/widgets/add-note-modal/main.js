@@ -91,7 +91,7 @@ define([
         };
 
         var editNote = function (note) {
-            view = new AddModal({collection: categories, model: NoteModel});
+            view = new AddModal({collection: categories, model: note});
             view.render();
         };
 
