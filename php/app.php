@@ -165,7 +165,7 @@ class App
         });
 
         // ADD a new password category
-        $router->addRoute('POST', '/passwords/category', $authCheck, function() use ($db, $message, $session, $rawInput) {
+        $router->addRoute('POST', '/password/category', $authCheck, function() use ($db, $message, $session, $rawInput) {
             $id = $db->addCategory($rawInput['data'], App::PASSWORD, $session->getUserid());
             $message->setData(array(
                             'id' => $id,

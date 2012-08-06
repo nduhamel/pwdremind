@@ -5,7 +5,8 @@ define([
     'sandbox',
     'text!./tpl/base.html',
     'bootstrap_modal',
-    'backbone_model_binder'
+    'backbone_model_binder',
+    'backbone_validation'
 ], function($, _, Backbone, sandbox, baseTpl){
 
     var AddCategoryModal = sandbox.WidgetView.extend({
@@ -73,12 +74,12 @@ define([
         var view;
 
         var addPasswordCategory= function () {
-            view = new AddCategoryModal({collection : passwordCategories, model : new passwordCategories.model() } );
+            view = new AddCategoryModal({collection : passwordCategories, model : new passwordCategories.model } );
             view.render();
         };
 
         var addNoteCategory= function () {
-            view = new AddCategoryModal({collection : noteCategories, model : new noteCategories.model() } );
+            view = new AddCategoryModal({collection : noteCategories, model : new noteCategories.model } );
             view.render();
         };
 
