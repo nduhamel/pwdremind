@@ -64,7 +64,7 @@ define([
             if (this.model.isValid(true)) {
                 var collection = this.collection;
                 this.model.save(null,{success: function (model) {
-                    collection.add(model);
+                    collection.addRessource(model);
                 }});
                 this.destroy();
             }
@@ -81,16 +81,17 @@ define([
 
     });
 
-    sandbox.defineWidget('NoteModal', ['noteCategories', 'Note'], function(noteCategories, Note){
-        var view;
+    sandbox.defineWidget('NoteModal', ['noteCategories'], function(categories){
+        var view,
+            NoteModel = categories.getRessourceModel();
 
         var addNote = function () {
-            view = new AddModal({collection : noteCategories, model : new Note({category_id: noteCategories.getCurrentCatId() }) } );
+            view = new AddModal({collection: categories, model: new NoteModel({category_id: categories.getCurrentCatId() }) } );
             view.render();
         };
 
         var editNote = function (note) {
-            view = new AddModal({collection : noteCategories, model : note });
+            view = new AddModal({collection: categories, model: NoteModel});
             view.render();
         };
 
