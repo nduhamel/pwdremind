@@ -12,7 +12,7 @@ define([
             meta : {label : 'Exporter', icon : 'icon-share', type : 'application', cat : 'extend'},
 
             start : function (el) {
-                exporter = new MainView({el : el});
+                exporter = new MainView({appendToEl : el});
                 exporter.render();
             },
 

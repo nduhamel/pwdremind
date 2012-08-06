@@ -1,13 +1,14 @@
 define([
+    'sandbox',
     'backbone',
     './step1',
     './step2',
     './step3',
     './final',
     'text!../tpl/base.html',
-], function(Backbone, Step1View, Step2View, Step3View, FinalView, baseTpl){
+], function(sandbox, Backbone, Step1View, Step2View, Step3View, FinalView, baseTpl){
 
-    return Backbone.View.extend({
+    return sandbox.WidgetView.extend({
 
         events : {
             'click a[name="next"]' : 'onNextTe'
@@ -21,7 +22,6 @@ define([
 
         render : function() {
             this.$el.html(_.template(baseTpl));
-            this.setElement('#exporter');
             this.loadStep();
             return this;
         },
@@ -30,14 +30,13 @@ define([
             if (this.stepView) {
                 this.stepView.destroy();
             }
-            this.stepView = new this.stepOrder[this.step]({el:this.el, exportOptions:this.exportOptions}).render();
+            this.stepView = new this.stepOrder[this.step]({appendToEl:this.el, exportOptions:this.exportOptions}).render();
         },
 
-        destroy : function () {
+        onDestroy : function () {
             if (this.stepView) {
                 this.stepView.destroy();
             }
-            this.remove();
         },
 
         onNextTe : function (event) {
@@ -47,7 +46,6 @@ define([
             opts = this.stepView.validate();
             if (opts){
                 _.extend(this.exportOptions, opts);
-                console.log(this.exportOptions);
                 this.step++;
                 this.loadStep();
             }

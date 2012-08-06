@@ -1,10 +1,11 @@
 define([
+    'sandbox',
     'backbone',
     'sandbox',
     'text!../tpl/step1.html',
-], function(Backbone, sandbox, baseTpl){
+], function(sandbox, Backbone, sandbox, baseTpl){
 
-    return Backbone.View.extend({
+    return sandbox.WidgetView.extend({
 
         initialize : function () {
             this.selected = [];
@@ -15,13 +16,8 @@ define([
         },
 
         render : function() {
-            this.$el.append(_.template(baseTpl));
-            this.setElement('#exporter-step');
+            this.$el.html(_.template(baseTpl));
             return this;
-        },
-
-        destroy : function () {
-            this.remove();
         },
 
         onSelect : function (event) {

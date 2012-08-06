@@ -8,9 +8,9 @@ define([
     'backbone_model_binder'
 ], function($, _, Backbone, sandbox, baseTpl){
 
-    var AddCategoryModal = Backbone.View.extend({
+    var AddCategoryModal = sandbox.WidgetView.extend({
 
-        el : 'body',
+        appendToEl : 'body',
 
         events : {
             "click button[type='submit']" : "onSubmit",
@@ -27,10 +27,9 @@ define([
         },
 
         render : function() {
-            this.$el.append(_.template(baseTpl));
-            this.setElement('#add-category-modal');
+            this.$el.html(_.template(baseTpl));
 
-            this.$el.modal({
+            this.$('.modal').modal({
                 show: true,
                 backdrop: 'static',
                 keyboard: false
@@ -42,11 +41,10 @@ define([
             return this;
         },
 
-        destroy : function () {
-            this.$el.modal('hide');
+        onDestroy : function () {
+            this.$('.modal').modal('hide');
             this.modelBinder.unbind();
             Backbone.Validation.unbind(this);
-            this.remove();
         },
 
         onSubmit : function (event) {

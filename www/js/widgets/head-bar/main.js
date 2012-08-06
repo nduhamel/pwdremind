@@ -6,9 +6,9 @@ define([
     'text!./tpl/base.html'
 ], function($, _, Backbone, sandbox, baseTpl){
 
-    var HeadBar = Backbone.View.extend({
+    var HeadBar = sandbox.WidgetView.extend({
 
-        el : 'header',
+        appendToEl : 'header',
 
         events : {
             "click a" : 'onAction',
@@ -20,10 +20,6 @@ define([
             var renderedContent = _.template(baseTpl, {logged: this.logged} );
             this.$el.html(renderedContent);
             return this;
-        },
-
-        destroy : function () {
-            this.$el.html('');
         },
 
         onLogin : function () {
