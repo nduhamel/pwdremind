@@ -55,7 +55,6 @@ define(['core'], function(core) {
             this.delegateEvents();
         },
 
-
         _createWrapper : function () {
             var newEl = this.make("div", {"id": this.cid});
             this.$el.append(newEl);

@@ -12,7 +12,7 @@ class App
     //Input datas
     private $_URI;                  //URI - /password/cat/id
     private $_method;               //GET POST DELETE
-    private $_rawInput, $_sig;      //Raw input 
+    private $_rawInput, $_sig;      //Raw input
     private $_username, $_A, $_M1;  //Login infos
 
     private $_session;
@@ -36,7 +36,7 @@ class App
         $this->_session = new SrpSession();
 
         $rawInputs = json_decode($this->_rawInput, true);
-        if ( is_array($rawInputs) && array_key_exists('sig', $rawInputs) ) { 
+        if ( is_array($rawInputs) && array_key_exists('sig', $rawInputs) ) {
             $this->_rawInput = $this->_checkKey('data', $rawInputs);
 
             //Checking the signatures
@@ -106,28 +106,28 @@ class App
         });
 
         // GET all lastest passwords
-        $router->addRoute('GET', '/passwords', $authCheck, function() use ($db, $message, $session) {
+        $router->addRoute('GET', '/password', $authCheck, function() use ($db, $message, $session) {
             $entries = $db->lastestEntries(App::PASSWORD, $session->getUserid());
             $message->setData($entries);
             $message->send();
-        });        
+        });
 
         // GET passwords in a specific category
-        $router->addRoute('GET', '/passwords/category/:id', $authCheck, function($id) use ($db, $message, $session) {
+        $router->addRoute('GET', '/password/category/:id', $authCheck, function($id) use ($db, $message, $session) {
             $entries = $db->getEntries(App::PASSWORD, $id, $session->getUserid());
             $message->setData($entries);
             $message->send();
-        }); 
+        });
 
         //GET password categories
-        $router->addRoute('GET', '/passwords/categories', $authCheck, function() use ($db, $message, $session) {
+        $router->addRoute('GET', '/password/categories', $authCheck, function() use ($db, $message, $session) {
             $categories = $db->getCategories(App::PASSWORD, $session->getUserid() );
             $message->setData($categories);
             $message->send();
         });
 
         //GET note categories
-        $router->addRoute('GET', '/notes/categories', $authCheck, function() use ($db, $message, $session) {
+        $router->addRoute('GET', '/note/categories', $authCheck, function() use ($db, $message, $session) {
             $categories = $db->getCategories(App::NOTE, $session->getUserid() );
             $message->setData($categories);
             $message->send();
@@ -143,7 +143,7 @@ class App
             ));
             $message->send();
         });
-  
+
         // UPDATE a password
         $router->addRoute('PUT', '/password', $authCheck, function() use ($db, $message, $session, $rawInput) {
             $db->updateEntry($rawInput['id'], $rawInput['data'], App::PASSWORD, $rawInput['category_id'], $session->getUserid());
@@ -175,7 +175,7 @@ class App
         });
 
         // ADD a new note category
-        $router->addRoute('POST', '/notes/category', $authCheck, function() use ($db, $message, $session, $rawInput) {
+        $router->addRoute('POST', '/note/category', $authCheck, function() use ($db, $message, $session, $rawInput) {
             $id = $db->addCategory($rawInput['data'], App::NOTE, $session->getUserid());
             $message->setData(array(
                             'id' => $id,
@@ -196,18 +196,18 @@ class App
         });
 
         // GET all lastest notes
-        $router->addRoute('GET', '/notes', $authCheck, function() use ($db, $message, $session) {
+        $router->addRoute('GET', '/note', $authCheck, function() use ($db, $message, $session) {
             $entries = $db->lastestEntries(App::NOTE, $session->getUserid());
             $message->setData($entries);
             $message->send();
-        });        
+        });
 
         // GET notes in a specific category
-        $router->addRoute('GET', '/notes/category/:id', $authCheck, function($id) use ($db, $message, $session) {
+        $router->addRoute('GET', '/note/category/:id', $authCheck, function($id) use ($db, $message, $session) {
             $entries = $db->getEntries(App::NOTE, $id, $session->getUserid());
             $message->setData($entries);
             $message->send();
-        }); 
+        });
 
         // Logout
         $router->addRoute('GET', '/logout', $authCheck, function() use ($session) {

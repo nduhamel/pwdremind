@@ -13,7 +13,6 @@ define([
         },
 
         initialize : function() {
-
             /*--- binding ---*/
             _.bindAll(this, 'render');
             this.collection.bind('change', this.render);
@@ -21,18 +20,11 @@ define([
             this.collection.bind('add', this.render);
             this.collection.bind('remove', this.render);
             /*---------------*/
-
-            this.currentCategory = this.options.currentCategory;
-
-            sandbox.subscribe('noteCategory:changed', function(cat_id) {
-                this.currentCategory = cat_id;
-                this.render();
-            }, this);
         },
 
         render : function() {
             this.$el.html(_.template(baseTpl, {categories : this.collection.toJSON(),
-                                               currentCategory: this.currentCategory }));
+                                               currentCategory: this.collection.getCurrentCatId() }));
             return this;
         },
 
@@ -47,7 +39,7 @@ define([
             if (name === 'add') {
                 sandbox.broadcast('request:addNoteCategory');
             } else {
-                sandbox.broadcast('noteCategory:change', name);
+                this.collection.setCurrentCatId(name);
             }
         }
 

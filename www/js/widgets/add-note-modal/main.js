@@ -62,8 +62,9 @@ define([
         onSubmit : function (event) {
             event.preventDefault();
             if (this.model.isValid(true)) {
+                var collection = this.collection;
                 this.model.save(null,{success: function (model) {
-                    sandbox.broadcast('add:note', model);
+                    collection.add(model);
                 }});
                 this.destroy();
             }

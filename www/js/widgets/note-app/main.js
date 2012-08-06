@@ -13,10 +13,9 @@ define([
         render : function() {
             this.$el.html(_.template(baseTpl));
             this.categoriesView = new CategoriesView({el : this.$('#note-app-categories'),
-                                                      collection : this.options.categories,
-                                                      currentCategory : this.options.notes.getCategoryId() }).render();
+                                                      collection : this.collection}).render();
             this.notesView = new NotesView({el : this.$('#note-app-notes'),
-                                                    collection : this.options.notes }).render();
+                                                    collection : this.collection.getRessourceCollection() }).render();
             return this;
         },
 
@@ -28,14 +27,14 @@ define([
 
     });
 
-    sandbox.defineWidget('NoteApp', ['noteCategories','notes'], function(categories, notes){
+    sandbox.defineWidget('NoteApp', ['noteCategories'], function(categories){
         var noteApp;
 
         return {
             meta : {label : 'Notes', icon : 'icon-pencil', type : 'application', cat : 'master'},
 
             start : function (el) {
-                noteApp = new NoteApp({el : el, categories : categories, notes : notes});
+                noteApp = new NoteApp({el : el, collection : categories});
                 noteApp.render();
             },
 

@@ -13,10 +13,9 @@ define([
         render : function() {
             this.$el.html(_.template(baseTpl));
             this.categoriesView = new CategoriesView({el : this.$('#password-app-categories'),
-                                                      collection : this.options.categories,
-                                                      currentCategory : this.options.passwords.getCategoryId() }).render();
+                                                      collection : this.collection}).render();
             this.passwordsView = new PasswordsView({el : this.$('#password-app-passwords'),
-                                                    collection : this.options.passwords }).render();
+                                                    collection : this.collection.getRessourceCollection() }).render();
             return this;
         },
 
@@ -29,7 +28,7 @@ define([
     });
 
 var test;
-    sandbox.defineWidget('PasswordApp', ['passwordCategories','passwords'], function(categories, passwords){
+    sandbox.defineWidget('PasswordApp', ['passwordCategories'], function(categories){
         var passwordApp;
 
 
@@ -38,9 +37,8 @@ var test;
 
             start : function (el) {
                 console.log(passwordApp);
-                passwordApp = new PasswordApp({el : el, categories : categories, passwords : passwords});
+                passwordApp = new PasswordApp({el : el, collection : categories});
                 passwordApp.render();
-                test = 'coucu';
             },
 
             stop : function () {

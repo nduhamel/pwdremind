@@ -56,6 +56,7 @@ define([
 
         destroy : function () {
             this.unbind();
+            this.collection.off();
             this.zeroclip = undefined;
             this.$el.html('');
         },

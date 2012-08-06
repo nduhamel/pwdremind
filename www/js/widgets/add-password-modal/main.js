@@ -61,10 +61,10 @@ define([
 
         onSubmit : function (event) {
             event.preventDefault();
-
+            var collection = this.collection;
             if (this.model.isValid(true)) {
                 this.model.save(null,{success: function (model) {
-                    sandbox.broadcast('add:password', model);
+                    collection.addRessource(model);
                 }});
                 this.destroy();
             }
@@ -82,8 +82,9 @@ define([
     });
 
 
-    sandbox.defineWidget('PasswordModal', ['passwordCategories', 'Password'], function(categories, PasswordModel){
-        var view;
+    sandbox.defineWidget('PasswordModal', ['passwordCategories'], function(categories){
+        var view,
+            PasswordModel = categories.getRessourceModel();
 
         var addPassword = function () {
             view = new AddModal({collection : categories, model : new PasswordModel({category_id: categories.getCurrentCatId() }) } );

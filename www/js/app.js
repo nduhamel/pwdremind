@@ -83,8 +83,7 @@ requirejs([
     'core',
     'sandbox',
     'modules/srpsession/srpsession',
-    'modules/passwords/passwords',
-    'modules/notes/notes',
+    'modules/ressources/main',
     'modules/applications/main',
     'widgets/login-modal/main',
     'widgets/add-password-modal/main',
@@ -101,8 +100,7 @@ requirejs([
              core,
              sandbox,
              srpsession,
-             passwords,
-             notes,
+             ressources,
              applications) {
 
     console.log('Starting app');
@@ -112,8 +110,7 @@ requirejs([
     core.broadcast('bootstrap');
 
     core.subscribe('login', function () {
-        core.start(passwords);
-        core.start(notes);
+        core.start(ressources);
     });
 
     core.subscribe('logout:after', function () {

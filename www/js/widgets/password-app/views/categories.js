@@ -16,28 +16,24 @@ define([
 
             /*--- binding ---*/
             _.bindAll(this, 'render');
-            this.collection.bind('change', this.render);
-            this.collection.bind('reset', this.render);
-            this.collection.bind('add', this.render);
-            this.collection.bind('remove', this.render);
+            this.collection.on('change', this.render);
+            this.collection.on('reset', this.render);
+            this.collection.on('add', this.render);
+            this.collection.on('remove', this.render);
+            this.collection.on('category:changed', this.render);
             /*---------------*/
 
-            this.currentCategory = this.options.currentCategory;
-
-            sandbox.subscribe('passwordCategory:changed', function(cat_id) {
-                this.currentCategory = cat_id;
-                this.render();
-            }, this);
         },
 
         render : function() {
             this.$el.html(_.template(baseTpl, {categories : this.collection.toJSON(),
-                                               currentCategory: this.currentCategory }));
+                                               currentCategory: this.collection.getCurrentCatId() }));
             return this;
         },
 
         destroy : function () {
             this.unbind();
+            this.collection.off();
             this.$el.html('');
         },
 
@@ -47,7 +43,7 @@ define([
             if (name === 'add') {
                 sandbox.broadcast('request:addPasswordCategory');
             } else {
-                sandbox.broadcast('passwordCategory:change', name);
+                this.collection.setCurrentCatId(name);
             }
         }
 
