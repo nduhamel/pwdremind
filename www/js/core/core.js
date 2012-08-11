@@ -96,7 +96,7 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
             // Current app is started ?
             if (this._curApp !== null && this._curApp.state === APP_STATE.STARTING){
                 // Deps available ?
-                var deps = this._checkDeps(this._curApp.deps);
+                var deps = this.checkDeps(this._curApp.deps);
                 if (deps !== false) {
                     this._curApp.start.apply(this._curApp,deps);
                     this._curApp.state = APP_STATE.STARTED;
@@ -105,7 +105,7 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
         },
 
         // Return deps or false
-        _checkDeps : function (deps) {
+        checkDeps : function (deps) {
             if (deps === null) {
                 return [];
             }else{
@@ -186,6 +186,10 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 
         provide : function (name, getter) {
             this._applications.registerDep(name, getter);
+        },
+
+        require : function (dep) {
+            return this._applications.checkDeps([dep])[0];
         },
 
         defineApp : function (App) {

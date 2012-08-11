@@ -6,11 +6,12 @@ define([
     'text!./tpl/base.html',
     'bootstrap_modal',
     'backbone_model_binder',
+    'backbone_validation'
 ], function($, _, Backbone, sandbox, baseTpl){
 
-    var AddModal = Backbone.View.extend({
+    var PasswordModal = sandbox.WidgetView.extend({
 
-        el : 'body',
+        appendToEl : 'body',
 
         events : {
             "click button[type='submit']" : "onSubmit",
@@ -19,9 +20,7 @@ define([
         },
 
         initialize : function () {
-            console.log('Init add modal');
             this.modelBinder = new Backbone.ModelBinder();
-
             // If not new save attributes for cancel
             if (!this.model.isNew()) {
                 this._revertAttributes = this.model.toJSON();
@@ -30,11 +29,9 @@ define([
 
         render : function() {
             var renderedContent = _.template(baseTpl, {categories : this.collection.toJSON()});
-            this.$el.append(renderedContent);
+            this.$el.html(renderedContent);
 
-            this.setElement('#add-modal');
-
-            this.$el.modal({
+            this.$('#add-modal').modal({
                 show: true,
                 backdrop: 'static',
                 keyboard: false,
@@ -52,11 +49,10 @@ define([
             return this;
         },
 
-        destroy : function () {
-            this.$el.modal('hide');
+        onDestroy : function () {
+            this.$('#add-modal').modal('hide');
             this.modelBinder.unbind();
             Backbone.Validation.unbind(this)
-            this.remove();
         },
 
         onSubmit : function (event) {
@@ -81,42 +77,5 @@ define([
 
     });
 
-
-    sandbox.defineWidget('PasswordModal', ['passwordCategories'], function(categories){
-        var view,
-            PasswordModel = categories.getRessourceModel();
-
-        var addPassword = function () {
-            view = new AddModal({collection : categories, model : new PasswordModel({category_id: categories.getCurrentCatId() }) } );
-            view.render();
-        };
-
-        var editPassword = function (password) {
-            view = new AddModal({collection : categories, model : password });
-            view.render();
-        };
-
-
-        return {
-            meta : {startOn: 'login:after'},
-
-            start : function () {
-                sandbox.subscribe('request:add-password', addPassword);
-                sandbox.subscribe('request:edit-password', editPassword);
-            },
-
-            stop : function () {
-                sandbox.unsubscribe('request:add-password', addPassword);
-                sandbox.unsubscribe('request:edit-password', editPassword);
-                if (view) {
-                    view.destroy();
-                }
-                view = undefined;
-            },
-
-            destroy : function () {
-                this.stop();
-            },
-        };
-    });
+    return PasswordModal;
 });

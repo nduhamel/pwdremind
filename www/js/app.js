@@ -82,20 +82,31 @@ requirejs([
     'sandbox',
     'widgets/head-bar/main',
     'widgets/login-modal/main',
+    'widgets/password-modal/main',
     'modules/srpsession/srpsession',
     'modules/ressources/main',
-    //~ 'widgets/add-password-modal/main',
     //~ 'widgets/add-category-modal/main',
     //~ 'widgets/add-note-modal/main',
     'applications/passwordList/main',
     'applications/noteList/main',
-    //~ 'widgets/sidebar/main',
-    //~ 'widgets/notify/main',
     //~ 'widgets/passwords-vizualizer/main',
     //~ 'widgets/exporter/main'
-], function (sandbox, HeadBar, LoginModal) {
+], function (sandbox, HeadBar, LoginModal, PasswordModal) {
     var headBar,
-        loginModal;
+        modal;
+
+    var addPassword = function () {
+        var categories = sandbox.require('passwordCategories'),
+            PasswordModel = categories.getRessourceModel();
+        modal = new PasswordModal({collection : categories, model : new PasswordModel({category_id: categories.getCurrentCatId() }) } );
+        modal.render();
+    };
+
+    var editPassword = function (password) {
+        var categories = sandbox.require('passwordCategories');
+        modal = new PasswordModal({collection : categories, model : password });
+        modal.render();
+    };
 
     console.log('Starting app');
 
@@ -123,13 +134,15 @@ requirejs([
     headBar = new HeadBar();
     headBar.render();
 
-    loginModal = new LoginModal();
-    loginModal.render();
+    modal = new LoginModal();
+    modal.render();
 
     sandbox.on('login', function () {
         sandbox.startModule('ressources');
-        loginModal.destroy();
-        loginModal = null;
+        modal.destroy();
+        modal = null;
+        sandbox.on('request:add-password', addPassword);
+        sandbox.on('request:edit-password', editPassword);
     });
 
     sandbox.on('logout:after', function () {
@@ -137,5 +150,5 @@ requirejs([
     });
 
     // For testing
-    //~ sandbox.trigger('request:login','nicolas','test');
+    sandbox.trigger('request:login','nicolas','test');
 });

@@ -41,7 +41,7 @@ define([
             event.preventDefault();
             var name = $(event.currentTarget).attr('name');
             if (name === 'add') {
-                sandbox.broadcast('request:addPasswordCategory');
+                sandbox.trigger('request:add-password');
             } else {
                 this.collection.setCurrentCatId(name);
             }

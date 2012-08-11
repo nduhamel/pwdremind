@@ -7,6 +7,10 @@ define(['core', 'backbone'], function(Core, Backbone) {
 
     _.extend(Sandbox.prototype, Backbone.Events, {
 
+        require : function (dep) {
+            return this.core.require(dep);
+        },
+
         configure : function (options) {
             this.core.configure(options);
         },
