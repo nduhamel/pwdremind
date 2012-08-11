@@ -6,7 +6,7 @@ define([
     'text!./tpl/base.html'
 ], function($, _, Backbone, sandbox, baseTpl){
 
-    var HeadBar = sandbox.WidgetView.extend({
+    return sandbox.WidgetView.extend({
 
         appendToEl : 'header',
 
@@ -14,10 +14,30 @@ define([
             "click a" : 'onAction',
         },
 
+        dataStyle : {
+            password : {label: 'Passwords', icon: 'icon-briefcase'},
+            note : {label: 'Notes', icon: 'icon-pencil'}
+        },
+
         logged : false,
 
+        initialize : function () {
+            sandbox.on('login', this.onLogin, this);
+            sandbox.on('logout', this.onLogout, this);
+            sandbox.on('startApp', this.render, this);
+        },
+
         render : function() {
-            var renderedContent = _.template(baseTpl, {logged: this.logged} );
+            var apps = sandbox.getApps();
+            var currentApp = sandbox.getCurrentApp();
+            var mainMenu = _.map(apps, function(opt, context){
+                opt.name = context;
+                return opt;
+            });
+            mainMenu = _.sortBy(mainMenu, function(entry){
+                return entry.order;
+            });
+            var renderedContent = _.template(baseTpl, {logged: this.logged, menu: mainMenu, apps: apps, current: currentApp} );
             this.$el.html(renderedContent);
             return this;
         },
@@ -37,38 +57,22 @@ define([
             event.preventDefault();
             var action = $(event.currentTarget).attr('name');
             if (action) {
-                sandbox.broadcast('request:'+action);
+                sandbox.trigger('request:'+action);
             }
+            var app = $(event.currentTarget).data('app');
+            var context = $(event.currentTarget).data('context');
+            if (app) {
+                sandbox.startApp(app);
+            } else if (context) {
+                sandbox.setContext(context, true);
+            }
+        },
+
+        onDestroy : function () {
+            sandbox.off('login', this.onLogin, this);
+            sandbox.off('logout', this.onLogout, this);
         }
 
     });
 
-
-    sandbox.defineWidget('HeadBar', function(){
-        var view;
-
-        return {
-            meta : {startOn: 'bootstrap'},
-
-            start : function () {
-                view = new HeadBar();
-                view.render();
-                sandbox.subscribe('login', view.onLogin, view);
-                sandbox.subscribe('logout', view.onLogout, view);
-            },
-
-            stop : function () {
-                if (view) {
-                    view.destroy();
-                }
-                sandbox.unsubscribe('login', view.onLogin);
-                sandbox.unsubscribe('logout', view.onLogout)
-                view = undefined;
-            },
-
-            destroy : function () {
-                this.stop();
-            },
-        };
-    });
 });

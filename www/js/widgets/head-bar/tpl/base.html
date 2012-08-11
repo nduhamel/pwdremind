@@ -1,21 +1,49 @@
-<!-- Navbar -->
-<div class="navbar navbar-fixed-top" >
+<div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
-
             <a class="brand" href="#">Password remind</a>
             <div class="nav-collapse">
-            <% if (logged) { %>
+                <ul class="main-nav">
+                <% _.each(menu, function (entry) {
+                    if (current !== null && entry.name === current.context){
+                    %><li class="active"><%
+                    } else {
+                    %><li><%
+                    }
+                    %>
+                        <a href="#" data-context="<%=entry.name%>">
+                            <i class="<%=entry.icon%> icon-white"></i>
+                            <span><%=entry.label%></span>
+                        </a>
+                    </li>
+                <% });%>
+                </ul>
                 <ul class="nav pull-right">
                     <li><a href="#logout" name="logout">
                         Username
                         <i class="icon-off icon-white"></i>
                     </a></li>
                 </ul>
-            <% } %>
             </div>
-
         </div>
     </div>
 </div>
-<!-- /Navbar -->
+<% if (current !== null) { %>
+<div class="subnav subnav-fixed">
+    <ul class="nav nav-pills">
+    <% _.each(apps[current.context].apps, function (app) {
+        if (app.name === current.app.name){
+        %><li class="active"><%
+        } else {
+        %><li><%
+        }
+        %>
+            <a href="#" data-context="<%=current.context%>" data-app="<%=app.name%>">
+                <i class="<%=app.icon%>"></i>
+                <%=app.label%>
+            </a>
+        </li>
+    <% });%>
+    </ul>
+</div>
+<% } %>

@@ -3,23 +3,26 @@ define([
     'underscore',
     'backbone',
     'sandbox',
-    'text!../tpl/categories.html'
+    'text!../tpl/sidebar.html'
 ], function($, _, Backbone, sandbox, baseTpl) {
 
-    var CategoriesView = Backbone.View.extend({
+    var SideView = Backbone.View.extend({
 
         events : {
             'click a' : 'onClick'
         },
 
         initialize : function() {
+
             /*--- binding ---*/
             _.bindAll(this, 'render');
-            this.collection.bind('change', this.render);
-            this.collection.bind('reset', this.render);
-            this.collection.bind('add', this.render);
-            this.collection.bind('remove', this.render);
+            this.collection.on('change', this.render);
+            this.collection.on('reset', this.render);
+            this.collection.on('add', this.render);
+            this.collection.on('remove', this.render);
+            this.collection.on('category:changed', this.render);
             /*---------------*/
+
         },
 
         render : function() {
@@ -30,6 +33,7 @@ define([
 
         destroy : function () {
             this.unbind();
+            this.collection.off();
             this.$el.html('');
         },
 
@@ -46,5 +50,5 @@ define([
     });
 
 
-    return CategoriesView;
+    return SideView;
 });

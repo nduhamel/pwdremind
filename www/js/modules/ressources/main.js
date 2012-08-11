@@ -38,27 +38,22 @@ define(['backbone', 'sandbox', './collections/categories'], function(Backbone, s
         crypted : ['name', 'notes']
     };
 
+    sandbox.defineModule({
 
-    // Facade
-    return {
-        initialize : function () {
+        name : 'ressources',
 
-            var passwordCategories = new Categories(null,{ressource:Password});
-            var noteCategories = new Categories(null,{ressource:Note});
+        provide : ['passwordCategories', 'noteCategories'],
 
-            sandbox.provide('passwordCategories', function () {return passwordCategories;});
-            sandbox.provide('noteCategories', function () {return noteCategories;});
+        start : function () {
+            this.passwordCategories = new Categories(null,{ressource:Password});
+            this.noteCategories = new Categories(null,{ressource:Note});
         },
 
-        reload : function () {
-            console.log('Reload Passwords');
-            // TODO
+        stop : function () {
+            this.passwordCategories = null;
+            this.noteCategories = null;
         },
 
-        destroy : function () {
-            console.log('Destroy Passwords');
-            delete passwords;
-            // TODO
-        }
-    };
+    });
+
 });

@@ -79,43 +79,56 @@ if (typeof Object.create !== 'function') {
 
 // Starts main
 requirejs([
-    'backbone',
-    'core',
     'sandbox',
+    'widgets/head-bar/main',
     'modules/srpsession/srpsession',
     'modules/ressources/main',
-    'modules/applications/main',
-    'widgets/login-modal/main',
-    'widgets/add-password-modal/main',
-    'widgets/add-category-modal/main',
-    'widgets/add-note-modal/main',
-    'widgets/head-bar/main',
-    'widgets/password-app/main',
-    'widgets/note-app/main',
-    'widgets/sidebar/main',
-    'widgets/notify/main',
-    'widgets/passwords-vizualizer/main',
-    'widgets/exporter/main'
-], function (Backbone,
-             core,
-             sandbox,
-             srpsession,
-             ressources,
-             applications) {
+    //~ 'widgets/login-modal/main',
+    //~ 'widgets/add-password-modal/main',
+    //~ 'widgets/add-category-modal/main',
+    //~ 'widgets/add-note-modal/main',
+    'applications/passwordList/main',
+    'applications/noteList/main',
+    //~ 'widgets/sidebar/main',
+    //~ 'widgets/notify/main',
+    //~ 'widgets/passwords-vizualizer/main',
+    //~ 'widgets/exporter/main'
+], function (sandbox, HeadBar) {
 
     console.log('Starting app');
-    core.start(applications);
-    core.start(srpsession, './authentication');
 
-    core.broadcast('bootstrap');
-
-    core.subscribe('login', function () {
-        core.start(ressources);
+    sandbox.configure({
+        appEl : 'div[name="application"]',
+        defaultContext : 'password',
+        context : {
+            password : {
+                label : 'Passwords',
+                icon : 'icon-briefcase',
+                order : 0,
+                defaultApp : 'passwordList'
+            },
+            note : {
+                label : 'Notes',
+                icon : 'icon-pencil',
+                order : 1,
+                defaultApp : 'noteList'
+            }
+        }
     });
 
-    core.subscribe('logout:after', function () {
+    sandbox.startModule('srpsession', {authUrl:'./authentication'});
+
+    var headBar = new HeadBar();
+    headBar.render();
+
+    sandbox.on('login', function () {
+        sandbox.startModule('ressources');
+    });
+
+    sandbox.on('logout:after', function () {
         location.reload();
     });
 
-    core.broadcast('request:login','nicolas','test');
+    // For testing
+    sandbox.trigger('request:login','nicolas','test');
 });

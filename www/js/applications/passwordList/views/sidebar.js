@@ -3,10 +3,10 @@ define([
     'underscore',
     'backbone',
     'sandbox',
-    'text!../tpl/categories.html'
+    'text!../tpl/sidebar.html'
 ], function($, _, Backbone, sandbox, baseTpl) {
 
-    var CategoriesView = Backbone.View.extend({
+    var SideView = Backbone.View.extend({
 
         events : {
             'click a' : 'onClick'
@@ -50,5 +50,5 @@ define([
     });
 
 
-    return CategoriesView;
+    return SideView;
 });

@@ -6,60 +6,48 @@ define([
     './cryptedsync'
 ], function(_, Backbone, sandbox, Authenticator, cryptedSync){
 
-    var defaultSync = Backbone.sync;
+    sandbox.defineModule({
 
-    var srpSession = {};
+        name : 'srpsession',
 
-    srpSession.onLogin = function (credential) {
-        console.log('Install crypted sync');
-        Backbone.sync = cryptedSync(credential.key, credential.macKey);
-        sandbox.broadcast('login');
-    };
-
-    srpSession.onFail = function () {
-        sandbox.broadcast('login:failed');
-    };
-
-    srpSession.requestLogin = function (username, password) {
-        console.log('Request login: '+username+':'+password);
-        var auth = new Authenticator(srpSession.authUrl, _.bind(srpSession.onLogin, srpSession ), srpSession.onFail);
-        auth.start(username, password);
-    };
-
-    srpSession.requestLogout = function () {
-        console.log('Request logout');
-        console.log('Remove crypted sync');
-        sandbox.broadcast('logout');
-    };
-
-    srpSession.onLogout = function () {
-        Backbone.sync = defaultSync;
-    };
-
-    // Facade
-    return {
-
-        // Options: authUrl syncUrl
-        initialize : function (authUrl) {
-            console.log('Init SRPsession');
-            srpSession.authUrl = authUrl;
-            sandbox.subscribe('request:login', srpSession.requestLogin, srpSession);
-            sandbox.subscribe('request:logout', srpSession.requestLogout, srpSession);
-            sandbox.subscribe('logout', srpSession.onLogout, srpSession);
+        start : function (options) {
+            this.authUrl = options.authUrl;
+            this.defaultSync = Backbone.sync;
+            this.sandbox.on('request:login', this.requestLogin, this);
+            this.sandbox.on('request:logout', this.requestLogout, this);
+            this.sandbox.on('logout', this.onLogout, this);
         },
 
-        reload : function () {
-            console.log('Reload SRPsession');
-            console.log('Remove crypted sync');
-            Backbone.sync = defaultSync;
+        stop : function () {
+            Backbone.sync = this.defaultSync;
+            this.sandbox.off('request:login', this.requestLogin, this);
+            this.sandbox.off('request:logout', this.requestLogout, this);
+            this.sandbox.off('logout', this.onLogout, this);
         },
 
-        destroy : function () {
-            console.log('Destroy SRPsession');
-            console.log('Remove crypted sync');
-            Backbone.sync = defaultSync;
-            sandbox.unsubscribe('request:login', srpSession.requestLogin);
-            sandbox.unsubscribe('request:logout', srpSession.requestLogout);
+        requestLogin : function (username, password) {
+            var auth = new Authenticator(this.authUrl, _.bind(this.onLogin, this ), _.bind(this.onFail, this ));
+            auth.start(username, password);
         },
-    };
+
+        onLogin : function (credential) {
+            //~ console.log('Install crypted sync');
+            Backbone.sync = cryptedSync(credential.key, credential.macKey);
+            this.sandbox.trigger('login');
+        },
+
+        onFail : function () {
+            this.sandbox.trigger('login:failed');
+        },
+
+        requestLogout : function () {
+            //~ console.log('Request logout');
+            //~ console.log('Remove crypted sync');
+            this.sandbox.trigger('logout');
+        },
+
+        onLogout : function () {
+            Backbone.sync = this.defaultSync;
+        },
+    });
 });

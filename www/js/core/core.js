@@ -1,214 +1,249 @@
-define(['underscore', 'backbone'], function( _, Backbone){
+define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 
-    var obj = {},
-        registeredDeps = {},
-        registeredWidgets = {},
-        requireQueue = [],
-        dispatcher = _.clone(Backbone.Events);
-
-    // Return deps or false if they are not available
-    function getDeps (deps) {
-        var missed = _.difference(deps, _.keys(registeredDeps));
-        if (!_.isEmpty(missed)) {
-            return false;
-        }
-        return _.map(_.pick(registeredDeps,deps), function(val, key){
-            return val();
-        });
+    var Applications = function () {
+        this._reset();
     };
 
-    //Check widget API must define start, stop, destroy and meta keys
-    //return true if ok
-    function checkWidgetAPI (widget) {
-        var missed;
+    _.extend(Applications.prototype, Backbone.Events, {
 
-        if (!_.isObject(widget)) {
-            throw "Invalid widget API";
-        }
-        missed = _.difference(['start','stop','destroy','meta'], _.keys(widget));
-        if (!_.isEmpty(missed)) {
-            throw "Invalid widget API";
-        }
-        // start stop destroy must be callable
-        _.each(['start','stop','destroy'], function(func){
-            if (!_.isFunction(widget[func])){
-                throw "Invalid widget API";
+        configure : function (options) {
+            _.each(options, function(opt, dataType){
+                if (_.has(this._context, dataType)) {
+                    _.extend(this._context[dataType], opt);
+                } else {
+                    this._context[dataType] = opt;
+                }
+            }, this);
+        },
+
+        setContext : function (context, autoStart) {
+            if (_.has(this._context, context)) {
+                this._curContext = context;
+                if (autoStart) {
+                    this.start(this._context[context].defaultApp);
+                }
+            } else {
+                throw "Invalid context";
             }
-        });
-        // meta must be an object
-        if (!_.isObject(widget.meta)) {
-            throw "Invalid widget API";
-        }
-        return true;
-    };
+        },
 
-    function getWidget (name) {
-        if (_.include(_.keys(registeredWidgets), name)){
-            return registeredWidgets[name];
-        }else{
-            throw 'Widget not registered';
-        }
-    };
-
-    function tryIniWidget(name) {
-        var deps,
-            instance,
-            widget = getWidget(name);
-
-        deps = getDeps(widget.deps);
-        if (deps) {
-            instance = widget.callback.apply(null, deps);
-            if (checkWidgetAPI(instance)) {
-                console.log('Init: '+name);
-                widget.instance = instance;
-                widget.status = 'init';
-                if (_.has(instance.meta, 'startOn')){
-                    obj.subscribe(instance.meta.startOn,function(){
-                        obj.startWidget(name);
-                    });
-                }
-                if (_.has(instance.meta, 'stopOn')) {
-                    obj.subscribe(instance.meta.stopOn,function(){
-                        obj.stopWidget(name);
-                    });
-                }
-                if (_.has(instance.meta, 'type') && instance.meta.type === 'application') {
-                    obj.broadcast('register:application', name, instance.meta);
-                }
-                return true
+        getCurrentApp : function () {
+            if (this._curApp !== null) {
+                return {app : this._curApp.toJSON(), context: this._curContext};
+            } else {
+                return null;
             }
-        }
-        return false;
-    };
+        },
 
-    obj.subscribe = function (channel, callback, context) {
-        dispatcher.on(channel, callback, context);
-    };
+        add : function (app) {
+            this._apps.push(app);
+            _.each(app.context, function(dataType){
+                if (_.has(this._context, dataType)) {
+                    this._context[dataType].apps.push(app);
+                } else {
+                    this._context[dataType]= {apps : [app]};
+                }
+            }, this);
+            this.length++;
+            this.trigger('addApp');
+            return this;
+        },
 
-    obj.broadcast = function (channel) {
-        var args = _.toArray(arguments);
-        dispatcher.trigger.apply(dispatcher, args);
-        args.slice(1);
-        args.unshift(channel+':after');
-        dispatcher.trigger.apply(dispatcher, args);
-    };
+        setEl : function (el) {
+            this._$el = (el instanceof $) ? el : $(el);
+        },
 
-    obj.unsubscribe = function (channel, callback, context) {
-        dispatcher.off(channel, callback, context);
-    };
+        toJSON : function () {
+            return JSON.parse(JSON.stringify(this._context));
+        },
 
-    obj.start = function (module) {
-        var args = Array.prototype.slice.call(arguments);
-        args.shift();
-        module.initialize.apply(module,args);
-    };
+        registerDep : function (name, getter) {
+            if (!_.isString(name)) {
+                throw "Dependence's name required";
+            }else if (!_.isFunction(getter)){
+                throw "Dependence's getter need to be a function";
+            }else if (_.include(_.keys(this._availableDeps), name)){
+                throw "dependence already registered";
+            }
+            this._availableDeps[name] = getter;
+            this._tryStart();
+        },
 
-    obj.stop = function (module) {
-        module.destroy();
-    };
+        start : function (name) {
+            if (this._$el === null) {
+                throw "Can't start application's element not defined";
+            }
+            var app = _.find(this._apps, function(app){
+                return app.name === name;
+            });
+            if (this._curApp !== null) {
+                this.stop();
+            }
+            app.$el = this._$el;
+            this._curApp = app;
+            this._curApp.state = APP_STATE.STARTING;
+            this._tryStart();
+            this.trigger('startApp', app.toJSON());
+        },
 
-    obj.provide = function (name, callback) {
-        //Name require
-        if (!_.isString(name)) {
-            throw "No name";
-        }else if (!_.isFunction(callback)){
-            throw "Callback need to be a function";
-        }else if (_.include(_.keys(registeredDeps), name)){
-            throw "dependency already registered";
-        }
-        registeredDeps[name] = callback;
+        stop : function () {
+            this._curApp.state = APP_STATE.STOP;
+            this._curApp.stop();
+            this._curApp = null;
+        },
 
-        // Check for widget which can be started
-        _.each(registeredWidgets, function(widget, name){
-            var deps;
-            if (widget.status === 'registered') {
-                deps = getDeps(widget.deps);
-                if (deps) {
-                    tryIniWidget(name);
+        _tryStart : function () {
+            // Current app is started ?
+            if (this._curApp !== null && this._curApp.state === APP_STATE.STARTING){
+                // Deps available ?
+                var deps = this._checkDeps(this._curApp.deps);
+                if (deps !== false) {
+                    this._curApp.start.apply(this._curApp,deps);
+                    this._curApp.state = APP_STATE.STARTED;
                 }
             }
-        });
-        // Check for callback which can be called
-        requireQueue = _.filter(requireQueue, function (func) {
-            var deps = getDeps(func.deps);
-            if (deps) {
-                func.callback.apply(null, deps);
-                return false;
+        },
+
+        // Return deps or false
+        _checkDeps : function (deps) {
+            if (deps === null) {
+                return [];
             }else{
-                return true;
+                var missed = _.difference(deps, _.keys(this._availableDeps));
+                if (!_.isEmpty(missed)) {
+                    return false;
+                }
+                return _.map(_.pick(this._availableDeps,deps), function(val, key){
+                    return val();
+                });
             }
-        });
+        },
+
+        _reset: function(options) {
+            this.length = 0;
+            this._context = {},
+            this._currentContext = null;
+            this._apps = [];
+            this._curApp = null;
+            this._availableDeps = {};
+            this._$el = null;
+        },
+
+    });
+
+    var BaseApp = function () {
+        this.cid = _.uniqueId('app');
+        this.state = APP_STATE.STOP;
     };
 
-    // Wait for deps call callback when available
-    obj.require = function (deps, callback) {
-        var availableDeps,
-
-        availableDeps = getDeps(deps);
-        if (availableDeps) {
-            callback.apply(null, availableDeps);
-        }else{
-            requireQueue.push({deps:deps, callback:callback});
-        }
+    var APP_STATE = {
+            STOP : 0,
+            STARTING : 1,
+            STARTED : 2,
     };
 
-    obj.defineWidget = function (name, deps, callback) {
-        var missed,
-            widget = {};
+    BaseApp.extend = Backbone.Model.extend;
 
-        //Name require and must be unique
-        if (!_.isString(name)) {
-            throw "No name";
-        }else if (_.include(_.keys(registeredWidgets), name)){
-            throw "Name already registered"
+    _.extend(BaseApp.prototype, {
+
+        deps : null,
+
+        start : function () {
+        },
+
+        stop : function () {
+        },
+
+        toJSON : function () {
+            return _.pick(this, 'name', 'label', 'icon', 'context', 'state');
         }
+    });
 
-        //This module may not have dependencies
-        if (!_.isArray(deps)) {
-            callback = deps;
-            deps = [];
-        }
-
-        widget = {callback:callback, deps:deps, status:'registered', instance: null};
-        registeredWidgets[name] = widget;
-
-        tryIniWidget(name);
+    var BaseModule = function (sandbox) {
+        this.cid = _.uniqueId('module');
+        this.sandbox = sandbox;
     };
 
-    obj.startWidget = function (name) {
-        var widget = getWidget(name),
-            args = _.toArray(arguments).slice(1);
+    BaseModule.extend = Backbone.Model.extend;
 
-        if (widget.status === 'registered') {
-            if (!tryIniWidget(name)) {
-                throw name+' dependences not available';
+    _.extend(BaseModule.prototype, {
+
+        provide : null,
+
+        start : function () {
+        },
+
+        stop : function () {
+        },
+    });
+
+
+    var Core = function () {
+        this._reset();
+    };
+
+    _.extend(Core.prototype, Backbone.Events, {
+
+        provide : function (name, getter) {
+            this._applications.registerDep(name, getter);
+        },
+
+        defineApp : function (App) {
+            App = BaseApp.extend(App);
+            this._applications.add(new App);
+        },
+
+        getApps : function () {
+            return this._applications.toJSON();
+        },
+
+        getCurrentApp : function () {
+            return this._applications.getCurrentApp();
+        },
+
+        startApp : function (name) {
+            this._applications.start(name);
+        },
+
+        defineModule : function (Module, sandbox) {
+            Module = BaseModule.extend(Module);
+            var mod = new Module(sandbox);
+            this._modules[mod.name] = mod;
+        },
+
+        startModule : function (name, options) {
+            var mod = this._modules[name];
+            mod.start(options);
+            if (mod.provide !== null) {
+                _.each(mod.provide, function(dep, i) {
+                    this.provide(dep, function(){
+                        return mod[dep];
+                    });
+                },this)
             }
-        } else if (widget.status === 'started') {
-            throw  name+' already started'
+        },
+
+        configure : function (options) {
+            this._applications.setEl(options.appEl);
+            this._applications.configure(options.context);
+            this._applications.setContext(options.defaultContext, true);
+        },
+
+        setContext : function (context) {
+            this._applications.setContext(context, true);
+        },
+
+        _reset : function () {
+            this._modules = {};
+            this._applications = new Applications;
+            this._applications.on('all', this._onApplicationsEvent, this);
+        },
+
+        _onApplicationsEvent : function () {
+            this.trigger.apply(this, arguments);
         }
 
-        if (widget.status === 'init' || widget.status === 'stoped') {
-            widget.instance.start.apply(widget.instance,args);
-        }else {
-            throw 'Unknow error';
-        }
-    };
+    });
 
-    obj.stopWidget = function (name) {
-        var widget = getWidget(name),
-            args = _.toArray(arguments).slice(1);
-
-        widget.instance.stop.apply(widget,args);
-        widget.status = 'stoped';
-    };
-
-    obj.destroyWidget = function (name) {
-        var widget = getWidget(name),
-            args = _.toArray(arguments).slice(1);
-
-        widget.destroy.apply(widget,args);
-        delete registeredWidgets[name];
-    };
-
-    return obj;
+    return Core;
 });

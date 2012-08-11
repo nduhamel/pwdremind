@@ -1,74 +1,89 @@
-define(['core'], function(core) {
+define(['core', 'backbone'], function(Core, Backbone) {
 
-    var sandbox = {};
-
-    sandbox.subscribe = function (channel, callback, context) {
-        core.subscribe(channel, callback, context || this);
+    var Sandbox = function () {
+        this.core = new Core;
+        this.core.on('all', this._proxyCore, this);
     };
 
-    sandbox.broadcast = function (channel) {
-        core.broadcast.apply(core, arguments);
-    };
+    _.extend(Sandbox.prototype, Backbone.Events, {
 
-    sandbox.unsubscribe = function (channel, callback) {
-        core.unsubscribe(channel, callback);
-    };
-
-    sandbox.provide = function () {
-        core.provide.apply(core, arguments);
-    };
-
-    sandbox.require = function () {
-        core.require.apply(core, arguments);
-    };
-
-    sandbox.defineWidget = function () {
-        core.defineWidget.apply(core, arguments);
-    };
-
-    sandbox.startWidget = function () {
-        core.startWidget.apply(core, arguments);
-    };
-
-    sandbox.stopWidget = function () {
-        core.stopWidget.apply(core, arguments);
-    };
-
-    sandbox.destroyWidget = function () {
-        core.destroyWidget.apply(core, arguments);
-    };
-
-    sandbox.WidgetView = Backbone.View.extend({
-
-        constructor : function (options) {
-            var options = options || {};
-            var appendToEl = options['appendToEl'] || this.appendToEl;
-            this.cid = _.uniqueId('widget');
-            this._configure(options);
-            if (appendToEl) {
-                this.setElement(appendToEl);
-                this._createWrapper();
-            }else{
-                this._ensureElement();
-            }
-            this.initialize.apply(this, arguments);
-            this.delegateEvents();
+        configure : function (options) {
+            this.core.configure(options);
         },
 
-        _createWrapper : function () {
-            var newEl = this.make("div", {"id": this.cid});
-            this.$el.append(newEl);
-            this.setElement(newEl);
+        setContext : function (context) {
+            this.core.setContext(context);
         },
 
-        destroy : function () {
-            if (this.onDestroy) {
-                this.onDestroy();
-            }
-            this.remove();
+        provide : function (name, getter) {
+            this.core.provide(name, getter);
         },
+
+        defineApp : function (App) {
+            this.core.defineApp(App);
+        },
+
+        getApps : function () {
+            return this.core.getApps();
+        },
+
+        getCurrentApp : function () {
+            return this.core.getCurrentApp();
+        },
+
+        startApp : function (name) {
+            this.core.startApp(name);
+        },
+
+        defineModule : function (Module) {
+            this.core.defineModule(Module, this);
+        },
+
+        startModule : function (name, options) {
+            this.core.startModule(name, options);
+        },
+
+        setAppEl : function (el) {
+            this.core.setAppEl(el);
+        },
+
+        _proxyCore : function () {
+            this.trigger.apply(this, arguments);
+        },
+
+        WidgetView : Backbone.View.extend({
+
+            constructor : function (options) {
+                var options = options || {};
+                var appendToEl = options['appendToEl'] || this.appendToEl;
+                this.cid = _.uniqueId('widget');
+                this._configure(options);
+                if (appendToEl) {
+                    this.setElement(appendToEl);
+                    this._createWrapper();
+                }else{
+                    this._ensureElement();
+                }
+                this.initialize.apply(this, arguments);
+                this.delegateEvents();
+            },
+
+            _createWrapper : function () {
+                var newEl = this.make("div", {"id": this.cid});
+                this.$el.append(newEl);
+                this.setElement(newEl);
+            },
+
+            destroy : function () {
+                if (this.onDestroy) {
+                    this.onDestroy();
+                }
+                this.remove();
+            },
+        }),
+
     });
 
-    return sandbox;
+    return new Sandbox;
 
 });
