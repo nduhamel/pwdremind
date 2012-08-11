@@ -25,7 +25,6 @@ define([
         rowTemplate : _.template(rowTpl, null, { variable: 'password'}),
 
         events : {
-            "click a[name='add']" : 'doAddModal',
             "click i[class='icon-remove']" : 'doRemove',
             "click i[class='icon-pencil']" : 'doEdit',
             "mouseover span[class='copy-username']" : 'doCopyUsername',
@@ -124,11 +123,6 @@ define([
             this.onReset(filtered);
         },
 
-        doAddModal : function (event) {
-            event.preventDefault();
-            sandbox.broadcast('request:add-password');
-        },
-
         doRemove : function (event) {
             var id = $(event.target).closest('tr').data('id');
             this.collection.get(id).destroy();
@@ -136,7 +130,7 @@ define([
 
         doEdit : function (event) {
             var id = $(event.target).closest('tr').data('id');
-            sandbox.broadcast('request:edit-password', this.collection.get(id));
+            sandbox.trigger('request:edit-password', this.collection.get(id));
         },
 
         setClipboard : function (elem, text) {

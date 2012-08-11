@@ -13,7 +13,6 @@ define([
         rowTemplate : _.template(rowTpl, null, { variable: 'note'}),
 
         events : {
-            "click a[name='add']" : 'doAddModal',
             "click i[class='icon-remove']" : 'doRemove',
             "click i[class='icon-pencil']" : 'doEdit'
         },
@@ -66,12 +65,6 @@ define([
             this.$('#pwdlist tbody').prepend(this.rowTemplate(model.toJSON()));
         },
 
-        doAddModal : function (event) {
-            event.preventDefault();
-            sandbox.broadcast('request:addNote');
-            console.log('request:addNote');
-        },
-
         doRemove : function (event) {
             var id = $(event.target).closest('tr').data('id');
             this.collection.get(id).destroy();
@@ -79,7 +72,7 @@ define([
 
         doEdit : function (event) {
             var id = $(event.target).closest('tr').data('id');
-            sandbox.broadcast('request:editNote', this.collection.get(id));
+            sandbox.trigger('request:editNote', this.collection.get(id));
         }
     });
 
