@@ -83,15 +83,15 @@ requirejs([
     'widgets/head-bar/main',
     'widgets/login-modal/main',
     'widgets/password-modal/main',
+    'widgets/note-modal/main',
     'modules/srpsession/srpsession',
     'modules/ressources/main',
     //~ 'widgets/add-category-modal/main',
-    //~ 'widgets/add-note-modal/main',
     'applications/passwordList/main',
     'applications/noteList/main',
     //~ 'widgets/passwords-vizualizer/main',
     //~ 'widgets/exporter/main'
-], function (sandbox, HeadBar, LoginModal, PasswordModal) {
+], function (sandbox, HeadBar, LoginModal, PasswordModal, NoteModal) {
     var headBar,
         modal;
 
@@ -105,6 +105,19 @@ requirejs([
     var editPassword = function (password) {
         var categories = sandbox.require('passwordCategories');
         modal = new PasswordModal({collection : categories, model : password });
+        modal.render();
+    };
+
+    var addNote = function () {
+        var categories = sandbox.require('noteCategories'),
+            NoteModel = categories.getRessourceModel();
+        modal = new NoteModal({collection: categories, model: new NoteModel({category_id: categories.getCurrentCatId() }) } );
+        modal.render();
+    };
+
+    var editNote = function (note) {
+        var categories = sandbox.require('noteCategories');
+        modal = new NoteModal({collection: categories, model: note});
         modal.render();
     };
 
@@ -143,6 +156,8 @@ requirejs([
         modal = null;
         sandbox.on('request:add-password', addPassword);
         sandbox.on('request:edit-password', editPassword);
+        sandbox.on('request:addNote', addNote);
+        sandbox.on('request:editNote', editNote);
     });
 
     sandbox.on('logout:after', function () {

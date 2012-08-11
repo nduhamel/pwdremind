@@ -5,12 +5,13 @@ define([
     'sandbox',
     'text!./tpl/base.html',
     'bootstrap_modal',
-    'backbone_model_binder'
+    'backbone_model_binder',
+    'backbone_validation'
 ], function($, _, Backbone, sandbox, baseTpl){
 
-    var AddModal = Backbone.View.extend({
+    var NoteModal = sandbox.WidgetView.extend({
 
-        el : 'body',
+        appendToEl : 'body',
 
         events : {
             "click button[type='submit']" : "onSubmit",
@@ -30,11 +31,9 @@ define([
 
         render : function() {
             var renderedContent = _.template(baseTpl, {categories : this.collection.toJSON()});
-            this.$el.append(renderedContent);
+            this.$el.html(renderedContent);
 
-            this.setElement('#add-modal');
-
-            this.$el.modal({
+            this.$('#add-modal').modal({
                 show: true,
                 backdrop: 'static',
                 keyboard: false
@@ -52,11 +51,10 @@ define([
             return this;
         },
 
-        destroy : function () {
-            this.$el.modal('hide');
+        onDestroy : function () {
+            this.$('#add-modal').modal('hide');
             this.modelBinder.unbind();
             Backbone.Validation.unbind(this);
-            this.remove();
         },
 
         onSubmit : function (event) {
@@ -81,40 +79,5 @@ define([
 
     });
 
-    sandbox.defineWidget('NoteModal', ['noteCategories'], function(categories){
-        var view,
-            NoteModel = categories.getRessourceModel();
-
-        var addNote = function () {
-            view = new AddModal({collection: categories, model: new NoteModel({category_id: categories.getCurrentCatId() }) } );
-            view.render();
-        };
-
-        var editNote = function (note) {
-            view = new AddModal({collection: categories, model: note});
-            view.render();
-        };
-
-        return {
-            meta : {startOn: 'login:after'},
-
-            start : function () {
-                sandbox.subscribe('request:addNote', addNote);
-                sandbox.subscribe('request:editNote', editNote);
-            },
-
-            stop : function () {
-                sandbox.unsubscribe('request:addNote', addNote);
-                sandbox.unsubscribe('request:editNote', editNote);
-                if (view) {
-                    view.destroy();
-                }
-                view = undefined;
-            },
-
-            destroy : function () {
-                this.stop();
-            }
-        };
-    });
+    return NoteModal;
 });

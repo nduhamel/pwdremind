@@ -41,7 +41,7 @@ define([
             event.preventDefault();
             var name = $(event.currentTarget).attr('name');
             if (name === 'add') {
-                sandbox.broadcast('request:addNoteCategory');
+                sandbox.trigger('request:addNote');
             } else {
                 this.collection.setCurrentCatId(name);
             }
