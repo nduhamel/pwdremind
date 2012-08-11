@@ -9,11 +9,11 @@ define([
 
         render : function() {
             this.$el.html(_.template(baseTpl));
-            this.categoriesView = new CategoriesView({el : '#password-vizualizer-categories',
-                                                      collection : this.options.categories,
-                                                      currentCategory : this.options.passwords.getCategoryId() }).render();
-            this.passwordsView = new PasswordsView({el : '#password-vizualizer-passwords',
-                                                    collection : this.options.passwords }).render();
+            this.categoriesView = new CategoriesView({el : '#sidebar',
+                                                      collection : this.collection,
+                                                      currentCategory : this.collection.getCurrentCatId() }).render();
+            this.passwordsView = new PasswordsView({el : '#content',
+                                                    collection : this.collection.getRessourceCollection() }).render();
             return this;
         },
 

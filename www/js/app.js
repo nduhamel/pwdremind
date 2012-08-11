@@ -86,8 +86,8 @@ requirejs([
     'widgets/note-modal/main',
     'modules/srpsession/srpsession',
     'modules/ressources/main',
-    //~ 'widgets/add-category-modal/main',
     'applications/passwordList/main',
+    'applications/passwordVizualizer/main',
     'applications/noteList/main',
     //~ 'widgets/passwords-vizualizer/main',
     //~ 'widgets/exporter/main'

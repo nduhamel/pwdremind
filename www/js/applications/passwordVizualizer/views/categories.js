@@ -3,7 +3,7 @@ define([
     'underscore',
     'backbone',
     'sandbox',
-    'text!../tpl/categories.html'
+    'text!../tpl/sidebar.html'
 ], function($, _, Backbone, sandbox, baseTpl) {
 
     var CategoriesView = Backbone.View.extend({
@@ -16,23 +16,17 @@ define([
 
             /*--- binding ---*/
             _.bindAll(this, 'render');
-            this.collection.bind('change', this.render);
-            this.collection.bind('reset', this.render);
-            this.collection.bind('add', this.render);
-            this.collection.bind('remove', this.render);
+            this.collection.on('change', this.render);
+            this.collection.on('reset', this.render);
+            this.collection.on('add', this.render);
+            this.collection.on('remove', this.render);
+            this.collection.on('category:changed', this.render);
             /*---------------*/
-
-            this.currentCategory = this.options.currentCategory;
-
-            sandbox.subscribe('passwordCategory:changed', function(cat_id) {
-                this.currentCategory = cat_id;
-                this.render();
-            }, this);
         },
 
         render : function() {
             this.$el.html(_.template(baseTpl, {categories : this.collection.toJSON(),
-                                               currentCategory: this.currentCategory }));
+                                               currentCategory: this.collection.getCurrentCatId() }));
             return this;
         },
 
@@ -44,7 +38,7 @@ define([
         onClick : function (event) {
             event.preventDefault();
             var name = $(event.currentTarget).attr('name');
-            sandbox.broadcast('passwordCategory:change', name);
+            this.collection.setCurrentCatId(name);
         }
 
     });
