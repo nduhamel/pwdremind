@@ -81,9 +81,9 @@ if (typeof Object.create !== 'function') {
 requirejs([
     'sandbox',
     'widgets/head-bar/main',
+    'widgets/login-modal/main',
     'modules/srpsession/srpsession',
     'modules/ressources/main',
-    //~ 'widgets/login-modal/main',
     //~ 'widgets/add-password-modal/main',
     //~ 'widgets/add-category-modal/main',
     //~ 'widgets/add-note-modal/main',
@@ -93,7 +93,9 @@ requirejs([
     //~ 'widgets/notify/main',
     //~ 'widgets/passwords-vizualizer/main',
     //~ 'widgets/exporter/main'
-], function (sandbox, HeadBar) {
+], function (sandbox, HeadBar, LoginModal) {
+    var headBar,
+        loginModal;
 
     console.log('Starting app');
 
@@ -118,11 +120,16 @@ requirejs([
 
     sandbox.startModule('srpsession', {authUrl:'./authentication'});
 
-    var headBar = new HeadBar();
+    headBar = new HeadBar();
     headBar.render();
+
+    loginModal = new LoginModal();
+    loginModal.render();
 
     sandbox.on('login', function () {
         sandbox.startModule('ressources');
+        loginModal.destroy();
+        loginModal = null;
     });
 
     sandbox.on('logout:after', function () {
@@ -130,5 +137,5 @@ requirejs([
     });
 
     // For testing
-    sandbox.trigger('request:login','nicolas','test');
+    //~ sandbox.trigger('request:login','nicolas','test');
 });

@@ -7,37 +7,37 @@ define([
     'bootstrap_modal',
 ], function($, _, Backbone, sandbox, baseTpl){
 
-    var LoginModal = Backbone.View.extend({
+    var LoginModal = sandbox.WidgetView.extend({
 
-        el : 'body',
+        appendToEl : 'body',
 
         events : {
             "submit" : "onSubmit",
         },
 
+        initialize : function () {
+            sandbox.on('login:failed', this.onError, this);
+        },
+
         render : function() {
-            var renderedContent = _.template(baseTpl);
-            $(this.el).append(renderedContent);
-
-            this.setElement('#login-modal');
-
-            this.$el.modal({
+            this.$el.html(_.template(baseTpl));
+            console.log(this.$el);
+            this.$('#login-modal').modal({
                 backdrop: 'static',
                 keyboard: false,
             });
-
             return this;
         },
 
-        destroy : function () {
+        onDestroy : function () {
+            sandbox.off('login:failed', this.onError, this);
             this.$('.alert.alert-error').hide();
             this.$('input[type="submit"]')
                 .removeClass('disabled')
                 .removeAttr('disabled')
                 .val('connexion');
             this.$("#login-form")[0].reset();
-            this.$el.modal('hide');
-            this.remove();
+            this.$('#login-modal').modal('hide');
         },
 
         onSubmit : function (event) {
@@ -50,7 +50,7 @@ define([
             var password = this.$el.find('#password').val();
             var username = this.$el.find('#username').val();
 
-            sandbox.broadcast('request:login', username, password);
+            sandbox.trigger('request:login', username, password);
         },
 
         onError : function () {
@@ -64,29 +64,5 @@ define([
 
     });
 
-    sandbox.defineWidget('LoginModal', function(){
-        var view;
-
-        return {
-            meta : {startOn: 'bootstrap', stopOn: 'login:after'},
-
-            start : function () {
-                view = new LoginModal();
-                view.render();
-                sandbox.subscribe('login:failed', view.onError, view);
-            },
-
-            stop : function () {
-                if (view) {
-                    view.destroy();
-                }
-                sandbox.unsubscribe('login:failed', view.onError);
-                view = undefined;
-            },
-
-            destroy : function () {
-                this.stop();
-            },
-        };
-    });
+    return LoginModal;
 });
