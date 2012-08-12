@@ -21,43 +21,9 @@ define([
     };
 
 
-    var DataCollections = Backbone.Collection.extend({
-
-        dataType : null,
-        category_id : null,
-
-        url : function () {
-            if (this.category_id) {
-                return './'+this.dataType+'s/category/'+this.category_id;
-            }
-            return false;
-        },
-
-        setDataType : function (dataType) {
-            if (this.dataType !== null) {
-                this.reset();
-            }
-            this.dataType = dataType;
-            return this;
-        },
-
-        getDataType : function () {
-            return this.dataType;
-        },
-
-        setCategoryId : function (id, options) {
-            if (id != this.category_id) {
-                this.category_id = id;
-            }
-            return this;
-        },
-    });
-
     var Exporter = function (options) {
         this.options = options;
-        this.datas = new DataCollections();
         this.dataTypesQueue = _.keys(options.categories);
-        _.extend(this, Backbone.Events);
     };
 
     _.extend(Exporter.prototype, Backbone.Events, {

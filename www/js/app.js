@@ -89,8 +89,7 @@ requirejs([
     'applications/passwordList/main',
     'applications/passwordVizualizer/main',
     'applications/noteList/main',
-    //~ 'widgets/passwords-vizualizer/main',
-    //~ 'widgets/exporter/main'
+    'applications/exporter/main'
 ], function (sandbox, HeadBar, LoginModal, PasswordModal, NoteModal) {
     var headBar,
         modal;
