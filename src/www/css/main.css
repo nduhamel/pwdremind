@@ -56,12 +56,12 @@ form#addentry select{
     top: 2px;
 }
 
-.navbar ul.main-nav {
+.navbar ul.nav {
     display: inline-block;
     padding: 0;
     margin: 0;
 }
-.navbar ul.main-nav > li {
+.navbar ul.nav > li {
     float: left;
     min-width: 90px;
     padding: 0;
@@ -70,11 +70,11 @@ form#addentry select{
     list-style: none;
 }
 
-.navbar ul.main-nav > li > a {
+.navbar ul.nav > li > a {
     display: block;
     height: 100%;
     margin: -7px 0;
-    margin-bottom: -12px;
+    margin-bottom: -8px;
     padding: 0 15px;
     font-size: 12px;
     font-weight: bold;
@@ -82,23 +82,23 @@ form#addentry select{
     text-shadow: 1px 1px 1px rgba(0,0,0,.2);
 }
 
-.navbar ul.main-nav > li > a:hover {
+.navbar ul.nav > li > a:hover {
     color: #888;
     text-decoration: none;
 }
 
-.navbar ul.main-nav > li > a > i {
+.navbar ul.nav > li > a > i {
     display: inline-block;
     margin-top: 5px;
     margin-bottom: .25em;
 }
 
-.navbar ul.main-nav > li > a > span {
+.navbar ul.nav > li > a > span {
     display: block;
     padding-bottom: 13px;
 }
 
-.navbar ul.main-nav > li.active > a {
+.navbar ul.nav > li.active > a {
     background: #333;
     color: #0088CC;
 }

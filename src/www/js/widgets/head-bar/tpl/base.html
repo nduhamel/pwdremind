@@ -3,7 +3,7 @@
         <div class="container">
             <a class="brand" href="#">Password remind</a>
             <div class="nav-collapse">
-                <ul class="main-nav">
+                <ul class="nav">
                 <% _.each(menu, function (entry) {
                     if (current !== null && entry.name === current.context){
                     %><li class="active"><%
@@ -19,10 +19,12 @@
                 <% });%>
                 </ul>
                 <ul class="nav pull-right">
-                    <li><a href="#logout" name="logout">
-                        Username
-                        <i class="icon-off icon-white"></i>
-                    </a></li>
+                    <li>
+                        <a href="#" name="logout">
+                            <i class="icon-off icon-white"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
