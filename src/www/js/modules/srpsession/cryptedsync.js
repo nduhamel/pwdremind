@@ -106,7 +106,7 @@ define(['underscore',
             var error = options.error;
             options.error = function (resp, status, xhr) {
                 if (resp.status == 403) {
-                    sandbox.broadcast('logout');
+                    sandbox.trigger('logout');
                 }else if (error) {
                     error(resp, status, xhr);
                 }

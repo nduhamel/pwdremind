@@ -150,7 +150,7 @@ requirejs([
         sandbox.on('request:editNote', editNote);
     });
 
-    sandbox.on('logout:after', function () {
+    sandbox.on('logout', function () {
         location.reload();
     });
 
