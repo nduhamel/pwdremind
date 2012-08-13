@@ -3,6 +3,12 @@
 <h3>Categories</h3>
 <ul class="nav nav-pills nav-stacked">
     <%  _.each(categories, function(category) { %>
-        <li <% if (category.id == currentCategory) {%> class="active" <%}%>><a href="" name="<%=category.id%>"><%= category.name %> (<%=category.dataCount%>)</a></li>
+        <li class="dropdown <% if (category.id == currentCategory) {%>active<%}%>">
+            <a href="" class="dropdown-toggle" name="<%=category.id%>"><%= category.name %><i class="icon-chevron-down"></i></a>
+            <ul class="dropdown-menu">
+                <li><a href="#" name="edit"><i class="icon-edit"></i> Edit</a></li>
+                <li><a href="#" name="remove"><i class="icon-remove"></i> Remove</a></li>
+            </ul>
+        </li>
     <% }); %>
 </ul>

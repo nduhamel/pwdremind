@@ -3,13 +3,16 @@ define([
     'underscore',
     'backbone',
     'sandbox',
-    'text!../tpl/sidebar.html'
+    'text!../tpl/sidebar.html',
+    //~ 'bootstrap_dropdown'
 ], function($, _, Backbone, sandbox, baseTpl) {
 
     var SideView = Backbone.View.extend({
 
         events : {
-            'click a' : 'onClick'
+            'click ul.dropdown-menu a' : 'menuAction',
+            'click a' : 'onClick',
+            'click a i' : 'dropdown'
         },
 
         initialize : function() {
@@ -23,6 +26,9 @@ define([
             this.collection.on('category:changed', this.render);
             /*---------------*/
 
+            this.dropDownOpen = null;
+            $('html').on('click', _.bind(this.clearDropdown, this));
+
         },
 
         render : function() {
@@ -35,6 +41,7 @@ define([
             this.unbind();
             this.collection.off();
             this.$el.html('');
+            $('html').off('click', _.bind(this.clearDropdown, this));
         },
 
         onClick : function (event) {
@@ -45,6 +52,34 @@ define([
             } else {
                 this.collection.setCurrentCatId(name);
             }
+        },
+
+        dropdown : function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            var dropdown = $(event.currentTarget).closest('li');
+            var isActive = dropdown.hasClass('open');
+            this.clearDropdown();
+            if (!isActive) dropdown.toggleClass('open')
+            this.dropDownOpen = dropdown;
+        },
+
+        clearDropdown : function (event) {
+            if (this.dropDownOpen !== null) {
+                this.dropDownOpen.removeClass('open');
+            }
+        },
+
+        menuAction : function (event) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            var name = $(event.currentTarget).attr('name');
+            if (name === 'edit') {
+                console.log('edit');
+            } else if (name === 'remove') {
+                console.log('remove');
+            }
+            this.clearDropdown();
         }
 
     });
