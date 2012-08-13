@@ -42,7 +42,7 @@ define([
 
         validate : function () {
             if (this.selected.length > 0){
-                return {dataType: this.selected};
+                return this.selected;
             }else {
                 return false;
             }

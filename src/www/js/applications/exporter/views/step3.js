@@ -20,7 +20,8 @@ define([
                 var $el = $(el);
                 options[$el.attr('name')] = $el.find('button.active').attr('name');
             });
-            return options;
+            this.options.exportOptions.options = options;
+            return this.options.exportOptions;
         },
 
 

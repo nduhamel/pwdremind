@@ -8,7 +8,18 @@ define(['backbone', '../models/category', './ressources'], function(Backbone, Ca
             var ressource = options.ressource;
             this.model = Category.extend({ressource:ressource.uri});
             this.url = './'+ressource.uri+'/categories';
-            this.ressourceCollection = new RessourceCollection(null,{ressource:ressource});
+            this.ressourceCollection = new RessourceCollection(null,{ressource:ressource, categories: this});
+            this.fetchInit();
+        },
+
+        reset : function (models, options) {
+            this.currentCat = undefined;
+            this.ressourceCollection.reset();
+            Backbone.Collection.prototype.reset.call(this, models, options);
+            return this;
+        },
+
+        fetchInit : function () {
             this.fetch({success: _.bind(this.onFirstFetch, this)});
         },
 
@@ -25,6 +36,7 @@ define(['backbone', '../models/category', './ressources'], function(Backbone, Ca
 
         afterFetch : function () {
              var cat = this.at(0);
+             console.log('set cat id'+ cat.get('id'));
              this.setCurrentCatId( cat.get('id') );
         },
 

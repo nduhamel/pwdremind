@@ -22,8 +22,9 @@ define([
 
 
     var Exporter = function (options) {
-        this.options = options;
-        this.dataTypesQueue = _.keys(options.categories);
+        this.options = options.options;
+        this.ressourcesQueue = _.keys(options.ressources);
+        this.ressources = options.ressources;
     };
 
     _.extend(Exporter.prototype, Backbone.Events, {
@@ -34,25 +35,29 @@ define([
         },
 
         _next : function () {
-            if (_.isEmpty(this.dataTypesQueue)) {
+            if (_.isEmpty(this.ressourcesQueue)) {
                 this.trigger('finished');
                 return;
             }
-            var dataType = this.dataTypesQueue.pop();
-            this._handleDataType(this.options.categories[dataType], dataType);
+            var ressource = this.ressourcesQueue.pop();
+            this._handleRessource(this.ressources[ressource], ressource);
         },
 
-        _handleDataType : function (categoriesId, dataType) {
-            this.datas.setDataType(dataType);
-            var finalize = _.after(categoriesId.length, _.bind(this.renderDataType,this));
-            _.each(categoriesId, function (catId) {
-                    this.datas.setCategoryId(catId).fetch({noDecrypt: true, add: true, success:finalize});
+        _handleRessource : function (categories, name) {
+            var finalize = _.after(categories.length, _.bind(this.renderDataType,this,name));
+            var ressource = sandbox.require(name+'Categories');
+            _.each(categories, function (catId) {
+                    this.data = ressource.getRessourceCollection().reset();
+                    this.data.setCategoryId(catId, {noFetch:true})
+                             .fetch({noDecrypt: true, add: true, success:finalize});
             }, this);
         },
 
-        renderDataType : function () {
-            var data = JSON2CSV(this.datas.toJSON());
-            this.trigger('newFile', this.datas.getDataType(), data);
+        renderDataType : function (name) {
+            var data = JSON2CSV(this.data.toJSON());
+            this.trigger('newFile', name, data);
+            this.data.categories.reset();
+            this.data.categories.fetchInit();
             this._next();
         },
 

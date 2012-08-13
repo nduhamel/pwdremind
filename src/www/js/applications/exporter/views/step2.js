@@ -16,21 +16,17 @@ define([
         },
 
         render : function() {
-            var that = this,
-                previousOpts = this.options.exportOptions.dataType,
-                request = _.map(previousOpts, function(opt){ return opt+'Categories'; });
-
-            sandbox.require(request,function(){
-                var args = _.toArray(arguments),
-                    dataType = _.zip(previousOpts,args);
-
-                that.$el.html(_.template(baseTpl, {dataType:dataType}));
+            var previousOpts = this.options.exportOptions,
+                ressources = {};
+            _.each(previousOpts, function (data) {
+                ressources[data] = sandbox.require(data+'Categories');
             });
+
+            this.$el.html(_.template(baseTpl, {ressources:ressources}));
             return this;
         },
 
         onSelect : function (event) {
-            console.log(this);
             var $el, type, id;
             event.preventDefault();
             $el =  $(event.target);
@@ -66,7 +62,7 @@ define([
 
         validate : function () {
             if (!_.isEmpty(this.selected)){
-                return {categories:this.selected};
+                return this.selected;
             }else{
                 return false;
             }

@@ -16,9 +16,17 @@ define([
         fileTemplate : _.template(fileTpl, null, { variable: 'file'}),
 
         initialize : function () {
+            var opts = this.options.exportOptions.options;
+            var ressources = _.pick(this.options.exportOptions, _.without(_.keys(this.options.exportOptions),'options'));
+
             this.files = new Backbone.Collection();
             this.files.on('add', this.onFileAdded, this);
-            this.exporter = new Exporter(this.options.exportOptions);
+
+            this.exporter = new Exporter({
+                ressources : ressources,
+                options : opts
+            });
+
             this.exporter.on('newFile', this.onNewFile, this);
             this.exporter.start();
         },

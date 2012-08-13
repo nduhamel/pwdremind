@@ -11,7 +11,7 @@ define([
     return sandbox.WidgetView.extend({
 
         events : {
-            'click a[name="next"]' : 'onNextTe'
+            'click a[name="next"]' : 'onNext'
         },
 
         initialize : function () {
@@ -30,7 +30,7 @@ define([
             if (this.stepView) {
                 this.stepView.destroy();
             }
-            this.stepView = new this.stepOrder[this.step]({appendToEl:this.el, exportOptions:this.exportOptions}).render();
+            this.stepView = new this.stepOrder[this.step]({appendToEl:this.$('#content'), exportOptions:this.exportOptions}).render();
         },
 
         onDestroy : function () {
@@ -39,13 +39,12 @@ define([
             }
         },
 
-        onNextTe : function (event) {
-            console.log(this);
+        onNext : function (event) {
             var opts;
             event.preventDefault();
             opts = this.stepView.validate();
             if (opts){
-                _.extend(this.exportOptions, opts);
+                this.exportOptions = opts;
                 this.step++;
                 this.loadStep();
             }

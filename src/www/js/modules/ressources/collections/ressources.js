@@ -5,6 +5,7 @@ define(['backbone', '../models/ressource'], function(Backbone, Ressource){
         initialize : function (models, options) {
             this.uri = options.ressource.uri;
             this.model = Ressource.extend(options.ressource);
+            this.categories = options.categories;
         },
 
         category_id : undefined,
@@ -17,10 +18,18 @@ define(['backbone', '../models/ressource'], function(Backbone, Ressource){
             }
         },
 
-        setCategoryId : function (id) {
+        reset : function (models, options) {
+            this.category_id = undefined;
+            Backbone.Collection.prototype.reset.call(this, models, options);
+            return this;
+        },
+
+        setCategoryId : function (id, options) {
             if (id != this.category_id) {
                 this.category_id = id;
-                this.fetch();
+                if (!options || !options.noFetch ) {
+                    this.fetch();
+                }
             }
             return this;
         }
