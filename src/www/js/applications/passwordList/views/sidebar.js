@@ -4,7 +4,6 @@ define([
     'backbone',
     'sandbox',
     'text!../tpl/sidebar.html',
-    //~ 'bootstrap_dropdown'
 ], function($, _, Backbone, sandbox, baseTpl) {
 
     var SideView = Backbone.View.extend({
