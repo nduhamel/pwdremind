@@ -74,6 +74,10 @@ define(['backbone', '../models/category', './ressources'], function(Backbone, Ca
             var cat = this.get(model.get('category_id'));
             var count = cat.get('dataCount');
             cat.set('dataCount',count+1);
-        }
+        },
+
+        comparator : function (a) {
+            return a.get('order');
+        },
     });
 });

@@ -52,6 +52,7 @@ require.config({
         backbone_model_binder : 'lib/Backbone.ModelBinder',
         underscore: 'lib/underscore',
         jquery: 'lib/jquery',
+        jquery_sortable : 'lib/jquery.sortable',
         bootstrap_modal: 'lib/bootstrap-modal',
         bootstrap_button : 'lib/bootstrap-button',
         zeroclipboard : 'lib/ZeroClipboard',
