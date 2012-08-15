@@ -203,10 +203,22 @@ form#addentry select{
     padding: 2%;
     margin-bottom: 18px;
 }
+
+.nav-stacked .badge{
+    margin-right: 10px;
+}
+
+.nav-stacked .active .badge{
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #999999;
+}
+
 .nav-stacked .icon-chevron-down{
     float: right;
     display: none;
 }
+
 .nav-stacked a:hover .icon-chevron-down{
     display: inline-block;
 }

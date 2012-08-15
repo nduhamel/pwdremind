@@ -8,13 +8,27 @@ define(['backbone'], function(Backbone){
             }
         },
 
+        defaults: {
+            "dataCount" : 0
+        },
+
         crypted : ['name'],
 
         initialize : function (attributes, options) {
             if (options && options.ressource) {
                 this.ressource = options.ressource;
             }
-            this.url = './'+this.ressource+'/category';
+        },
+
+        url : function () {
+            return './'+this.ressource+'/category';
+        },
+
+        parse : function (resp) {
+            if (resp.dataCount) {
+                resp.dataCount = parseInt(resp.dataCount);
+            }
+            return resp;
         }
 
     });

@@ -174,6 +174,26 @@ class App
             $message->send();
         });
 
+        // DELETE a password category
+        $router->addRoute('DELETE', '/password/category', $authCheck, function() use ($db, $message, $session, $rawInput) {
+            $db->deleteCategory($rawInput['id'], $session->getUserid());
+            $message->setData(array(
+                            'id' => $rawInput['id'],
+            ));
+            $message->send();
+        });
+
+        // UPDATE a password category
+        $router->addRoute('PUT', '/password/category', $authCheck, function() use ($db, $message, $session, $rawInput) {
+            $db->updateCategory($rawInput['id'], $rawInput['data'], $session->getUserid());
+            $message->setData(array(
+                            'id' => $rawInput['id'],
+                            'data' => $rawInput['data'],
+                            'dataCount' => $rawInput['dataCount'],
+            ));
+            $message->send();
+        });
+
         // ADD a new note category
         $router->addRoute('POST', '/note/category', $authCheck, function() use ($db, $message, $session, $rawInput) {
             $id = $db->addCategory($rawInput['data'], App::NOTE, $session->getUserid());

@@ -1,10 +1,10 @@
 <a class="btn btn-large btn-success btn-add" href="" name="add">Add</a>
 
-<h3>Categories</h3>
+<h3>Categories <small><a name="addCat">add</a></small></h3>
 <ul class="nav nav-pills nav-stacked">
     <%  _.each(categories, function(category) { %>
         <li class="dropdown <% if (category.id == currentCategory) {%>active<%}%>">
-            <a href="" class="dropdown-toggle" name="<%=category.id%>"><%= category.name %><i class="icon-chevron-down"></i></a>
+            <a href="" class="dropdown-toggle" name="<%=category.id%>"><span class="badge badge-info"><%= category.dataCount %></span><%= category.name %><i class="icon-chevron-down"></i></a>
             <ul class="dropdown-menu">
                 <li><a href="#" name="edit"><i class="icon-edit"></i> Edit</a></li>
                 <li><a href="#" name="remove"><i class="icon-remove"></i> Remove</a></li>

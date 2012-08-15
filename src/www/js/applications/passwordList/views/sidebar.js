@@ -48,6 +48,8 @@ define([
             var name = $(event.currentTarget).attr('name');
             if (name === 'add') {
                 sandbox.trigger('request:add-password');
+            } else if (name === 'addCat') {
+                sandbox.trigger('request:addPasswordCategory');
             } else {
                 this.collection.setCurrentCatId(name);
             }
@@ -72,11 +74,19 @@ define([
         menuAction : function (event) {
             event.preventDefault();
             event.stopImmediatePropagation();
-            var name = $(event.currentTarget).attr('name');
-            if (name === 'edit') {
-                console.log('edit');
-            } else if (name === 'remove') {
-                console.log('remove');
+            var $el = $(event.currentTarget);
+            var action = $el.attr('name');
+            var catId = $el.closest('li.dropdown')
+                           .find('a.dropdown-toggle').attr('name');
+            var cat = this.collection.get(catId);
+            if (action === 'edit') {
+                sandbox.trigger('request:editPasswordCategory', cat);
+            } else if (action === 'remove') {
+                if (cat.get('dataCount') === 0) {
+                    cat.destroy();
+                } else {
+                    sandbox.trigger('request:errorModal', 'This category is not empty please remove passwords before');
+                }
             }
             this.clearDropdown();
         }

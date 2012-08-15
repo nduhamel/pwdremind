@@ -73,6 +73,24 @@ class Database {
         }
     }
 
+    // TODO check empty !!!
+    public function deleteCategory($cat_id, $user_id)
+    {
+        $req = $this->_db->prepare("DELETE FROM category
+                                    WHERE id=:cat_id
+                                    AND user_id=:user_id ");
+        $req->execute(array('cat_id'=>$cat_id, 'user_id'=>$user_id));
+    }
+
+    public function updateCategory($cat_id, $data, $user_id)
+    {
+        $req = $this->_db->prepare("UPDATE category
+                                    SET data=:data
+                                    WHERE id=:cat_id
+                                    AND user_id=:user_id");
+        $req->execute(array('cat_id'=>$cat_id, 'data'=>$data, 'user_id'=>$user_id));
+    }
+
     public function getTypes($user_id) {
         $req = $this->_db->prepare("SELECT id, data
                                     FROM type

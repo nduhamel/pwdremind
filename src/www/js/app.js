@@ -75,13 +75,14 @@ requirejs([
     'widgets/login-modal/main',
     'widgets/password-modal/main',
     'widgets/note-modal/main',
+    'widgets/category-modal/main',
     'modules/srpsession/srpsession',
     'modules/ressources/main',
     'applications/passwordList/main',
     'applications/passwordVizualizer/main',
     'applications/noteList/main',
     'applications/exporter/main'
-], function (sandbox, HeadBar, LoginModal, PasswordModal, NoteModal) {
+], function (sandbox, HeadBar, LoginModal, PasswordModal, NoteModal, CategoryModal) {
     var headBar,
         modal;
 
@@ -109,6 +110,20 @@ requirejs([
         var categories = sandbox.require('noteCategories');
         modal = new NoteModal({collection: categories, model: note});
         modal.render();
+    };
+
+    var addCategory= function (categories) {
+        view = new CategoryModal({collection : categories, model : new categories.model() } );
+        view.render();
+    };
+
+    var editCategory= function (categories, cat) {
+        view = new CategoryModal({collection : categories, model : cat } );
+        view.render();
+    };
+
+    var errorModal = function (html) {
+        console.log(html);
     };
 
     console.log('Starting app');
@@ -148,6 +163,11 @@ requirejs([
         sandbox.on('request:edit-password', editPassword);
         sandbox.on('request:addNote', addNote);
         sandbox.on('request:editNote', editNote);
+        sandbox.on('request:addPasswordCategory', _.bind(addCategory, null, sandbox.require('passwordCategories')));
+        sandbox.on('request:addNoteCategory', _.bind(addCategory, null, sandbox.require('noteCategories')));
+        sandbox.on('request:editPasswordCategory', _.bind(editCategory, null, sandbox.require('passwordCategories')));
+        sandbox.on('request:editNoteCategory', _.bind(editCategory, null, sandbox.require('noteCategories')));
+        sandbox.on('request:errorModal', errorModal);
     });
 
     sandbox.on('logout', function () {

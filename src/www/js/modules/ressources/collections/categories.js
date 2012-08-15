@@ -9,7 +9,14 @@ define(['backbone', '../models/category', './ressources'], function(Backbone, Ca
             this.model = Category.extend({ressource:ressource.uri});
             this.url = './'+ressource.uri+'/categories';
             this.ressourceCollection = new RessourceCollection(null,{ressource:ressource, categories: this});
+            this.ressourceCollection.on('remove', _.bind(this.onRemove,this));
             this.fetchInit();
+        },
+
+        onRemove : function () {
+            var cat = this.get(this.currentCat);
+            var count = cat.get('dataCount');
+            cat.set('dataCount',count-1);
         },
 
         reset : function (models, options) {
@@ -36,7 +43,6 @@ define(['backbone', '../models/category', './ressources'], function(Backbone, Ca
 
         afterFetch : function () {
              var cat = this.at(0);
-             console.log('set cat id'+ cat.get('id'));
              this.setCurrentCatId( cat.get('id') );
         },
 
@@ -65,6 +71,9 @@ define(['backbone', '../models/category', './ressources'], function(Backbone, Ca
             if ( this.currentCat === model.get('category_id') ){
                 this.ressourceCollection.add(model,{at:0});
             }
+            var cat = this.get(model.get('category_id'));
+            var count = cat.get('dataCount');
+            cat.set('dataCount',count+1);
         }
     });
 });
