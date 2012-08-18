@@ -1,6 +1,12 @@
 define(['backbone', 'sandbox'], function(Backbone, sandbox){
 
+    var HistoryModel = Backbone.Model.extend({
+        crypted : ['action', 'model', 'uri', 'modelLabel', 'modelId'],
+    });
+
     var HistoryCollection = Backbone.Collection.extend({
+        model: HistoryModel,
+        url: './history'
     });
 
     var methodWatched = ['create', 'delete'];
@@ -19,7 +25,8 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
                         'action': method,
                         'model': modelAttr,
                         'uri': model.uri,
-                        'modelLabel': model.get(model.historyLabel)
+                        'modelLabel': model.get(model.historyLabel),
+                        'modelId': model.id
                     });
                     console.log(history);
                 }
@@ -40,7 +47,8 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
         start : function () {
             this.defaultSync = Backbone.sync;
             this.history = new HistoryCollection();
-            this.history.on('add', this.checkSize, this);
+            this.history.fetch();
+            this.history.on('add', this.postAdd, this);
             Backbone.sync = syncProxy(this.defaultSync, this.history);
         },
 
@@ -51,9 +59,12 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
             delete this.history;
         },
 
-        checkSize : function () {
+        postAdd : function (model) {
+            var toRemove;
+            model.save();
             if (this.history.length > this.maxSize) {
-                this.history.pop();
+                toRemove = this.history.pop();
+                toRemove.destroy();
             }
         }
 

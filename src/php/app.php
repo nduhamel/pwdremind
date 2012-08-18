@@ -234,19 +234,35 @@ class App
          *************/
 
          $router->addRoute('POST', '/history', $authCheck, function() use ($db, $message, $session, $rawInput) {
-
+            $id = $db->addHistory($rawInput['data'], $session->getUserid());
+            $message->setData(array(
+                            'id' => $id,
+                            'data' => $rawInput['data'],
+            ));
+            $message->send();
          });
 
          $router->addRoute('PUT', '/history', $authCheck, function() use ($db, $message, $session, $rawInput) {
-
+            $db->updateHistory($rawInput['id'], $rawInput['data'], $session->getUserid());
+            $message->setData(array(
+                            'id' => $rawInput['id'],
+                            'data' => $rawInput['data'],
+            ));
+            $message->send();
          });
 
          $router->addRoute('GET', '/history', $authCheck, function() use ($db, $message, $session, $rawInput) {
-
+            $entries = $db->getHistory($session->getUserid());
+            $message->setData($entries);
+            $message->send();
          });
 
          $router->addRoute('DELETE', '/history', $authCheck, function() use ($db, $message, $session, $rawInput) {
-
+            $db->removeHistory($rawInput['id'], $session->getUserid());
+            $message->setData(array(
+                            'id' => $rawInput['id'],
+            ));
+            $message->send();
          });
 
         // Logout

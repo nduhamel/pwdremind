@@ -35,8 +35,16 @@
                 verifier VARCHAR(256) NOT NULL,
                 salt VARCHAR(32) NOT NULL,
                 config TEXT NOT NULL);";
-                $db->query($req);
+        $db->query($req);
         fwrite(STDOUT,"User table created!\n");
+
+        $req = "CREATE TABLE history (
+                id SERIAL PRIMARY KEY AUTO_INCREMENT,
+                data TEXT,
+                user_id INT NOT NULL)";
+        $db->query($req);
+        fwrite(STDOUT,"history table created!\n");
+
     }
     elseif (PDO_DRIVER == 'sqlite') {
         $req = "CREATE TABLE data (
@@ -64,6 +72,13 @@
                 config TEXT NOT NULL);";
         $db->query($req);
         fwrite(STDOUT,"User table created!\n");
+
+        $req = "CREATE TABLE history (
+                id INTEGER PRIMARY KEY,
+                data TEXT,
+                user_id INT NOT NULL)";
+        $db->query($req);
+        fwrite(STDOUT,"history table created!\n");
     }
     else {
 
@@ -92,6 +107,13 @@
                 config TEXT NOT NULL);";
         $db->query($req);
         fwrite(STDOUT,"User table created!\n");
+
+        $req = "CREATE TABLE history (
+                id INTEGER PRIMARY KEY AUTO_INCREMENT,
+                data TEXT,
+                user_id INT NOT NULL)";
+        $db->query($req);
+        fwrite(STDOUT,"history table created!\n");
 
     }
 
