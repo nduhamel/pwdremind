@@ -19,6 +19,19 @@
                 <% });%>
                 </ul>
                 <ul class="nav pull-right">
+                <% _.each(masterApp, function (entry) {
+                    if (current !== null && entry.name === current.app.name){
+                    %><li class="active"><%
+                    } else {
+                    %><li><%
+                    }
+                    %>
+                        <a href="#" data-app="<%=entry.name%>">
+                            <i class="<%=entry.icon%> icon-white"></i>
+                            <span><%=entry.label%></span>
+                        </a>
+                    </li>
+                <% });%>
                     <li>
                         <a href="#" name="logout">
                             <i class="icon-off icon-white"></i>
@@ -30,7 +43,7 @@
         </div>
     </div>
 </div>
-<% if (current !== null) { %>
+<% if (current !== null && current.context !== null) { %>
 <div class="subnav subnav-fixed">
     <ul class="nav nav-pills">
     <% _.each(apps[current.context].apps, function (app) {

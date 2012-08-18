@@ -85,21 +85,27 @@ define(['underscore',
                     var response_data = JSON.parse(resp.data);
 
                     if (options.noDecrypt !== true) {
-                        _.each(response_data, function (e) {
-                            if (e.data) {
-                                var tmp = JSON.parse(Crypto.decrypt(key, e.data));
-                                _.extend(e, tmp);
-                                delete e.data;
-                            }
-                        });
+
+                        if (!_.isArray(response_data) && response_data.data){
+                            var tmp = JSON.parse(Crypto.decrypt(key, response_data.data));
+                            _.extend(response_data, tmp);
+                            delete response_data.data;
+                        } else {
+                            _.each(response_data, function (e) {
+                                if (e.data) {
+                                    var tmp = JSON.parse(Crypto.decrypt(key, e.data));
+                                    _.extend(e, tmp);
+                                    delete e.data;
+                                }
+                            });
+                        }
                     }
 
                 } else {
                     //TODO handle error
                     console.log('ERROR checksum');
                 }
-                //~ console.log('Sucess....');
-                //~ console.log(response_data);
+
                 if (success) success(response_data, status, xhr);
             };
 

@@ -50,6 +50,8 @@ require.config({
         backbone: 'lib/backbone',
         backbone_validation : 'lib/backbone.validation',
         backbone_model_binder : 'lib/Backbone.ModelBinder',
+        memento: 'lib/Memento',
+        mementoable: 'lib/Mementoable',
         underscore: 'lib/underscore',
         jquery: 'lib/jquery',
         jquery_sortable : 'lib/jquery.sortable',
@@ -79,6 +81,8 @@ requirejs([
     'widgets/category-modal/main',
     'modules/srpsession/srpsession',
     'modules/ressources/main',
+    'modules/ressourcesHistory/main',
+    'applications/history/main',
     'applications/passwordList/main',
     'applications/passwordVizualizer/main',
     'applications/noteList/main',
@@ -158,6 +162,7 @@ requirejs([
 
     sandbox.on('login', function () {
         sandbox.startModule('ressources');
+        sandbox.startModule('ressourcesHistory');
         modal.destroy();
         modal = null;
         sandbox.on('request:add-password', addPassword);

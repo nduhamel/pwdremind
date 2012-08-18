@@ -18,7 +18,7 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 
         setContext : function (context, autoStart) {
             if (_.has(this._context, context)) {
-                this._curContext = context;
+                this._currentContext = context;
                 if (autoStart) {
                     this.start(this._context[context].defaultApp);
                 }
@@ -29,7 +29,7 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 
         getCurrentApp : function () {
             if (this._curApp !== null) {
-                return {app : this._curApp.toJSON(), context: this._curContext};
+                return {app : this._curApp.toJSON(), context: this._currentContext};
             } else {
                 return null;
             }
@@ -37,13 +37,17 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 
         add : function (app) {
             this._apps.push(app);
-            _.each(app.context, function(dataType){
-                if (_.has(this._context, dataType)) {
-                    this._context[dataType].apps.push(app);
-                } else {
-                    this._context[dataType]= {apps : [app]};
-                }
-            }, this);
+            if (app.context !== null) {
+                _.each(app.context, function(dataType){
+                    if (_.has(this._context, dataType)) {
+                        this._context[dataType].apps.push(app);
+                    } else {
+                        this._context[dataType]= {apps : [app]};
+                    }
+                }, this);
+            } else {
+                this._context.master.push(app);
+            }
             this.length++;
             this.trigger('addApp');
             return this;
@@ -80,6 +84,9 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
                 this.stop();
             }
             app.$el = this._$el;
+            if (app.context === null) {
+                this._currentContext = null;
+            }
             this._curApp = app;
             this._curApp.state = APP_STATE.STARTING;
             this._tryStart();
@@ -121,7 +128,7 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 
         _reset: function(options) {
             this.length = 0;
-            this._context = {},
+            this._context = {master:[]},
             this._currentContext = null;
             this._apps = [];
             this._curApp = null;
@@ -145,6 +152,8 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
     BaseApp.extend = Backbone.Model.extend;
 
     _.extend(BaseApp.prototype, {
+
+        context : null,
 
         deps : null,
 
