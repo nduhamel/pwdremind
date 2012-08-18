@@ -3,7 +3,8 @@ define([
     'underscore',
     'backbone',
     'sandbox',
-], function($, _, Backbone, sandbox){
+    './views/history'
+], function($, _, Backbone, sandbox, HistoryView){
 
     sandbox.defineApp({
         deps : ['history'],
@@ -12,11 +13,16 @@ define([
         name : 'history',
 
         start : function (history){
-            console.log(history);
+            this.view = new HistoryView({
+                el : this.$el,
+                collection : history
+            });
+            this.view.render();
         },
 
         stop : function () {
-
+            this.view.destroy();
+            delete this.view;
         },
     });
 

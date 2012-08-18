@@ -20,7 +20,8 @@ define(['backbone', 'sandbox', './collections/categories'], function(Backbone, s
             //~ notes : {},
         },
         crypted : ['site', 'login', 'pwd', 'notes'],
-        keepInHistory : true
+        keepInHistory : true,
+        historyLabel: 'site'
     };
 
     var Note = {
@@ -37,7 +38,8 @@ define(['backbone', 'sandbox', './collections/categories'], function(Backbone, s
             }
         },
         crypted : ['name', 'notes'],
-        keepInHistory : true
+        keepInHistory : true,
+        historyLabel: 'name'
     };
 
     sandbox.defineModule({

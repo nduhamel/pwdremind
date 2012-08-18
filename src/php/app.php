@@ -229,9 +229,29 @@ class App
             $message->send();
         });
 
+        /*
+         * HISTORY
+         *************/
+
+         $router->addRoute('POST', '/history', $authCheck, function() use ($db, $message, $session, $rawInput) {
+
+         });
+
+         $router->addRoute('PUT', '/history', $authCheck, function() use ($db, $message, $session, $rawInput) {
+
+         });
+
+         $router->addRoute('GET', '/history', $authCheck, function() use ($db, $message, $session, $rawInput) {
+
+         });
+
+         $router->addRoute('DELETE', '/history', $authCheck, function() use ($db, $message, $session, $rawInput) {
+
+         });
+
         // Logout
-        $router->addRoute('GET', '/logout', $authCheck, function() use ($session) {
-            $session->logout();
+        $router->addRoute('GET', '/logout', $authCheck, function() use ($db, $message, $session, $rawInput) {
+
         });
 
         //Run the router

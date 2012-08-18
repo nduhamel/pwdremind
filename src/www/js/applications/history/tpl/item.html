@@ -1,0 +1,24 @@
+<%
+var labelClass;
+switch (item.action) {
+    case 'create':
+        labelClass = "label-success";
+        break;
+    case 'delete':
+        labelClass = "label-important";
+        break;
+}%>
+<tr>
+    <td>
+        <span class="label <%=labelClass%>"><%=item.action%></span>
+    </td>
+    <td>
+        <%=item.uri%>
+    </td>
+    <td>
+        <%=item.modelLabel%>
+    </td>
+    <td>
+        <a class="btn"><i class="icon-share-alt"/> Undo</a>
+    </td>
+</tr>

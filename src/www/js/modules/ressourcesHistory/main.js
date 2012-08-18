@@ -18,7 +18,8 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
                     history.add({
                         'action': method,
                         'model': modelAttr,
-                        'uri': model.uri
+                        'uri': model.uri,
+                        'modelLabel': model.get(model.historyLabel)
                     });
                     console.log(history);
                 }
