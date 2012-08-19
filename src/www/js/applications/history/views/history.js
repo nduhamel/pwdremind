@@ -16,7 +16,7 @@ define([
         itemTemplate : _.template(itemTpl, null, { variable: 'item'}),
 
         initialize : function () {
-            this.collection.on('destroy add', this.render, this);
+            this.collection.on('destroy add sync', this.render, this);
         },
 
         render : function () {

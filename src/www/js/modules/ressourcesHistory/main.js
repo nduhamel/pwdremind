@@ -12,10 +12,11 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
 
     var actionMap = {
         'create': 'delete',
-        'delete': 'create'
+        'delete': 'create',
+        'update': 'update'
     };
 
-    var methodWatched = ['create', 'delete'];
+    var methodWatched = ['create', 'delete', 'update'];
 
     var syncProxy = function(sync, memonize) {
         return function (method, model, options) {
@@ -24,14 +25,23 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
                 if (success) {
                     success(resp, status, xhr);
                 }
-                var keep = options.keepInHistory ? options.keepInHistory : model.keepInHistory;
+                var keep = _.has(options, 'keepInHistory') ? options.keepInHistory : model.keepInHistory;
                 if (keep && _.include(methodWatched, method)) {
+                    var modelAttr;
+                    if (method === 'update') {
+                        if (!model.previousServerAttr) {
+                            throw 'previousServerAttr not defined';
+                        }
+                        modelAttr = model.previousServerAttr;
+                    } else {
+                        modelAttr = model.toJSON();
+                    }
                     memonize({
-                        'action': method,
-                        'model': model.toJSON(),
-                        'uri': model.uri,
-                        'modelLabel': model.get(model.historyLabel),
-                        'modelId': model.id
+                            'action': method,
+                            'model': modelAttr,
+                            'uri': model.uri,
+                            'modelLabel': model.get(model.historyLabel),
+                            'modelId': model.id
                     });
                 }
             };
@@ -87,7 +97,7 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
             sandbox.trigger('ressource:'+uri+':'+action, attr, function(){
                 entry.destroy();
             });
-        }
+        },
 
     });
 

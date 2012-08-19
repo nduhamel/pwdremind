@@ -59,6 +59,9 @@ define([
             event.preventDefault();
             var collection = this.collection;
             if (this.model.isValid(true)) {
+                if (!this.model.isNew()) {
+                    this.model.previousServerAttr = this._revertAttributes;
+                }
                 this.model.save(null,{success: function (model) {
                     collection.addRessource(model);
                 }});

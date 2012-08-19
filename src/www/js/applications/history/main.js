@@ -1,10 +1,7 @@
 define([
-    'jquery',
-    'underscore',
-    'backbone',
     'sandbox',
     './views/history'
-], function($, _, Backbone, sandbox, HistoryView){
+], function(sandbox, HistoryView){
 
     sandbox.defineApp({
         deps : ['history'],

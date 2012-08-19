@@ -106,6 +106,18 @@ define(['backbone', '../models/category', './ressources'], function(Backbone, Ca
             cat.set('dataCount',count+1);
         },
 
+        updateRessource : function (attr, success) {
+            var model;
+            if ( this.currentCat === attr.category_id ){
+                model = this.ressourceCollection.get(attr.id);
+                model.set(attr);
+            } else {
+                model = new this.ressourceCollection.model(attr);
+            }
+            model.save(null, {keepInHistory:false});
+            success();
+        },
+
         comparator : function (a) {
             return a.get('order');
         },

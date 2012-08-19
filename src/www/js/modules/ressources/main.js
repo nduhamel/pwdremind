@@ -60,6 +60,8 @@ define([
             sandbox.on('ressource:note:delete', this.noteCategories.destroyRessource, this.noteCategories);
             sandbox.on('ressource:password:create', this.passwordCategories.createRessource, this.passwordCategories);
             sandbox.on('ressource:note:create', this.noteCategories.createRessource, this.noteCategories);
+            sandbox.on('ressource:password:update', this.passwordCategories.updateRessource, this.passwordCategories);
+            sandbox.on('ressource:note:update', this.noteCategories.updateRessource, this.noteCategories);
 
         },
 
