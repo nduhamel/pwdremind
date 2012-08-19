@@ -41,7 +41,7 @@ define([
 
         stop : function () {
             this.passwordApp.destroy();
-            console.log(delete this.passwordApp);
+            delete this.passwordApp;
         },
     });
 

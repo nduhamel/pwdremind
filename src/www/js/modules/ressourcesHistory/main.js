@@ -2,6 +2,7 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
 
     var HistoryModel = Backbone.Model.extend({
         crypted : ['action', 'model', 'uri', 'modelLabel', 'modelId'],
+        urlRoot : './history'
     });
 
     var HistoryCollection = Backbone.Collection.extend({
@@ -9,26 +10,29 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
         url: './history'
     });
 
+    var actionMap = {
+        'create': 'delete',
+        'delete': 'create'
+    };
+
     var methodWatched = ['create', 'delete'];
 
-    var syncProxy = function(sync, history) {
+    var syncProxy = function(sync, memonize) {
         return function (method, model, options) {
             var success = options.success;
             options.success = function(resp, status, xhr) {
                 if (success) {
                     success(resp, status, xhr);
                 }
-                if (model.keepInHistory && _.include(methodWatched, method)) {
-                    console.log('WATCHED ACTION! LOG it!');
-                    var modelAttr = model.toJSON();
-                    history.add({
+                var keep = options.keepInHistory ? options.keepInHistory : model.keepInHistory;
+                if (keep && _.include(methodWatched, method)) {
+                    memonize({
                         'action': method,
-                        'model': modelAttr,
+                        'model': model.toJSON(),
                         'uri': model.uri,
                         'modelLabel': model.get(model.historyLabel),
                         'modelId': model.id
                     });
-                    console.log(history);
                 }
             };
 
@@ -42,30 +46,47 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
 
         provide: ['history'],
 
-        maxSize : 3,
-
         start : function () {
             this.defaultSync = Backbone.sync;
             this.history = new HistoryCollection();
             this.history.fetch();
-            this.history.on('add', this.postAdd, this);
-            Backbone.sync = syncProxy(this.defaultSync, this.history);
+            Backbone.sync = syncProxy(this.defaultSync, _.bind(this.add,this));
+            sandbox.on('history:undo', this.doUndo, this);
         },
 
         stop : function () {
+            sandbox.off(null,null,this);
             Backbone.sync = this.defaultSync;
-            this.history.off();
+            this.history.off(null,null,this);
             delete this.defaultSync;
             delete this.history;
         },
 
-        postAdd : function (model) {
-            var toRemove;
-            model.save();
-            if (this.history.length > this.maxSize) {
-                toRemove = this.history.pop();
-                toRemove.destroy();
+        add : function (attr) {
+            var dups = this.history.where({'modelId': attr.modelId});
+            _.each(dups, function(model){
+                model.destroy();
+            });
+            if (attr.action === "delete") {
+                attr.modelId = null;
+                delete attr.model.id;
             }
+            var model = new this.history.model(attr);
+            model.save(null,{
+                success: _.bind(function(model){
+                    this.history.add(model);
+                },this)
+            });
+        },
+
+        doUndo : function (id) {
+            var entry = this.history.get(id),
+                action = actionMap[entry.get('action')],
+                uri = entry.get('uri'),
+                attr = entry.get('model');
+            sandbox.trigger('ressource:'+uri+':'+action, attr, function(){
+                entry.destroy();
+            });
         }
 
     });

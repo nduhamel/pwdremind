@@ -1,4 +1,9 @@
-define(['backbone', 'sandbox', './collections/categories'], function(Backbone, sandbox, Categories){
+define([
+    'underscore',
+    'backbone',
+    'sandbox',
+    './collections/categories'
+], function(_, Backbone, sandbox, Categories){
 
     var Password = {
         uri : 'password',
@@ -51,9 +56,17 @@ define(['backbone', 'sandbox', './collections/categories'], function(Backbone, s
         start : function () {
             this.passwordCategories = new Categories(null,{ressource:Password});
             this.noteCategories = new Categories(null,{ressource:Note});
+            sandbox.on('ressource:password:delete', this.passwordCategories.destroyRessource, this.passwordCategories);
+            sandbox.on('ressource:note:delete', this.noteCategories.destroyRessource, this.noteCategories);
+            sandbox.on('ressource:password:create', this.passwordCategories.createRessource, this.passwordCategories);
+            sandbox.on('ressource:note:create', this.noteCategories.createRessource, this.noteCategories);
+
         },
 
         stop : function () {
+            sandbox.off(null, null, this.passwordCategories);
+            sandbox.off(null, null, this.noteCategories);
+
             this.passwordCategories = null;
             this.noteCategories = null;
         },

@@ -257,10 +257,10 @@ class App
             $message->send();
          });
 
-         $router->addRoute('DELETE', '/history', $authCheck, function() use ($db, $message, $session, $rawInput) {
-            $db->removeHistory($rawInput['id'], $session->getUserid());
+         $router->addRoute('DELETE', '/history/:id', $authCheck, function($id) use ($db, $message, $session, $rawInput) {
+            $db->removeHistory($id, $session->getUserid());
             $message->setData(array(
-                            'id' => $rawInput['id'],
+                            'id' => $id,
             ));
             $message->send();
          });

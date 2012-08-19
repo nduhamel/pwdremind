@@ -201,7 +201,7 @@ class Database {
         $req = $this->_db->prepare("DELETE FROM history
                                     WHERE id=:id
                                     AND user_id=:user_id ");
-        $req->execute(array('id'=>id, 'user_id'=>$user_id));
+        $req->execute(array('id'=>$id, 'user_id'=>$user_id));
     }
 
     public function getHistory($user_id)

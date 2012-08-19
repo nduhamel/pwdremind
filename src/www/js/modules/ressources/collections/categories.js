@@ -76,6 +76,36 @@ define(['backbone', '../models/category', './ressources'], function(Backbone, Ca
             cat.set('dataCount',count+1);
         },
 
+        /*
+         * Used by history
+         *
+         */
+
+        destroyRessource : function (attr, success) {
+            var model = new this.ressourceCollection.model(attr);
+            if ( this.currentCat === model.get('category_id') ){
+                this.ressourceCollection.remove(model);
+            } else {
+                var cat = this.get(model.get('category_id'));
+                var count = cat.get('dataCount');
+                cat.set('dataCount',count-1);
+            }
+            model.destroy({keepInHistory:false});
+            success();
+        },
+
+        createRessource : function (attr, success) {
+            var model = new this.ressourceCollection.model(attr);
+            if ( this.currentCat === model.get('category_id') ){
+                this.ressourceCollection.add(model, {at:0});
+            }
+            model.save(null, {keepInHistory:false});
+            success();
+            var cat = this.get(model.get('category_id'));
+            var count = cat.get('dataCount');
+            cat.set('dataCount',count+1);
+        },
+
         comparator : function (a) {
             return a.get('order');
         },
