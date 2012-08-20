@@ -171,17 +171,17 @@ class Database {
     /*
      *  History
      ***********/
-    public function addHistory($data, $user_id)
+    public function addHistory($data, $timestamp, $user_id)
     {
         if ($this->_driver == 'pgsql'){
-            $req = $this->_db->prepare("INSERT INTO history (data, user_id)
-                                        VALUES(:data, :user_id) RETURNING id");
-            $req->execute(array('data'=> $data, 'user_id'=>$user_id));
+            $req = $this->_db->prepare("INSERT INTO history (data, timestamp, user_id)
+                                        VALUES(:data, :timestamp, :user_id) RETURNING id");
+            $req->execute(array('data'=> $data, 'timestamp'=>$timestamp, 'user_id'=>$user_id));
             return $req->fetchColumn();
         } else {
-            $req = $this->_db->prepare("INSERT INTO history (data, user_id)
-                                        VALUES(:data, :user_id)");
-            $req->execute(array('data'=> $data, 'user_id'=>$user_id));
+            $req = $this->_db->prepare("INSERT INTO history (data, timestamp, user_id)
+                                        VALUES(:data, :timestamp, :user_id)");
+            $req->execute(array('data'=> $data, 'timestamp'=>$timestamp, 'user_id'=>$user_id));
             return $this->_db->lastInsertId();
         }
     }
@@ -206,7 +206,7 @@ class Database {
 
     public function getHistory($user_id)
     {
-        $req = $this->_db->prepare("SELECT id, data
+        $req = $this->_db->prepare("SELECT id, data, timestamp
                                     FROM history
                                     WHERE user_id = :user_id");
         $req->execute(array('user_id'=>$user_id));

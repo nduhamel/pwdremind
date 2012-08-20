@@ -234,10 +234,12 @@ class App
          *************/
 
          $router->addRoute('POST', '/history', $authCheck, function() use ($db, $message, $session, $rawInput) {
-            $id = $db->addHistory($rawInput['data'], $session->getUserid());
+            $timestamp = time();
+            $id = $db->addHistory($rawInput['data'], $timestamp, $session->getUserid());
             $message->setData(array(
                             'id' => $id,
                             'data' => $rawInput['data'],
+                            'timestamp' => $timestamp
             ));
             $message->send();
          });

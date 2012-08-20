@@ -2,12 +2,21 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
 
     var HistoryModel = Backbone.Model.extend({
         crypted : ['action', 'model', 'uri', 'modelLabel', 'modelId'],
-        urlRoot : './history'
+        urlRoot : './history',
+        parse : function (resp) {
+            if (resp.timestamp) {
+                resp.timestamp = parseInt(resp.timestamp);
+            }
+            return resp;
+        }
     });
 
     var HistoryCollection = Backbone.Collection.extend({
         model: HistoryModel,
-        url: './history'
+        url: './history',
+        comparator : function (a, b) {
+            return b.get('timestamp') - a.get('timestamp');
+        }
     });
 
     var actionMap = {

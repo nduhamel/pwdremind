@@ -1,4 +1,5 @@
 <%
+// Label
 var labelClass;
 switch (item.action) {
     case 'create':
@@ -10,10 +11,16 @@ switch (item.action) {
     case 'update':
         labelClass = "label-warning";
         break;
-}%>
+}
+// Date
+var date = new Date(item.timestamp*1000);
+%>
 <tr>
     <td>
         <span class="label <%=labelClass%>"><%=item.action%></span>
+    </td>
+    <td>
+        <%=date.toLocaleDateString()%> <%=date.toLocaleTimeString()%>
     </td>
     <td>
         <%=item.uri%>
