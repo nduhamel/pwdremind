@@ -267,6 +267,11 @@ class App
             $message->send();
          });
 
+         /*
+          * PING
+          ***************/
+        $router->addRoute('GET', '/ping', $authCheck, function(){});
+
         // Logout
         $router->addRoute('GET', '/logout', $authCheck, function() use ($db, $message, $session, $rawInput) {
 

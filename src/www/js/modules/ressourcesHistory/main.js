@@ -98,6 +98,7 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
         },
 
         doUndo : function (id) {
+            console.log(id);
             var entry = this.history.get(id),
                 action = actionMap[entry.get('action')],
                 uri = entry.get('uri'),

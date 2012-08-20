@@ -82,6 +82,7 @@ requirejs([
     'modules/srpsession/srpsession',
     'modules/ressources/main',
     'modules/ressourcesHistory/main',
+    'modules/ping/main',
     'applications/history/main',
     'applications/passwordList/main',
     'applications/passwordVizualizer/main',
@@ -161,6 +162,10 @@ requirejs([
     modal.render();
 
     sandbox.on('login', function () {
+        sandbox.startModule('ping', {
+            url: './ping',
+            interval: 30
+        });
         sandbox.startModule('ressources');
         sandbox.startModule('ressourcesHistory');
         modal.destroy();
