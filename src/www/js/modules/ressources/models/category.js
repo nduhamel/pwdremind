@@ -12,7 +12,7 @@ define(['backbone'], function(Backbone){
             "dataCount" : 0
         },
 
-        crypted : ['name'],
+        crypted : ['name', 'order'],
 
         initialize : function (attributes, options) {
             if (options && options.ressource) {

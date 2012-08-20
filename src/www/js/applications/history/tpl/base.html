@@ -1,0 +1,26 @@
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span2">
+        </div>
+        <div class="span8">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Action</th>
+                <th>Date</th>
+                <th>Ressource</th>
+                <th>Info</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% _.each(items, function(item) {
+                print( itemTpl(item) );
+            }); %>
+        </tbody>
+    </table>
+        </div>
+        <div class="span2">
+        </div>
+    </div>
+</div>

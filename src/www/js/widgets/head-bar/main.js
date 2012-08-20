@@ -30,14 +30,26 @@ define([
         render : function() {
             var apps = sandbox.getApps();
             var currentApp = sandbox.getCurrentApp();
-            var mainMenu = _.map(apps, function(opt, context){
+            var mainMenu = _.pick(apps, _.reject(_.keys(apps), function(v){
+                    return v === 'master';
+                }
+            ));
+            mainMenu = _.map(mainMenu, function(opt, context){
                 opt.name = context;
                 return opt;
-            });
+            })
             mainMenu = _.sortBy(mainMenu, function(entry){
                 return entry.order;
+            })
+
+            var masterApp = apps.master;
+            var renderedContent = _.template(baseTpl, {
+                logged: this.logged,
+                menu: mainMenu,
+                apps: apps,
+                current: currentApp,
+                masterApp: masterApp,
             });
-            var renderedContent = _.template(baseTpl, {logged: this.logged, menu: mainMenu, apps: apps, current: currentApp} );
             this.$el.html(renderedContent);
             return this;
         },

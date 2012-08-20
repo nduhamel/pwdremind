@@ -74,6 +74,73 @@ define(['backbone', '../models/category', './ressources'], function(Backbone, Ca
             var cat = this.get(model.get('category_id'));
             var count = cat.get('dataCount');
             cat.set('dataCount',count+1);
-        }
+        },
+
+        /*
+         * Used by history
+         *
+         */
+
+        destroyRessource : function (attr, options) {
+            var model = new this.ressourceCollection.model(attr);
+            if ( this.currentCat === model.get('category_id') ){
+                this.ressourceCollection.remove(model);
+            } else {
+                var cat = this.get(model.get('category_id'));
+                var count = cat.get('dataCount');
+                cat.set('dataCount',count-1);
+            }
+            model.destroy(options);
+        },
+
+        createRessource : function (attr, options) {
+            var model = new this.ressourceCollection.model(attr);
+            if ( this.currentCat === model.get('category_id') ){
+                this.ressourceCollection.add(model, {at:0});
+            }
+            model.save(null, options);
+            var cat = this.get(model.get('category_id'));
+            var count = cat.get('dataCount');
+            cat.set('dataCount',count+1);
+        },
+
+        updateRessource : function (curAttr, previousAttr, options) {
+            var model;
+            // category change
+            if (curAttr.category_id !== previousAttr.category_id) {
+                // dataCount
+                // Remove current model
+                if (curAttr.category_id === this.currentCat ) {
+                    this.ressourceCollection.remove(curAttr.id);
+                } else {
+                    var cat = this.get(curAttr.category_id);
+                    var count = cat.get('dataCount');
+                    cat.set('dataCount',count-1);
+                }
+                // Add to previous cat
+                var cat = this.get(previousAttr.category_id);
+                var count = cat.get('dataCount');
+                cat.set('dataCount',count+1);
+            }
+            // Update model
+            if ( previousAttr.category_id === curAttr.category_id && previousAttr.category_id === this.currentCat) {
+                model = this.ressourceCollection.get(previousAttr.id);
+                model.set(previousAttr);
+            } else if (previousAttr.category_id === this.currentCat) {
+                model = new this.ressourceCollection.model(previousAttr);
+                this.ressourceCollection.add(model);
+            } else {
+                model = new this.ressourceCollection.model(previousAttr);
+            }
+
+            if (options.keepInHistory === true) {
+                model.previousServerAttr = curAttr;
+            }
+            model.save(null, options);
+        },
+
+        comparator : function (a) {
+            return a.get('order');
+        },
     });
 });

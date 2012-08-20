@@ -168,6 +168,52 @@ class Database {
         $req->execute(array('entry_id'=>$entry_id, 'user_id'=>$user_id));
     }
 
+    /*
+     *  History
+     ***********/
+    public function addHistory($data, $timestamp, $user_id)
+    {
+        if ($this->_driver == 'pgsql'){
+            $req = $this->_db->prepare("INSERT INTO history (data, timestamp, user_id)
+                                        VALUES(:data, :timestamp, :user_id) RETURNING id");
+            $req->execute(array('data'=> $data, 'timestamp'=>$timestamp, 'user_id'=>$user_id));
+            return $req->fetchColumn();
+        } else {
+            $req = $this->_db->prepare("INSERT INTO history (data, timestamp, user_id)
+                                        VALUES(:data, :timestamp, :user_id)");
+            $req->execute(array('data'=> $data, 'timestamp'=>$timestamp, 'user_id'=>$user_id));
+            return $this->_db->lastInsertId();
+        }
+    }
+
+    public function updateHistory($id, $data, $user_id)
+    {
+        $req = $this->_db->prepare("UPDATE history
+                                    SET data=:data
+                                    WHERE id=:id
+                                    AND user_id=:user_id ");
+        $req->execute(array('data'=>$data,'id'=>$id, 'user_id'=>$user_id));
+        return $id;
+    }
+
+    public function removeHistory($id, $user_id)
+    {
+        $req = $this->_db->prepare("DELETE FROM history
+                                    WHERE id=:id
+                                    AND user_id=:user_id ");
+        $req->execute(array('id'=>$id, 'user_id'=>$user_id));
+    }
+
+    public function getHistory($user_id)
+    {
+        $req = $this->_db->prepare("SELECT id, data, timestamp
+                                    FROM history
+                                    WHERE user_id = :user_id");
+        $req->execute(array('user_id'=>$user_id));
+        return $req->fetchall(PDO::FETCH_ASSOC);
+    }
+
+
     //Return true if the entry exists
     public function checkEntry($id, $user_id)
     {

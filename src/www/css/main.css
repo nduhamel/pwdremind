@@ -227,4 +227,12 @@ form#addentry select{
     left: auto;
     right: 0;
 }
+.nav-stacked li.sortable-placeholder {
+    border: 1px dashed #CCC;
+    background: none;
+
+  -webkit-border-radius: 5px;
+     -moz-border-radius: 5px;
+          border-radius: 5px;
+}
 

@@ -4,6 +4,7 @@ define([
     'backbone',
     'sandbox',
     'text!../tpl/sidebar.html',
+    'jquery_sortable'
 ], function($, _, Backbone, sandbox, baseTpl) {
 
     var SideView = Backbone.View.extend({
@@ -11,7 +12,8 @@ define([
         events : {
             'click ul.dropdown-menu a' : 'menuAction',
             'click a' : 'onClick',
-            'click a i' : 'dropdown'
+            'click a i' : 'dropdown',
+            'sortupdate' : 'onSorted'
         },
 
         initialize : function() {
@@ -33,6 +35,9 @@ define([
         render : function() {
             this.$el.html(_.template(baseTpl, {categories : this.collection.toJSON(),
                                                currentCategory: this.collection.getCurrentCatId() }));
+            this.$(".nav").sortable({
+                forcePlaceholderSize: true
+            });
             return this;
         },
 
@@ -89,7 +94,16 @@ define([
                 }
             }
             this.clearDropdown();
-        }
+        },
+
+        onSorted : function (event, data) {
+            this.$('.nav li.dropdown a.dropdown-toggle').each(_.bind(function (index, el) {
+                var cat = this.collection.get($(el).attr('name'));
+                cat.set({'order' : index}, {silent:true});
+                cat.save(null, {silent: true});
+            }, this));
+            this.collection.sort({silent: true});
+        },
 
     });
 

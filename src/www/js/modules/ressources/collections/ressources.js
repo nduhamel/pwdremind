@@ -32,6 +32,6 @@ define(['backbone', '../models/ressource'], function(Backbone, Ressource){
                 }
             }
             return this;
-        }
+        },
     });
 });
