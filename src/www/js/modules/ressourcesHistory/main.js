@@ -81,6 +81,7 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
             }
             var model = new this.history.model(attr);
             model.save(null,{
+                wait: true,
                 success: _.bind(function(model){
                     this.history.add(model);
                 },this)
