@@ -58,16 +58,22 @@ define([
         onSubmit : function (event) {
             event.preventDefault();
             var collection = this.collection;
+
             if (this.model.isValid(true)) {
                 if (!this.model.isNew()) {
                     this.model.previousServerAttr = this._revertAttributes;
+                    collection.updateRessource(this.model.previousServerAttr, this.model.toJSON(), {
+                        keepInHistory: true
+                    });
+                } else {
+                    this.model.save(null,{
+                        success: function(model){
+                            collection.addRessource(model);
+                        }
+                    });
                 }
-                this.model.save(null,{success: function (model) {
-                    collection.addRessource(model);
-                }});
                 this.destroy();
             }
-
         },
 
         onCancel : function (event) {

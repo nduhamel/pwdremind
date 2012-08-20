@@ -27,22 +27,20 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
                 }
                 var keep = _.has(options, 'keepInHistory') ? options.keepInHistory : model.keepInHistory;
                 if (keep && _.include(methodWatched, method)) {
-                    var modelAttr;
+                    var modelAttr = {
+                        action: method,
+                        uri: model.uri,
+                        modelLabel: model.get(model.historyLabel),
+                        modelId: model.id
+                    };
                     if (method === 'update') {
                         if (!model.previousServerAttr) {
                             throw 'previousServerAttr not defined';
                         }
-                        modelAttr = model.previousServerAttr;
-                    } else {
-                        modelAttr = model.toJSON();
+                        modelAttr.previousAttr = model.previousServerAttr;
                     }
-                    memonize({
-                            'action': method,
-                            'model': modelAttr,
-                            'uri': model.uri,
-                            'modelLabel': model.get(model.historyLabel),
-                            'modelId': model.id
-                    });
+                    modelAttr.model = model.toJSON();
+                    memonize(modelAttr);
                 }
             };
 
@@ -93,10 +91,21 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
             var entry = this.history.get(id),
                 action = actionMap[entry.get('action')],
                 uri = entry.get('uri'),
-                attr = entry.get('model');
-            sandbox.trigger('ressource:'+uri+':'+action, attr, function(){
-                entry.destroy();
-            });
+                attr = entry.get('model'),
+                callback = function () {
+                     entry.destroy();
+                };
+            if (action === 'update') {
+                sandbox.trigger('ressource:'+uri+':'+action, attr, entry.get('previousAttr'), {
+                    success: callback,
+                    keepInHistory: false
+                });
+            } else {
+                sandbox.trigger('ressource:'+uri+':'+action, attr, {
+                    success: callback,
+                    keepInHistory: false
+                });
+            }
         },
 
     });

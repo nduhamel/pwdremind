@@ -81,7 +81,7 @@ define(['backbone', '../models/category', './ressources'], function(Backbone, Ca
          *
          */
 
-        destroyRessource : function (attr, success) {
+        destroyRessource : function (attr, options) {
             var model = new this.ressourceCollection.model(attr);
             if ( this.currentCat === model.get('category_id') ){
                 this.ressourceCollection.remove(model);
@@ -90,32 +90,53 @@ define(['backbone', '../models/category', './ressources'], function(Backbone, Ca
                 var count = cat.get('dataCount');
                 cat.set('dataCount',count-1);
             }
-            model.destroy({keepInHistory:false});
-            success();
+            model.destroy(options);
         },
 
-        createRessource : function (attr, success) {
+        createRessource : function (attr, options) {
             var model = new this.ressourceCollection.model(attr);
             if ( this.currentCat === model.get('category_id') ){
                 this.ressourceCollection.add(model, {at:0});
             }
-            model.save(null, {keepInHistory:false});
-            success();
+            model.save(null, options);
             var cat = this.get(model.get('category_id'));
             var count = cat.get('dataCount');
             cat.set('dataCount',count+1);
         },
 
-        updateRessource : function (attr, success) {
+        updateRessource : function (curAttr, previousAttr, options) {
             var model;
-            if ( this.currentCat === attr.category_id ){
-                model = this.ressourceCollection.get(attr.id);
-                model.set(attr);
-            } else {
-                model = new this.ressourceCollection.model(attr);
+            // category change
+            if (curAttr.category_id !== previousAttr.category_id) {
+                // dataCount
+                // Remove current model
+                if (curAttr.category_id === this.currentCat ) {
+                    this.ressourceCollection.remove(curAttr.id);
+                } else {
+                    var cat = this.get(curAttr.category_id);
+                    var count = cat.get('dataCount');
+                    cat.set('dataCount',count-1);
+                }
+                // Add to previous cat
+                var cat = this.get(previousAttr.category_id);
+                var count = cat.get('dataCount');
+                cat.set('dataCount',count+1);
             }
-            model.save(null, {keepInHistory:false});
-            success();
+            // Update model
+            if ( previousAttr.category_id === curAttr.category_id && previousAttr.category_id === this.currentCat) {
+                model = this.ressourceCollection.get(previousAttr.id);
+                model.set(previousAttr);
+            } else if (previousAttr.category_id === this.currentCat) {
+                model = new this.ressourceCollection.model(previousAttr);
+                this.ressourceCollection.add(model);
+            } else {
+                model = new this.ressourceCollection.model(previousAttr);
+            }
+
+            if (options.keepInHistory === true) {
+                model.previousServerAttr = curAttr;
+            }
+            model.save(null, options);
         },
 
         comparator : function (a) {
