@@ -47,6 +47,7 @@ form#addentry select{
     font-weight: 600;
     position: relative;
     top: 2px;
+    color: white;
 }
 
 .navbar ul.nav {
