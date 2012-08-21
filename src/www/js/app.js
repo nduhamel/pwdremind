@@ -83,6 +83,7 @@ requirejs([
     'modules/ressources/main',
     'modules/ressourcesHistory/main',
     'modules/ping/main',
+    'modules/idleTimer/main',
     'applications/history/main',
     'applications/passwordList/main',
     'applications/passwordVizualizer/main',
@@ -164,7 +165,13 @@ requirejs([
     sandbox.on('login', function () {
         sandbox.startModule('ping', {
             url: './ping',
-            interval: 30
+            interval: 60*2
+        });
+        sandbox.startModule('idleTimer',{
+            timeout: 60*3
+        });
+        sandbox.on('idleTimer:timeout', function () {
+            sandbox.trigger('logout');
         });
         sandbox.startModule('ressources');
         sandbox.startModule('ressourcesHistory');
