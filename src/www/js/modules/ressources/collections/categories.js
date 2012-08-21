@@ -1,4 +1,9 @@
-define(['backbone', '../models/category', './ressources'], function(Backbone, Category, RessourceCollection){
+define([
+    'underscore',
+    'backbone',
+    '../models/category',
+    './ressources'
+], function(_, Backbone, Category, RessourceCollection){
 
     return Backbone.Collection.extend({
 
@@ -34,8 +39,12 @@ define(['backbone', '../models/category', './ressources'], function(Backbone, Ca
             if ( this.length == 0 ) {
                 console.log('No categories, create default: General');
                 var cat = new this.model({name:'General'});
-                this.add(cat);
-                cat.save({success: _.bind(this.afterFetch, this) });
+                cat.save(null, {
+                    success: _.bind(function (model) {
+                        this.add(model);
+                        this.afterFetch();
+                    },this)
+                });
             } else {
                 this.afterFetch();
             }
