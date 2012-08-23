@@ -7,22 +7,31 @@ define([
 
     var Password = {
         uri : 'password',
-        validation : {
+
+        schema : {
             site : {
-                required  : true,
-                pattern: "url",
+                validators: ['required', 'url']
             },
             login : {
-                required  : true,
+                title: 'Username',
+                validators: ['required']
             },
             pwd : {
-                required  : true,
+                type: 'Password',
+                validators: ['required'],
+                title : "Password"
             },
             category_id : {
-                required : true,
+                title: 'Category',
+                validators: ['required'],
+                type: 'Select',
+                options: function(callback) {
+                    sandbox.trigger('ressource:get', this.uri, callback)
+                }
             },
-            // TODO maxlength
-            //~ notes : {},
+            note : {
+                type: 'TextArea'
+            }
         },
         crypted : ['site', 'login', 'pwd', 'notes'],
         keepInHistory : true,
@@ -31,18 +40,24 @@ define([
 
     var Note = {
         uri : 'note',
-        validation : {
+        schema : {
             name : {
-                required  : true
+                validators: ['required']
             },
-            notes : {
-                required  : true
+            note : {
+                type: 'TextArea',
+                validators: ['required']
             },
             category_id : {
-                required : true
+                title: 'Category',
+                validators: ['required'],
+                type: 'Select',
+                options: function(callback) {
+                    sandbox.trigger('ressource:get', this.uri, callback)
+                }
             }
         },
-        crypted : ['name', 'notes'],
+        crypted : ['name', 'note'],
         keepInHistory : true,
         historyLabel: 'name'
     };
@@ -77,12 +92,11 @@ define([
                     );
                 },this);
 
-                sandbox.on('ressource:get', function(uri){
-                    return this.ressources[ressource.uri];
-                },this);
-
             },this);
 
+            sandbox.on('ressource:get', function(uri, callback){
+                callback(this.ressources[uri]);
+            },this);
         },
 
         stop : function () {

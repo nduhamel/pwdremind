@@ -2,12 +2,6 @@ define(['backbone'], function(Backbone){
 
     return Backbone.Model.extend({
 
-        validation : {
-            name : {
-                required  : true
-            }
-        },
-
         defaults: {
             "dataCount" : 0
         },
@@ -29,6 +23,10 @@ define(['backbone'], function(Backbone){
                 resp.dataCount = parseInt(resp.dataCount);
             }
             return resp;
+        },
+
+        toString : function () {
+            return this.get('name');
         }
 
     });

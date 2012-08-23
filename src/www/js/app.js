@@ -50,8 +50,7 @@ require.config({
         backbone: 'lib/backbone',
         backbone_validation : 'lib/backbone.validation',
         backbone_model_binder : 'lib/Backbone.ModelBinder',
-        memento: 'lib/Memento',
-        mementoable: 'lib/Mementoable',
+        backbone_forms : 'lib/backbone-forms',
         underscore: 'lib/underscore',
         jquery: 'lib/jquery',
         jquery_sortable : 'lib/jquery.sortable',
@@ -76,9 +75,8 @@ requirejs([
     'sandbox',
     'widgets/head-bar/main',
     'widgets/login-modal/main',
-    'widgets/password-modal/main',
-    'widgets/note-modal/main',
     'widgets/category-modal/main',
+    'widgets/add-edit-modal/main',
     'modules/srpsession/srpsession',
     'modules/ressources/main',
     'modules/ressourcesHistory/main',
@@ -89,33 +87,31 @@ requirejs([
     'applications/passwordVizualizer/main',
     'applications/noteList/main',
     'applications/exporter/main'
-], function (sandbox, HeadBar, LoginModal, PasswordModal, NoteModal, CategoryModal) {
+], function (sandbox, HeadBar, LoginModal, CategoryModal, AddEditModal) {
     var headBar,
         modal;
 
     var addPassword = function () {
         var categories = sandbox.require('passwordCategories'),
             PasswordModel = categories.getRessourceModel();
-        modal = new PasswordModal({collection : categories, model : new PasswordModel({category_id: categories.getCurrentCatId() }) } );
+        modal = new AddEditModal({model : new PasswordModel({category_id: categories.getCurrentCatId() }) } );
         modal.render();
     };
 
     var editPassword = function (password) {
-        var categories = sandbox.require('passwordCategories');
-        modal = new PasswordModal({collection : categories, model : password });
+        modal = new AddEditModal({model : password });
         modal.render();
     };
 
     var addNote = function () {
         var categories = sandbox.require('noteCategories'),
             NoteModel = categories.getRessourceModel();
-        modal = new NoteModal({collection: categories, model: new NoteModel({category_id: categories.getCurrentCatId() }) } );
+        modal = new AddEditModal({model: new NoteModel({category_id: categories.getCurrentCatId() }) } );
         modal.render();
     };
 
     var editNote = function (note) {
-        var categories = sandbox.require('noteCategories');
-        modal = new NoteModal({collection: categories, model: note});
+        modal = new AddEditModal({model: note});
         modal.render();
     };
 

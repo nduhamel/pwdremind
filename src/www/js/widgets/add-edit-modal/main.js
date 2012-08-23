@@ -5,11 +5,10 @@ define([
     'sandbox',
     'text!./tpl/base.html',
     'bootstrap_modal',
-    'backbone_model_binder',
-    'backbone_validation'
+    'backbone_forms'
 ], function($, _, Backbone, sandbox, baseTpl){
 
-    var PasswordModal = sandbox.WidgetView.extend({
+    return sandbox.WidgetView.extend({
 
         appendToEl : 'body',
 
@@ -19,58 +18,57 @@ define([
             "click a.close" : "onCancel",
         },
 
-        initialize : function () {
-            this.modelBinder = new Backbone.ModelBinder();
+        initialize : function (options) {
+            if (options && options.label) {
+                this.label = options.label
+            }
             // If not new save attributes for cancel
             if (!this.model.isNew()) {
                 this._revertAttributes = this.model.toJSON();
             }
+            console.log(this.model);
         },
 
         render : function() {
-            var renderedContent = _.template(baseTpl, {categories : this.collection.toJSON()});
+            this.form = new Backbone.Form({
+                model: this.model
+            }).render();
+
+            var renderedContent = _.template(baseTpl,{
+                titleLabel: this.label || this.model.isNew ? 'Add' : 'Edit',
+                cancelLabel: "Cancel",
+                saveLabel: "Save"
+            });
             this.$el.html(renderedContent);
+            this.$('.modal-body').append(this.form.el);
 
             this.$('#add-modal').modal({
                 show: true,
                 backdrop: 'static',
                 keyboard: false,
             })
-            .css({
-                width: 'auto',
-                'margin-left': function () {
-                    return -($(this).width() / 2);
-                }
-            });
-
-            Backbone.Validation.bind(this, {forceUpdate: true});
-            this.modelBinder.bind(this.model, this.el);
 
             return this;
         },
 
         onDestroy : function () {
             this.$('#add-modal').modal('hide');
-            this.modelBinder.unbind();
-            Backbone.Validation.unbind(this)
         },
 
         onSubmit : function (event) {
             event.preventDefault();
-            var collection = this.collection;
 
-            if (this.model.isValid(true)) {
+            if (this.form.validate() === null) {
+                this.form.commit();
                 if (!this.model.isNew()) {
                     this.model.previousServerAttr = this._revertAttributes;
-                    collection.updateRessource(this.model.previousServerAttr, this.model.toJSON(), {
-                        keepInHistory: true
-                    });
+                    sandbox.trigger('ressource:'+this.model.uri+':update',
+                                    this.model.previousServerAttr,
+                                    this.model.toJSON(),
+                                    { keepInHistory: true}
+                    );
                 } else {
-                    this.model.save(null,{
-                        success: function(model){
-                            collection.addRessource(model);
-                        }
-                    });
+                    sandbox.trigger('ressource:'+this.model.uri+':create', this.model);
                 }
                 this.destroy();
             }
@@ -86,5 +84,4 @@ define([
 
     });
 
-    return PasswordModal;
 });
