@@ -54,23 +54,46 @@ define([
         provide : ['passwordCategories', 'noteCategories'],
 
         start : function () {
-            this.passwordCategories = new Categories(null,{ressource:Password});
-            this.noteCategories = new Categories(null,{ressource:Note});
-            sandbox.on('ressource:password:delete', this.passwordCategories.destroyRessource, this.passwordCategories);
-            sandbox.on('ressource:note:delete', this.noteCategories.destroyRessource, this.noteCategories);
-            sandbox.on('ressource:password:create', this.passwordCategories.createRessource, this.passwordCategories);
-            sandbox.on('ressource:note:create', this.noteCategories.createRessource, this.noteCategories);
-            sandbox.on('ressource:password:update', this.passwordCategories.updateRessource, this.passwordCategories);
-            sandbox.on('ressource:note:update', this.noteCategories.updateRessource, this.noteCategories);
+
+
+            var availableRessources = [Password, Note];
+
+            this.ressources = {};
+
+            _.each(availableRessources, function(ressource){
+
+                //New API
+                this.ressources[ressource.uri] = new Categories(null,{ressource: ressource});
+
+                //compatibility hack
+                this[ressource.uri+'Categories'] = this.ressources[ressource.uri];
+
+                //Bind 'ressource:uri:function'
+                _.each(['create','update','delete'], function(channel){
+                    sandbox.on(
+                        'ressource:'+ressource.uri+':'+channel,
+                        this.ressources[ressource.uri][channel+'Ressource'],
+                        this.ressources[ressource.uri]
+                    );
+                },this);
+
+                sandbox.on('ressource:get', function(uri){
+                    return this.ressources[ressource.uri];
+                },this);
+
+            },this);
 
         },
 
         stop : function () {
-            sandbox.off(null, null, this.passwordCategories);
-            sandbox.off(null, null, this.noteCategories);
 
-            this.passwordCategories = null;
-            this.noteCategories = null;
+            // unbind
+            _.each(this.ressources, function(context){
+                sandbox.off(null,null,context);
+            },this);
+            sandbox.off(null,null,this);
+
+            this.ressources = null;
         },
 
     });

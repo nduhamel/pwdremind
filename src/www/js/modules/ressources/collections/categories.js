@@ -81,7 +81,7 @@ define(['backbone', '../models/category', './ressources'], function(Backbone, Ca
          *
          */
 
-        destroyRessource : function (attr, options) {
+        deleteRessource : function (attr, options) {
             var model = new this.ressourceCollection.model(attr);
             if ( this.currentCat === model.get('category_id') ){
                 this.ressourceCollection.remove(model);
