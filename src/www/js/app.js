@@ -17,6 +17,10 @@ require.config({
             deps: ['jquery']
         },
 
+        'bootstrap_popover': {
+            deps: ['jquery','bootstrap_tooltip']
+        },
+
         'zeroclipboard' : {
             exports : 'ZeroClipboard'
         },
@@ -65,7 +69,12 @@ require.config({
 
         // core
         core: 'core/core',
-        sandbox: 'core/sandbox'
+        sandbox: 'core/sandbox',
+
+        // perso
+        popover : 'lib/backbone-popover',
+        pwdgen: 'lib/pwdgen',
+        passwordEditor: 'lib/passwordEditor'
 
     }
 

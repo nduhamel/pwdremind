@@ -1133,7 +1133,6 @@ Form.editors = (function() {
      */
     render: function() {
       this.setValue(this.value);
-
       return this;
     },
 
@@ -1264,7 +1263,6 @@ Form.editors = (function() {
     }
 
   });
-
 
   //TEXTAREA
   editors.TextArea = editors.Text.extend({

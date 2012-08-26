@@ -17,7 +17,7 @@ define([
                 validators: ['required']
             },
             pwd : {
-                type: 'Password',
+                type: 'passwordEditor',
                 validators: ['required'],
                 title : "Password"
             },

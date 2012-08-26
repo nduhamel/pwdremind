@@ -4,9 +4,10 @@ define([
     'backbone',
     'sandbox',
     'text!./tpl/base.html',
+    'passwordEditor/main',
     'bootstrap_modal',
     'backbone_forms'
-], function($, _, Backbone, sandbox, baseTpl){
+], function($, _, Backbone, sandbox, baseTpl, passwordEditor){
 
     return sandbox.WidgetView.extend({
 

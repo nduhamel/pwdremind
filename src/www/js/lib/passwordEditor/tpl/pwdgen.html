@@ -1,0 +1,28 @@
+<form id="<%=id%>">
+    <fieldset>
+        <div class="control-group">
+            <label class="control-label">Options</label>
+            <div class="controls">
+                <label class="radio">
+                    <input type="radio" checked="" value="all" name="pwdgen-option"/>
+                    Tous caract&egrave;res imprimables
+                </label>
+                <label class="radio">
+                    <input type="radio" value="alphanumeric" name="pwdgen-option"/>
+                    Uniquement des caract&egrave;res alphanum&eacute;riques
+                </label>
+                <label class="radio">
+                    <input type="radio" value="alpha" name="pwdgen-option"/>
+                    Uniquement des lettres
+                </label>
+                <label class="radio">
+                    <input type="radio" value="numeric" name="pwdgen-option"/>
+                    Uniquement des chiffres
+                </label>
+            </div>
+        </div>
+    </fieldset>
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">G&eacute;n&eacute;rer</button>
+    </div>
+</form>
