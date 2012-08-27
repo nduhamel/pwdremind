@@ -2,8 +2,9 @@ define([
     'underscore',
     'backbone',
     'sandbox',
-    './collections/categories'
-], function(_, Backbone, sandbox, Categories){
+    './collections/categories',
+    'passwordEditor/main',
+], function(_, Backbone, sandbox, Categories, passwordEditor){
 
     var Password = {
         uri : 'password',
@@ -17,7 +18,7 @@ define([
                 validators: ['required']
             },
             pwd : {
-                type: 'passwordEditor',
+                type: passwordEditor,
                 validators: ['required'],
                 title : "Password"
             },

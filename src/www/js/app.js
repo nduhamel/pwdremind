@@ -74,7 +74,8 @@ require.config({
         // perso
         popover : 'lib/backbone-popover',
         pwdgen: 'lib/pwdgen',
-        passwordEditor: 'lib/passwordEditor'
+        passwordEditor: 'lib/passwordEditor',
+        parseUrl: 'lib/parseurl'
 
     }
 

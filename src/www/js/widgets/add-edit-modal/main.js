@@ -4,10 +4,10 @@ define([
     'backbone',
     'sandbox',
     'text!./tpl/base.html',
-    'passwordEditor/main',
+    'parseUrl',
     'bootstrap_modal',
     'backbone_forms'
-], function($, _, Backbone, sandbox, baseTpl, passwordEditor){
+], function($, _, Backbone, sandbox, baseTpl, parseUrl){
 
     return sandbox.WidgetView.extend({
 
@@ -27,13 +27,20 @@ define([
             if (!this.model.isNew()) {
                 this._revertAttributes = this.model.toJSON();
             }
-            console.log(this.model);
         },
 
         render : function() {
             this.form = new Backbone.Form({
                 model: this.model
             }).render();
+
+            this.form.on('site:blur', function(form, editor){
+                var parsedUrl = parseUrl(editor.getValue());
+                console.log(parsedUrl);
+                if (parsedUrl.protocol === "") {
+                    editor.setValue('http://'+parsedUrl.href);
+                }
+            });
 
             var renderedContent = _.template(baseTpl,{
                 titleLabel: this.label || this.model.isNew ? 'Add' : 'Edit',
@@ -53,6 +60,7 @@ define([
         },
 
         onDestroy : function () {
+            this.form.off();
             this.$('#add-modal').modal('hide');
         },
 
