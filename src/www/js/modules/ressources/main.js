@@ -2,49 +2,70 @@ define([
     'underscore',
     'backbone',
     'sandbox',
-    './collections/categories'
-], function(_, Backbone, sandbox, Categories){
+    './collections/categories',
+    'passwordEditor/main',
+], function(_, Backbone, sandbox, Categories, passwordEditor){
 
     var Password = {
         uri : 'password',
-        validation : {
+
+        schema : {
             site : {
-                required  : true,
-                pattern: "url",
+                validators: ['required', 'url']
             },
             login : {
-                required  : true,
+                title: 'Username',
+                validators: ['required']
             },
             pwd : {
-                required  : true,
+                type: passwordEditor,
+                validators: ['required'],
+                title : "Password"
             },
             category_id : {
-                required : true,
+                title: 'Category',
+                validators: ['required'],
+                type: 'Select',
+                options: function(callback) {
+                    sandbox.trigger('ressource:get', this.uri, callback)
+                }
             },
-            // TODO maxlength
-            //~ notes : {},
+            note : {
+                type: 'TextArea'
+            }
         },
+
         crypted : ['site', 'login', 'pwd', 'notes'],
-        keepInHistory : true,
-        historyLabel: 'site'
+        history: {
+            keep: true,
+            label: 'site'
+        }
     };
 
     var Note = {
         uri : 'note',
-        validation : {
+        schema : {
             name : {
-                required  : true
+                validators: ['required']
             },
-            notes : {
-                required  : true
+            note : {
+                type: 'TextArea',
+                validators: ['required']
             },
             category_id : {
-                required : true
+                title: 'Category',
+                validators: ['required'],
+                type: 'Select',
+                options: function(callback) {
+                    sandbox.trigger('ressource:get', this.uri, callback)
+                }
             }
         },
-        crypted : ['name', 'notes'],
-        keepInHistory : true,
-        historyLabel: 'name'
+        crypted : ['name', 'note'],
+        history: {
+            keep: true,
+            label: 'name'
+        }
     };
 
     sandbox.defineModule({
@@ -54,23 +75,45 @@ define([
         provide : ['passwordCategories', 'noteCategories'],
 
         start : function () {
-            this.passwordCategories = new Categories(null,{ressource:Password});
-            this.noteCategories = new Categories(null,{ressource:Note});
-            sandbox.on('ressource:password:delete', this.passwordCategories.destroyRessource, this.passwordCategories);
-            sandbox.on('ressource:note:delete', this.noteCategories.destroyRessource, this.noteCategories);
-            sandbox.on('ressource:password:create', this.passwordCategories.createRessource, this.passwordCategories);
-            sandbox.on('ressource:note:create', this.noteCategories.createRessource, this.noteCategories);
-            sandbox.on('ressource:password:update', this.passwordCategories.updateRessource, this.passwordCategories);
-            sandbox.on('ressource:note:update', this.noteCategories.updateRessource, this.noteCategories);
 
+
+            var availableRessources = [Password, Note];
+
+            this.ressources = {};
+
+            _.each(availableRessources, function(ressource){
+
+                //New API
+                this.ressources[ressource.uri] = new Categories(null,{ressource: ressource});
+
+                //compatibility hack
+                this[ressource.uri+'Categories'] = this.ressources[ressource.uri];
+
+                //Bind 'ressource:uri:function'
+                _.each(['create','update','delete'], function(channel){
+                    sandbox.on(
+                        'ressource:'+ressource.uri+':'+channel,
+                        this.ressources[ressource.uri][channel+'Ressource'],
+                        this.ressources[ressource.uri]
+                    );
+                },this);
+
+            },this);
+
+            sandbox.on('ressource:get', function(uri, callback){
+                callback(this.ressources[uri]);
+            },this);
         },
 
         stop : function () {
-            sandbox.off(null, null, this.passwordCategories);
-            sandbox.off(null, null, this.noteCategories);
 
-            this.passwordCategories = null;
-            this.noteCategories = null;
+            // unbind
+            _.each(this.ressources, function(context){
+                sandbox.off(null,null,context);
+            },this);
+            sandbox.off(null,null,this);
+
+            this.ressources = null;
         },
 
     });

@@ -215,6 +215,16 @@ class App
             $message->send();
         });
 
+        $router->addRoute('PUT', '/note', $authCheck, function() use ($db, $message, $session, $rawInput) {
+            $db->updateEntry($rawInput['id'], $rawInput['data'], App::NOTE, $rawInput['category_id'], $session->getUserid());
+            $message->setData(array(
+                            'id' => $rawInput['id'],
+                            'data' => $rawInput['data'],
+                            'category_id' => $rawInput['category_id'],
+            ));
+            $message->send();
+        });
+
         // GET all lastest notes
         $router->addRoute('GET', '/note', $authCheck, function() use ($db, $message, $session) {
             $entries = $db->lastestEntries(App::NOTE, $session->getUserid());

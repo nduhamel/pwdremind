@@ -76,21 +76,12 @@ define([
             return this.ressourceCollection.model;
         },
 
-        addRessource : function (model) {
-            if ( this.currentCat === model.get('category_id') ){
-                this.ressourceCollection.add(model,{at:0});
-            }
-            var cat = this.get(model.get('category_id'));
-            var count = cat.get('dataCount');
-            cat.set('dataCount',count+1);
-        },
-
         /*
          * Used by history
          *
          */
 
-        destroyRessource : function (attr, options) {
+        deleteRessource : function (attr, options) {
             var model = new this.ressourceCollection.model(attr);
             if ( this.currentCat === model.get('category_id') ){
                 this.ressourceCollection.remove(model);
@@ -103,14 +94,29 @@ define([
         },
 
         createRessource : function (attr, options) {
-            var model = new this.ressourceCollection.model(attr);
-            if ( this.currentCat === model.get('category_id') ){
-                this.ressourceCollection.add(model, {at:0});
+            var options = options || {};
+            var model;
+            if (attr instanceof Backbone.Model) {
+                model = attr;
+            } else {
+                var model = new this.ressourceCollection.model(attr);
             }
+
+            var success = options.success;
+            options.success = _.bind(function (model, response) {
+                if ( this.currentCat === model.get('category_id') ){
+                    this.ressourceCollection.add(model, {at:0});
+                }
+                var cat = this.get(model.get('category_id'));
+                var count = cat.get('dataCount');
+                cat.set('dataCount',count+1);
+
+                if (success) {
+                    success(model, response);
+                }
+            },this);
             model.save(null, options);
-            var cat = this.get(model.get('category_id'));
-            var count = cat.get('dataCount');
-            cat.set('dataCount',count+1);
+
         },
 
         updateRessource : function (curAttr, previousAttr, options) {
