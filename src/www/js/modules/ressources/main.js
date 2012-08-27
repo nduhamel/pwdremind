@@ -34,9 +34,12 @@ define([
                 type: 'TextArea'
             }
         },
+
         crypted : ['site', 'login', 'pwd', 'notes'],
-        keepInHistory : true,
-        historyLabel: 'site'
+        history: {
+            keep: true,
+            label: 'site'
+        }
     };
 
     var Note = {
@@ -59,8 +62,10 @@ define([
             }
         },
         crypted : ['name', 'note'],
-        keepInHistory : true,
-        historyLabel: 'name'
+        history: {
+            keep: true,
+            label: 'name'
+        }
     };
 
     sandbox.defineModule({

@@ -31,15 +31,22 @@ define(['backbone', 'sandbox'], function(Backbone, sandbox){
         return function (method, model, options) {
             var success = options.success;
             options.success = function(resp, status, xhr) {
+                var keep;
                 if (success) {
                     success(resp, status, xhr);
                 }
-                var keep = _.has(options, 'keepInHistory') ? options.keepInHistory : model.keepInHistory;
+
+                if (_.has(options, 'keepInHistory')) {
+                    keep = options.keepInHistory;
+                }else{
+                    keep = model.history ? model.history.keep : false;
+                }
+
                 if (keep && _.include(methodWatched, method)) {
                     var modelAttr = {
                         action: method,
                         uri: model.uri,
-                        modelLabel: model.get(model.historyLabel),
+                        modelLabel: model.get(model.history.label),
                         modelId: model.id
                     };
                     if (method === 'update') {
