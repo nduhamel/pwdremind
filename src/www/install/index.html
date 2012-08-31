@@ -22,24 +22,22 @@
   <div class="container-fluid">
     <div class="row-fluid">
       <br>
-      <div class="span2"></div>
+      <div class="span3"></div>
+        <div class="span6">
 
-
-      <div class="span8">
-
-          <!-- Database
+          <!-- Database | Step 1
           ================================================== -->
           <section id="db-connection">
             <div class="well span12">
             <div class="page-header">
-              <h1>Database</h1>
+              <h1>
+                Database
+                <small>Step 1 - Connection</small>
+              </h1>
             </div>
             <br>
 
-
-            <h2>Connection</h2>
-            <br>
-            <form class="form-horizontal" id="db-form">
+            <form class="form-horizontal">
 
               <div class="control-group">
                 <label class="control-label" for="db-type">Type</label>
@@ -90,7 +88,6 @@
               <div class="control-group">
                 <div class="controls">
                   <button type="submit" class="btn btn-large" id="db-test">Test connection</button>
-                  <button type="button" class="btn btn-large btn-primary" id="db-save">Save</button>
                 </div>
               </div>
 
@@ -104,20 +101,104 @@
             </form>
 
             <hr>
-            <a class="btn btn-primary btn-large" style="float:right;" href="" id="step1to2">Next</a>
+            <a class="btn btn-primary btn-large disabled" style="float:right;" href="" id="step1to2">Next</a>
 
 
-          </div>
+            </div>
           </section>
 
-          <!-- User
+          <!-- Database | Step 2
+          ================================================== -->
+          <section id="db-configuration">
+            <div class="well span12">
+            <div class="page-header">
+              <h1>
+                Database
+                <small>Step 2 - Configuration</small>
+              </h1>
+            </div>
+            <br>
+
+            <form class="form-horizontal">
+
+              <div class="control-group">
+                <label class="control-label" for="db-prefix">Prefix</label>
+                <div class="controls">
+                  <input type="text" id="db-prefix" value="pwdr_">
+                </div>
+              </div>
+
+              <div class="control-group">
+                <div class="controls">
+                  <button type="submit" class="btn btn-large" id="install-db">Install database</button>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <div class="controls">
+                  <div class="" id="db-alert"> 
+                  </div>
+                </div>
+              </div>
+
+            </form>
+
+            <hr>
+            <a class="btn btn-primary btn-large" style="float:left;" href="" id="step2to1">Previous</a>
+            <a class="btn btn-primary btn-large disabled" style="float:right;" href="" id="step2to3">Next</a>
+
+
+            </div>
+          </section>
+
+          <!-- User | Step 3
           ================================================== -->
           <section id="add-user">
             <div class="well span12">
-              <div class="page-header">
-                <h1>2. User</h1>
+            <div class="page-header">
+              <h1>
+                User
+                <small>Step 3 - Add user</small>
+              </h1>
+            </div>
+            <br>
+
+            <form class="form-horizontal" id="add-user-form">
+
+              <div class="control-group">
+                <label class="control-label" for="add-username">Username</label>
+                <div class="controls">
+                  <input type="text" id="add-username" value="root">
+                </div>
               </div>
-              <p class="lead">Add a new user to the app</p>
+
+              <div class="control-group">
+                <label class="control-label" for="add-password">Password</label>
+                <div class="controls">
+                  <input type="text" id="add-password" value="root">
+                </div>
+              </div>
+
+              <div class="control-group">
+                <div class="controls">
+                  <button type="submit" class="btn btn-large" id="db-test">Create user</button>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <div class="controls">
+                  <div class="" id="db-alert"> 
+                  </div>
+                </div>
+              </div>
+
+            </form>
+
+            <hr>
+            <a class="btn btn-primary btn-large" style="float:left;" href="" id="step3to2">Previous</a>
+            <a class="btn btn-primary btn-large" style="float:right;" href="" id="step3to4">Next</a>
+
+
             </div>
           </section>
 

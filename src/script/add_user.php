@@ -95,7 +95,7 @@
 
     $srp = new SRPOptions();
 
-    // Get information from user
+    // Get information FROM ". DB_PREFIX ."user
     fwrite(STDOUT, "Please enter username: ");
     $name = trim(fgets(STDIN));
     fwrite(STDOUT, "Please enter password: ");

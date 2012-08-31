@@ -4,15 +4,15 @@
 
     var $window = $(window);
 
-    //Hide save
-    $('#db-save').hide();
+    //Hide sections
+    $('#db-configuration').hide();
     $('#add-user').hide();
 
     // Database connection test
     $('#db-test').click(function(e) {
 
       e.preventDefault();
-      reset_db_form();
+      reset_db_connection_form();
 
       //Getting data
       db_data = get_db_data();
@@ -27,7 +27,27 @@
 
     });
 
-    var reset_db_form = function() {
+    // Database installation
+    $('#install-db').click(function(e) {
+
+      e.preventDefault();
+      var prefix = { "prefix" : $("#db-prefix").val() };
+      prefix = JSON.stringify(prefix);
+  
+      $.post("php/install_db.php", prefix, function(data) {
+        if (data == 'Success!') {
+          $('#install-db').addClass('btn-success');
+          $('#install-db').html('Installed !');
+          $('#step2to3').removeClass('disabled');
+        } else {
+          $('#install-db').addClass('btn-danger');
+          $('#install-db').html('Error...');
+        }
+      });
+
+    });
+
+    var reset_db_connection_form = function() {
       // Reset style for multiple tries
       if ( $('#db-test').hasClass("btn-success") )
         $('#db-test').removeClass("btn-success");
@@ -35,8 +55,9 @@
         $('#db-test').removeClass("btn-danger");
       if ( $('#db-alert').hasClass("alert alert-danger") )
         $('#db-alert').removeClass("alert alert-danger");
+      if ( ! $('#step1to2').hasClass("disabled") )
+        $('#step1to2').addClass("disabled");
 
-      $('#db-save').hide();
       $('#db-test').addClass("btn-info");
       $('#db-test').html("Testing...");
       $('#db-alert').html("");
@@ -58,14 +79,14 @@
         $('#db-test').removeClass("btn-info");
         $('#db-test').html("It works!");
         $('#db-test').addClass("btn-success");
-        $('#db-save').fadeIn();
+        $('#step1to2').removeClass("disabled");
     };
 
     var connection_failed = function(data){
         $('#db-test').removeClass("btn-info");
         $('#db-test').html("It doesn't work..");
         $('#db-test').addClass("btn-danger");
-        $('#db-save').fadeOut();
+        $('#step1to2').addClass("disabled");
         $('#db-alert').addClass("alert alert-danger");
         $('#db-alert').html(data);
     };
@@ -83,16 +104,36 @@
         $("#db-username").parent().parent().fadeIn();
         $("#db-password").parent().parent().fadeIn();
       }
+
     });
 
     $('#step1to2').click(function(e) {
-
       e.preventDefault();
-      $('#db-connection').fadeOut();
-      $('#add-user').fadeIn();
-
+      if ( ! $(this).hasClass("disabled") ) {
+        $('#db-connection').fadeOut();
+        $('#db-configuration').fadeIn();
+      }
     });
 
+    $('#step2to1').click(function(e) {
+      e.preventDefault();
+      $('#db-configuration').fadeOut();
+      $('#db-connection').fadeIn();
+    });
+
+    $('#step2to3').click(function(e) {
+      e.preventDefault();
+      if ( ! $(this).hasClass("disabled") ) {
+        $('#db-configuration').fadeOut();
+        $('#add-user').fadeIn();
+      }
+    });
+
+    $('#step3to2').click(function(e) {
+      e.preventDefault();
+      $('#add-user').fadeOut();
+      $('#db-configuration').fadeIn();
+    });
 
 });
 

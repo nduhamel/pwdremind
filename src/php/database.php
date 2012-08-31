@@ -29,7 +29,7 @@ class Database {
 
     public function getVerifier($username)
     {
-        $req = $this->_db->prepare("SELECT * FROM user WHERE username = :username");
+        $req = $this->_db->prepare("SELECT * FROM ". DB_PREFIX ."user WHERE username = :username");
         $req->execute(array('username'=>$username));
         return $req->fetchObject();
     }
@@ -37,7 +37,7 @@ class Database {
     //Return true if the user exists in database
     public function checkUsername($username)
     {
-        $req = $this->_db->prepare("SELECT * FROM user WHERE username = :username");
+        $req = $this->_db->prepare("SELECT * FROM ". DB_PREFIX ."user WHERE username = :username");
         $req->execute(array('username'=>$username));
         $req = $req->fetchall(PDO::FETCH_ASSOC);
         if (count($req) == 1)
@@ -49,7 +49,7 @@ class Database {
     public function getCategories($type_id, $user_id)
     {
         $req = $this->_db->prepare("SELECT category.id, category.data, COUNT(data.category_id) as dataCount
-                                    FROM category
+                                    FROM ". DB_PREFIX ."category
                                     LEFT OUTER JOIN data ON category.id = data.category_id
                                     WHERE category.user_id = :user_id
                                     AND category.type_id = :type_id
@@ -61,12 +61,12 @@ class Database {
     public function addCategory($data, $type_id, $user_id)
     {
         if ($this->_driver == 'pgsql'){
-            $req = $this->_db->prepare("INSERT INTO category (data, type_id, user_id)
+            $req = $this->_db->prepare("INSERT INTO ". DB_PREFIX ."category (data, type_id, user_id)
                                         VALUES(:data, :type_id, :user_id) RETURNING id");
             $req->execute(array('data'=> $data, 'type_id'=>$type_id, 'user_id'=>$user_id));
             return $req->fetchColumn();
         } else {
-            $req = $this->_db->prepare("INSERT INTO category (data, type_id, user_id)
+            $req = $this->_db->prepare("INSERT INTO ". DB_PREFIX ."category (data, type_id, user_id)
                                         VALUES(:data, :type_id, :user_id)");
             $req->execute(array('data'=> $data, 'type_id'=>$type_id, 'user_id'=>$user_id));
             return $this->_db->lastInsertId();
@@ -76,7 +76,7 @@ class Database {
     // TODO check empty !!!
     public function deleteCategory($cat_id, $user_id)
     {
-        $req = $this->_db->prepare("DELETE FROM category
+        $req = $this->_db->prepare("DELETE FROM ". DB_PREFIX ."category
                                     WHERE id=:cat_id
                                     AND user_id=:user_id ");
         $req->execute(array('cat_id'=>$cat_id, 'user_id'=>$user_id));
@@ -84,40 +84,17 @@ class Database {
 
     public function updateCategory($cat_id, $data, $user_id)
     {
-        $req = $this->_db->prepare("UPDATE category
+        $req = $this->_db->prepare("UPDATE ". DB_PREFIX ."category
                                     SET data=:data
                                     WHERE id=:cat_id
                                     AND user_id=:user_id");
         $req->execute(array('cat_id'=>$cat_id, 'data'=>$data, 'user_id'=>$user_id));
     }
 
-    public function getTypes($user_id) {
-        $req = $this->_db->prepare("SELECT id, data
-                                    FROM type
-                                    WHERE user_id = :user_id");
-        $req->execute(array('user_id'=>$user_id));
-        return $req->fetchall(PDO::FETCH_ASSOC);
-    }
-
-    public function addType($data, $user_id)
-    {
-        if ($this->_driver == 'pgsql'){
-            $req = $this->_db->prepare("INSERT INTO type (data, user_id)
-                                        VALUES(:data, :user_id) RETURNING id");
-            $req->execute(array('data'=> $data,'user_id'=>$user_id));
-            return $req->fetchColumn();
-        } else {
-            $req = $this->_db->prepare("INSERT INTO type (data, user_id)
-                                        VALUES(:data, :user_id)");
-            $req->execute(array('data'=> $data,'user_id'=>$user_id));
-            return $this->_db->lastInsertId();
-        }
-    }
-
     public function getEntries($type_id, $category_id, $user_id)
     {
         $req = $this->_db->prepare("SELECT id,data, type_id, category_id
-                                    FROM data
+                                    FROM ". DB_PREFIX ."data
                                     WHERE user_id = :user_id
                                     AND category_id = :category_id
                                     AND type_id  = :type_id ");
@@ -128,7 +105,7 @@ class Database {
     public function lastestEntries($type_id, $user_id)
     {
         $req = $this->_db->prepare("SELECT id, data, type_id, category_id
-                                    FROM data
+                                    FROM ". DB_PREFIX ."data
                                     WHERE user_id = :user_id
                                     AND type_id = :type_id");
         $req->execute(array('type_id'=>$type_id, 'user_id'=>$user_id));
@@ -138,12 +115,12 @@ class Database {
     public function storeEntry($data, $type_id, $category_id, $user_id)
     {
         if ($this->_driver == 'pgsql'){
-            $req = $this->_db->prepare("INSERT INTO data (data, type_id, category_id, user_id)
+            $req = $this->_db->prepare("INSERT INTO ". DB_PREFIX ."data (data, type_id, category_id, user_id)
                                         VALUES(:data, :type_id, :category_id, :user_id) RETURNING id");
             $req->execute(array('data'=> $data, 'type_id'=>'1', 'category_id'=>$category_id, 'user_id'=>$user_id));
             return $req->fetchColumn();
         } else {
-            $req = $this->_db->prepare("INSERT INTO data (data, type_id, category_id, user_id)
+            $req = $this->_db->prepare("INSERT INTO ". DB_PREFIX ."data (data, type_id, category_id, user_id)
                                         VALUES(:data, :type_id, :category_id, :user_id)");
             $req->execute(array('data'=> $data, 'type_id'=>$type_id, 'category_id'=>$category_id, 'user_id'=>$user_id));
             return $this->_db->lastInsertId();
@@ -152,7 +129,7 @@ class Database {
 
     public function updateEntry($id, $data, $type_id, $category_id, $user_id)
     {
-        $req = $this->_db->prepare("UPDATE data
+        $req = $this->_db->prepare("UPDATE ". DB_PREFIX ."data
                                     SET data=:data, type_id=:type_id, category_id=:category_id
                                     WHERE id=:id
                                     AND user_id=:user_id ");
@@ -162,7 +139,7 @@ class Database {
 
     public function deleteEntry($entry_id, $user_id)
     {
-        $req = $this->_db->prepare("DELETE FROM data
+        $req = $this->_db->prepare("DELETE FROM ". DB_PREFIX ."data
                                     WHERE id=:entry_id
                                     AND user_id=:user_id ");
         $req->execute(array('entry_id'=>$entry_id, 'user_id'=>$user_id));
@@ -174,12 +151,12 @@ class Database {
     public function addHistory($data, $timestamp, $user_id)
     {
         if ($this->_driver == 'pgsql'){
-            $req = $this->_db->prepare("INSERT INTO history (data, timestamp, user_id)
+            $req = $this->_db->prepare("INSERT INTO ". DB_PREFIX ."history (data, timestamp, user_id)
                                         VALUES(:data, :timestamp, :user_id) RETURNING id");
             $req->execute(array('data'=> $data, 'timestamp'=>$timestamp, 'user_id'=>$user_id));
             return $req->fetchColumn();
         } else {
-            $req = $this->_db->prepare("INSERT INTO history (data, timestamp, user_id)
+            $req = $this->_db->prepare("INSERT INTO ". DB_PREFIX ."history (data, timestamp, user_id)
                                         VALUES(:data, :timestamp, :user_id)");
             $req->execute(array('data'=> $data, 'timestamp'=>$timestamp, 'user_id'=>$user_id));
             return $this->_db->lastInsertId();
@@ -188,7 +165,7 @@ class Database {
 
     public function updateHistory($id, $data, $user_id)
     {
-        $req = $this->_db->prepare("UPDATE history
+        $req = $this->_db->prepare("UPDATE ". DB_PREFIX ."history
                                     SET data=:data
                                     WHERE id=:id
                                     AND user_id=:user_id ");
@@ -198,7 +175,7 @@ class Database {
 
     public function removeHistory($id, $user_id)
     {
-        $req = $this->_db->prepare("DELETE FROM history
+        $req = $this->_db->prepare("DELETE FROM ". DB_PREFIX ."history
                                     WHERE id=:id
                                     AND user_id=:user_id ");
         $req->execute(array('id'=>$id, 'user_id'=>$user_id));
@@ -207,7 +184,7 @@ class Database {
     public function getHistory($user_id)
     {
         $req = $this->_db->prepare("SELECT id, data, timestamp
-                                    FROM history
+                                    FROM ". DB_PREFIX ."history
                                     WHERE user_id = :user_id");
         $req->execute(array('user_id'=>$user_id));
         return $req->fetchall(PDO::FETCH_ASSOC);
@@ -218,7 +195,7 @@ class Database {
     public function checkEntry($id, $user_id)
     {
         $req = $this->_db->prepare("SELECT id
-                                    FROM data
+                                    FROM ". DB_PREFIX ."data
                                     WHERE id=:id
                                     AND user_id=:user_id ");
         $req->execute(array('id'=>$id, 'user_id'=>$user_id));

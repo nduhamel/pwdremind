@@ -1,5 +1,5 @@
 <?php
-require_once('../php/hermetic/crypto_util.php');
+require_once('../php/utils/crypto_util.php');
 require_once('../php/srp.php');
 require_once('../php/database.php');
 require_once('../config.php');

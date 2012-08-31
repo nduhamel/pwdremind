@@ -1,7 +1,7 @@
 <?php
 require_once('session.php');
-require_once('hermetic/crypto_util.php');
-require_once('hermetic/srp_256.php');
+require_once('utils/crypto_util.php');
+require_once('utils/srp_256.php');
 
 class SrpSession extends Session
 {

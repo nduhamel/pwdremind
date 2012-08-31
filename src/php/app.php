@@ -4,7 +4,7 @@ require_once('srpsession.php');
 require_once('message.php');
 require_once('authentication.php');
 require_once('router.php');
-require_once('hermetic/crypto_util.php');
+require_once('utils/crypto_util.php');
 require_once('../config.php');
 
 class App
