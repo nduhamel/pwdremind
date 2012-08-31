@@ -4,11 +4,9 @@
 
     var $window = $(window);
 
-    // side bar
-    $('.sidenav').affix();
-
     //Hide save
     $('#db-save').hide();
+    $('#add-user').hide();
 
     // Database connection test
     $('#db-test').click(function(e) {
@@ -85,7 +83,13 @@
         $("#db-username").parent().parent().fadeIn();
         $("#db-password").parent().parent().fadeIn();
       }
+    });
 
+    $('#step1to2').click(function(e) {
+
+      e.preventDefault();
+      $('#db-connection').fadeOut();
+      $('#add-user').fadeIn();
 
     });
 
