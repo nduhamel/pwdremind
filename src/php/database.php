@@ -48,12 +48,15 @@ class Database {
 
     public function getCategories($type_id, $user_id)
     {
-        $req = $this->_db->prepare("SELECT category.id, category.data, COUNT(data.category_id) as dataCount
+        $req = $this->_db->prepare("SELECT ". DB_PREFIX ."category.id, 
+                                    ". DB_PREFIX ."category.data, 
+                                    COUNT(". DB_PREFIX ."data.category_id) as dataCount
                                     FROM ". DB_PREFIX ."category
-                                    LEFT OUTER JOIN data ON category.id = data.category_id
-                                    WHERE category.user_id = :user_id
-                                    AND category.type_id = :type_id
-                                    GROUP BY category.id");
+                                    LEFT OUTER JOIN ". DB_PREFIX ."data 
+                                    ON ". DB_PREFIX ."category.id = ". DB_PREFIX ."data.category_id
+                                    WHERE ". DB_PREFIX ."category.user_id = :user_id
+                                    AND ". DB_PREFIX ."category.type_id = :type_id
+                                    GROUP BY ". DB_PREFIX ."category.id");
         $req->execute(array('user_id'=>$user_id, 'type_id'=>$type_id));
         return $req->fetchall(PDO::FETCH_ASSOC);
     }
