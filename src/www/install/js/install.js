@@ -7,6 +7,9 @@
     // side bar
     $('.sidenav').affix();
 
+    //Hide save
+    $('#db-save').hide();
+
     // Database connection test
     $('#db-test').click(function(e) {
 
@@ -32,11 +35,10 @@
         $('#db-test').removeClass("btn-success");
       if ( $('#db-test').hasClass("btn-danger") )
         $('#db-test').removeClass("btn-danger");
-      if ( !$('#db-save').hasClass("disabled") )
-        $('#db-save').addClass("disabled");
       if ( $('#db-alert').hasClass("alert alert-danger") )
         $('#db-alert').removeClass("alert alert-danger");
 
+      $('#db-save').hide();
       $('#db-test').addClass("btn-info");
       $('#db-test').html("Testing...");
       $('#db-alert').html("");
@@ -58,17 +60,34 @@
         $('#db-test').removeClass("btn-info");
         $('#db-test').html("It works!");
         $('#db-test').addClass("btn-success");
-        $('#db-save').removeClass("disabled");
+        $('#db-save').fadeIn();
     };
 
     var connection_failed = function(data){
         $('#db-test').removeClass("btn-info");
         $('#db-test').html("It doesn't work..");
         $('#db-test').addClass("btn-danger");
-        $('#db-save').addClass("disabled");
+        $('#db-save').fadeOut();
         $('#db-alert').addClass("alert alert-danger");
         $('#db-alert').html(data);
     };
+
+    //Sqlite specific options
+    $("#db-type").change(function(){
+      if ( $(this).val() == "sqlite" ) {
+        $("#db-host").parent().parent().fadeOut();
+        $("#db-port").parent().parent().fadeOut();
+        $("#db-username").parent().parent().fadeOut();
+        $("#db-password").parent().parent().fadeOut();
+      } else {
+        $("#db-host").parent().parent().fadeIn();
+        $("#db-port").parent().parent().fadeIn();
+        $("#db-username").parent().parent().fadeIn();
+        $("#db-password").parent().parent().fadeIn();
+      }
+
+
+    });
 
 
 });
