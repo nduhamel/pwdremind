@@ -10,7 +10,6 @@
 
     // Database connection test
     $('#db-test').click(function(e) {
-
       e.preventDefault();
       reset_db_connection_form();
 
@@ -24,7 +23,6 @@
           connection_failed(data);
         }
       });
-
     });
 
     // Database installation
@@ -44,7 +42,28 @@
           $('#install-db').html('Error...');
         }
       });
+    });
 
+    // Database installation
+    $('#create-user').click(function(e) {
+
+      e.preventDefault();
+      var user = {
+        "username" : $("#add-username").val(),
+        "password" : $("#add-password").val()
+         };
+      user = JSON.stringify(user);
+  
+      $.post("php/add_user.php", user, function(data) {
+        if (data == 'Success!') {
+          $('#create-user').addClass('btn-success');
+          $('#create-user').html('User added !');
+          $('#step2to3').removeClass('disabled');
+        } else {
+          $('#create-user').addClass('btn-danger');
+          $('#create-user').html('Error...');
+        }
+      });
     });
 
     var reset_db_connection_form = function() {
