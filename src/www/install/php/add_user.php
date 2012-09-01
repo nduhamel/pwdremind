@@ -7,7 +7,7 @@
 
     if (PDO_DRIVER == 'sqlite') {
         // Correct db path
-        $DSN = str_replace("sqlite:../","sqlite:../../" , PDO_DSN );
+        $DSN = str_replace("sqlite:../","sqlite:../../../" , PDO_DSN );
         $db = new PDO($DSN);
     } else {
         $db = new PDO(PDO_DSN, PDO_USER, PDO_PASSWORD);
