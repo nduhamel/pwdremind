@@ -9,6 +9,8 @@
     $('#add-user').hide();
     $('#final-step').hide();
 
+    // ------------------------------------ Step 1 ------------------------------------ //
+
     // Database connection test
     $('#db-test').click(function(e) {
       e.preventDefault();
@@ -22,60 +24,6 @@
           connection_success();
         } else {
           connection_failed(data);
-        }
-      });
-    });
-
-    // Database installation
-    $('#install-db').click(function(e) {
-
-      e.preventDefault();
-      var prefix = { "DB_PREFIX" : $("#db-prefix").val() };
-      prefix = JSON.stringify(prefix);
-
-      $('#db-test').addClass("btn-info");
-      $('#db-test').html("Installing...");
-
-      $.post("php/update_config.php", prefix, function(data) {
-          if (data == 'Success!') {
-
-            // If prefix saved launch install script
-            $.get("php/install_db.php", function(data) {
-              if (data == 'Success!') {
-                $('#install-db').addClass('btn-success');
-                $('#install-db').html('Installed !');
-                $('#step2to3').removeClass('disabled');
-              } else {
-                $('#install-db').addClass('btn-danger');
-                $('#install-db').html('Error...');
-              }
-            });
-
-          } else {
-            $('#install-db').addClass('btn-danger');
-            $('#install-db').html('Error...');
-          }
-        });
-    });
-
-    // Add user
-    $('#create-user').click(function(e) {
-
-      e.preventDefault();
-      var user = {
-        "username" : $("#add-username").val(),
-        "password" : $("#add-password").val()
-         };
-      user = JSON.stringify(user);
-  
-      $.post("php/add_user.php", user, function(data) {
-        if (data == 'Success!') {
-          $('#create-user').addClass('btn-success');
-          $('#create-user').html('User added !');
-          $('#step2to3').removeClass('disabled');
-        } else {
-          $('#create-user').addClass('btn-danger');
-          $('#create-user').html('Error...');
         }
       });
     });
@@ -170,6 +118,40 @@
       }
     });
 
+    // ------------------------------------ Step 2 ------------------------------------ //
+
+    // Database installation
+    $('#install-db').click(function(e) {
+
+      e.preventDefault();
+      var prefix = { "DB_PREFIX" : $("#db-prefix").val() };
+      prefix = JSON.stringify(prefix);
+
+      $('#db-test').addClass("btn-info");
+      $('#db-test').html("Installing...");
+
+      $.post("php/update_config.php", prefix, function(data) {
+          if (data == 'Success!') {
+
+            // If prefix saved launch install script
+            $.get("php/install_db.php", function(data) {
+              if (data == 'Success!') {
+                $('#install-db').addClass('btn-success');
+                $('#install-db').html('Installed !');
+                $('#step2to3').removeClass('disabled');
+              } else {
+                $('#install-db').addClass('btn-danger');
+                $('#install-db').html('Error...');
+              }
+            });
+
+          } else {
+            $('#install-db').addClass('btn-danger');
+            $('#install-db').html('Error...');
+          }
+        });
+    });
+
     $('#step2to1').click(function(e) {
       e.preventDefault();
       reset_db_connection_form();
@@ -185,6 +167,30 @@
       }
     });
 
+    // ------------------------------------ Step 3 ------------------------------------ //
+
+    // Add user
+    $('#create-user').click(function(e) {
+
+      e.preventDefault();
+      var user = {
+        "username" : $("#add-username").val(),
+        "password" : $("#add-password").val()
+         };
+      user = JSON.stringify(user);
+  
+      $.post("php/add_user.php", user, function(data) {
+        if (data == 'Success!') {
+          $('#create-user').addClass('btn-success');
+          $('#create-user').html('User added !');
+          $('#step2to3').removeClass('disabled');
+        } else {
+          $('#create-user').addClass('btn-danger');
+          $('#create-user').html('Error...');
+        }
+      });
+    });
+
     $('#step3to2').click(function(e) {
       e.preventDefault();
       $('#add-user').fadeOut();
@@ -196,6 +202,8 @@
       $('#add-user').fadeOut();
       $('#final-step').fadeIn();
     });
+
+    // ------------------------------------ Step 4 ------------------------------------ //
 
     $('#step4to3').click(function(e) {
       e.preventDefault();
