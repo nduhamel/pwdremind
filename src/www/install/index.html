@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <title>pwdremind installation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,233 +11,40 @@
     <!-- Le styles -->
     <link href="../css/bootstrap.css" rel="stylesheet">
     <link href="../css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-  </head>
+</head>
 
-  <body>
+<body>
 
-
-  <div class="container-fluid">
-    <div class="row-fluid">
-      <br>
-      <div class="span3"></div>
-        <div class="span6">
-
-          <!-- Database | Step 1
-          ================================================== -->
-          <section id="db-connection">
-            <div class="well span12">
-            <div class="page-header">
-              <h1>
-                Database
-                <small>Step 1 - Connection</small>
-              </h1>
-            </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
             <br>
+            <div class="span3"></div>
+            <div class="span6">
 
-            <form class="form-horizontal">
-
-              <div class="control-group">
-                <label class="control-label" for="db-type">Type</label>
-                <div class="controls">
-                  <select id="db-type">
-                    <option value="mysql">mysql</option>
-                    <option value="postgre">postgre</option>
-                    <option value="sqlite">sqlite</option>
-                  </select>
-               </div>
-              </div>
-
-              <div class="control-group">
-                <label class="control-label" for="db-name">Database name</label>
-                <div class="controls">
-                  <input type="text" id="db-name" value="pwdremind">
-                </div>
-              </div>
-
-              <div class="control-group">
-                <label class="control-label" for="db-host">Host</label>
-                <div class="controls">
-                  <input type="text" id="db-host" value="127.0.0.1">
-                </div>
-              </div>
-
-              <div class="control-group">
-                <label class="control-label" for="db-port">Port</label>
-                <div class="controls">
-                  <input type="text" id="db-port" value="8889">
-                </div>
-              </div>
-
-              <div class="control-group">
-                <label class="control-label" for="db-username">Username</label>
-                <div class="controls">
-                  <input type="text" id="db-username" value="root">
-                </div>
-              </div>
-
-              <div class="control-group">
-                <label class="control-label" for="db-password">Password</label>
-                <div class="controls">
-                  <input type="text" id="db-password" value="root">
-                </div>
-              </div>
-
-              <div class="control-group">
-                <div class="controls">
-                  <button type="submit" class="btn btn-large" id="db-test">Test connection</button>
-                </div>
-              </div>
-
-              <div class="control-group">
-                <div class="controls">
-                  <div class="" id="db-alert"> 
-                  </div>
-                </div>
-              </div>
-
-            </form>
-
-            <hr>
-            <a class="btn btn-primary btn-large disabled" style="float:right;" href="" id="step1to2">Save & Next step</a>
-
+                <!-- Here comes the steps -->
+                <div class="well span12" id="content"></div>
 
             </div>
-          </section>
-
-          <!-- Database | Step 2
-          ================================================== -->
-          <section id="db-configuration">
-            <div class="well span12">
-            <div class="page-header">
-              <h1>
-                Database
-                <small>Step 2 - Configuration</small>
-              </h1>
-            </div>
-            <br>
-
-            <form class="form-horizontal">
-
-              <div class="control-group">
-                <label class="control-label" for="db-prefix">Prefix</label>
-                <div class="controls">
-                  <input type="text" id="db-prefix" value="pwdr_">
-                </div>
-              </div>
-
-              <div class="control-group">
-                <div class="controls">
-                  <button type="submit" class="btn btn-large" id="install-db">Install database</button>
-                </div>
-              </div>
-
-              <div class="control-group">
-                <div class="controls">
-                  <div class="" id="db-alert"> 
-                  </div>
-                </div>
-              </div>
-
-            </form>
-
-            <hr>
-            <a class="btn btn-primary btn-large" style="float:left;" href="" id="step2to1">Previous</a>
-            <a class="btn btn-primary btn-large disabled" style="float:right;" href="" id="step2to3">Next</a>
-
-
-            </div>
-          </section>
-
-          <!-- User | Step 3
-          ================================================== -->
-          <section id="add-user">
-            <div class="well span12">
-            <div class="page-header">
-              <h1>
-                User
-                <small>Step 3 - Add user</small>
-              </h1>
-            </div>
-            <br>
-
-            <form class="form-horizontal" id="add-user-form">
-
-              <div class="control-group">
-                <label class="control-label" for="add-username">Username</label>
-                <div class="controls">
-                  <input type="text" id="add-username" value="root">
-                </div>
-              </div>
-
-              <div class="control-group">
-                <label class="control-label" for="add-password">Password</label>
-                <div class="controls">
-                  <input type="text" id="add-password" value="root">
-                </div>
-              </div>
-
-              <div class="control-group">
-                <div class="controls">
-                  <button type="submit" class="btn btn-large" id="create-user">Create user</button>
-                </div>
-              </div>
-
-              <div class="control-group">
-                <div class="controls">
-                  <div class="" id="db-alert"> 
-                  </div>
-                </div>
-              </div>
-
-            </form>
-
-            <hr>
-            <a class="btn btn-primary btn-large" style="float:left;" href="" id="step3to2">Previous</a>
-            <a class="btn btn-primary btn-large" style="float:right;" href="" id="step3to4">Next</a>
-
-
-            </div>
-          </section>
-
-          <!-- User | Step 4
-          ================================================== -->
-          <section id="final-step">
-            <div class="well span12">
-            <div class="page-header">
-              <h1>
-                You're done !
-              </h1>
-            </div>
-            <br>
-
-            <h2>Enjoy pwdremind</h2>
-            <hr>
-
-            <a class="btn btn-primary btn-large" style="float:left;" href="" id="step4to3">Previous</a>
-
-            </div>
-          </section>
 
         </div>
-
-      </div>
     </div>
-  </div>
+</div>
 
 
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="../js/lib/jquery.js"></script>
+<script src="js/install.js"></script>
+<script src="js/step1.js"></script>
+<script src="js/step2.js"></script>
+<script src="js/step3.js"></script>
+<script src="js/step4.js"></script>
 
-
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="../js/lib/jquery.js"></script>
-    <script src="js/install.js"></script>
-
-  </body>
+</body>
 </html>

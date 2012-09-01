@@ -1,0 +1,73 @@
+<div class="page-header">
+    <h1>
+        Database
+        <small>Step 1 - Connection</small>
+    </h1>
+</div>
+<br>
+
+<form class="form-horizontal">
+
+    <div class="control-group">
+        <label class="control-label" for="db-type">Type</label>
+        <div class="controls">
+            <select id="db-type">
+                <option value="mysql">mysql</option>
+                <option value="postgre">postgre</option>
+                <option value="sqlite">sqlite</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="db-name">Database name</label>
+        <div class="controls">
+            <input type="text" id="db-name" value="pwdremind">
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="db-host">Host</label>
+        <div class="controls">
+            <input type="text" id="db-host" value="127.0.0.1">
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="db-port">Port</label>
+        <div class="controls">
+            <input type="text" id="db-port" value="8889">
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="db-username">Username</label>
+        <div class="controls">
+            <input type="text" id="db-username" value="root">
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="db-password">Password</label>
+        <div class="controls">
+            <input type="text" id="db-password" value="root">
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn btn-large" id="db-test">Test connection</button>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls">
+            <div class="" id="db-alert"> 
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<hr>
+<a class="btn btn-primary btn-large disabled" style="float:right;" href="" id="step1to2">Save & Next step</a>
