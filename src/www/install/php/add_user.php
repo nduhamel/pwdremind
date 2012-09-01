@@ -6,7 +6,9 @@
     $data = json_decode(file_get_contents('php://input'),true);
 
     if (PDO_DRIVER == 'sqlite') {
-        $db = new PDO(PDO_DSN);
+        // Correct db path
+        $DSN = str_replace("sqlite:../","sqlite:../../" , PDO_DSN );
+        $db = new PDO($DSN);
     } else {
         $db = new PDO(PDO_DSN, PDO_USER, PDO_PASSWORD);
     }

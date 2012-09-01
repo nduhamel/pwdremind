@@ -7,16 +7,13 @@
 
 	$data = json_decode(file_get_contents('php://input'),true);
 
-	if ($data['type'] == 'sqlite')
-		$PDO_DSN = $data['type'].':../../'.$data['name'].'.db';
-	else
-	    $PDO_DSN = $data['type'].':host='.$data['host'].';port='.$data['port'].';dbname='.$data['name'];
-
-	$PDO_USER = $data['username'];
-	$PDO_PASSWORD = $data['password'];
+	$PDO_DRIVER = $data['PDO_DRIVER'];
+	$PDO_DSN = str_replace("sqlite:../","sqlite:../../" , $data['PDO_DSN'] );;
+	$PDO_USER = $data['PDO_USER'];
+	$PDO_PASSWORD = $data['PDO_PASSWORD'];
 
 	try {
-		if ($data['type'] == 'sqlite')
+		if ($PDO_DRIVER == 'sqlite')
 		    $db = new PDO($PDO_DSN);
 		else 
 		    $db = new PDO($PDO_DSN, $PDO_USER, $PDO_PASSWORD);

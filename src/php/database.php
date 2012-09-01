@@ -10,8 +10,7 @@ class Database {
         try {
             if (PDO_DRIVER == 'sqlite') {
                 $this->_db = new PDO(PDO_DSN);
-            }
-            else {
+            } else {
                 $this->_db = new PDO(PDO_DSN, PDO_USER, PDO_PASSWORD);
             }
             $this->_db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
