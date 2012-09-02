@@ -12,15 +12,25 @@ $(function() {
 
         $.post("php/add_user.php", user, function(data) {
             if (data == 'Success!') {
-                $('#create-user').addClass('btn-success');
-                $('#create-user').html('User added !');
-                $('#step2-next').removeClass('disabled');
+                add_success();
             } else {
-                $('#create-user').addClass('btn-danger');
-                $('#create-user').html('Error...');
+                add_failed(data);
             }
         });
     });
+
+    var add_success = function () {
+        $('#create-user').addClass('btn-success');
+        $('#create-user').html('User added !');
+        $('#step2-next').removeClass('disabled');
+    };
+
+    var add_failed = function (data) {
+        $('#create-user').addClass('btn-danger');
+        $('#create-user').html('Error...');
+        $('#step3-error').addClass("alert alert-danger");
+        $('#step3-error').html("Failed to add user to the database...<br>"+data);
+    };
 
     $('#content').on("click", "#step3-previous", function(e) {
         e.preventDefault();
