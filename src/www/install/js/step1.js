@@ -28,8 +28,8 @@ $(function() {
             $('#db-test').removeClass("btn-info");
         if ( $('#step1-error').hasClass("alert alert-danger") )
             $('#step1-error').removeClass("alert alert-danger");
-        if ( ! $('#step1to2').hasClass("disabled") )
-            $('#step1to2').addClass("disabled");
+        if ( ! $('#step1-next').hasClass("disabled") )
+            $('#step1-next').addClass("disabled");
          
         $('#step1-error').html("");
         $('#db-test').html("Test connection");
@@ -61,14 +61,14 @@ $(function() {
         $('#db-test').removeClass("btn-info");
         $('#db-test').html("It works!");
         $('#db-test').addClass("btn-success");
-        $('#step1to2').removeClass("disabled");
+        $('#step1-next').removeClass("disabled");
     };
 
     var connection_failed = function(data){
         $('#db-test').removeClass("btn-info");
         $('#db-test').html("It doesn't work..");
         $('#db-test').addClass("btn-danger");
-        $('#step1to2').addClass("disabled");
+        $('#step1-next').addClass("disabled");
         $('#step1-error').addClass("alert alert-danger");
         $('#step1-error').html(data);
     };
@@ -91,7 +91,7 @@ $(function() {
 
     });
 
-    $('#content').on("click", "#step1to2", function(e) {
+    $('#content').on("click", "#step1-next", function(e) {
         e.preventDefault();
         if ( ! $(this).hasClass("disabled") ) {
 
@@ -100,7 +100,7 @@ $(function() {
                 if (data == 'Success!') {
                     $('#content').load('html/step2.html');
                 } else {
-                    $('#step1to2').html('Error saving data');
+                    $('#step1-next').html('Error saving data');
                 }
             });
 

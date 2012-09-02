@@ -30,7 +30,7 @@ $(function() {
     var install_success = function() {
         $('#install-db').addClass('btn-success');
         $('#install-db').html('Installed !');
-        $('#step2to3').removeClass('disabled');
+        $('#step2-next').removeClass('disabled');
     };
 
     var install_failed = function(data) {
@@ -48,12 +48,12 @@ $(function() {
     };
 
 
-    $('#content').on("click", "#step2to1", function(e) {
+    $('#content').on("click", "#step1-previous", function(e) {
         e.preventDefault();
         $('#content').load('html/step1.html');
     });
 
-    $('#content').on("click", "#step2to3", function(e) {
+    $('#content').on("click", "#step2-next", function(e) {
         e.preventDefault();
         if ( ! $(this).hasClass("disabled") ) {
             $('#content').load('html/step3.html');
