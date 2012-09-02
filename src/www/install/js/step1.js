@@ -26,12 +26,12 @@ $(function() {
             $('#db-test').removeClass("btn-danger");
         if ( $('#db-test').hasClass("btn-info") )
             $('#db-test').removeClass("btn-info");
-        if ( $('#db-alert').hasClass("alert alert-danger") )
-            $('#db-alert').removeClass("alert alert-danger");
+        if ( $('#step1-error').hasClass("alert alert-danger") )
+            $('#step1-error').removeClass("alert alert-danger");
         if ( ! $('#step1to2').hasClass("disabled") )
             $('#step1to2').addClass("disabled");
          
-        $('#db-alert').html("");
+        $('#step1-error').html("");
         $('#db-test').html("Test connection");
     };
 
@@ -69,8 +69,8 @@ $(function() {
         $('#db-test').html("It doesn't work..");
         $('#db-test').addClass("btn-danger");
         $('#step1to2').addClass("disabled");
-        $('#db-alert').addClass("alert alert-danger");
-        $('#db-alert').html(data);
+        $('#step1-error').addClass("alert alert-danger");
+        $('#step1-error').html(data);
     };
 
     //Sqlite specific options
