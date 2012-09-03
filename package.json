@@ -1,0 +1,10 @@
+{
+  "name": "pwdremind",
+  "version": "0.0.1",
+  "devDependencies": {
+    "grunt-requirejs": ">=0.2.8",
+    "grunt-contrib": ">=0.0.3",
+    "cheerio": ">=0.9.2",
+    "grunt-recess": ">=0.1.0"
+  }
+}

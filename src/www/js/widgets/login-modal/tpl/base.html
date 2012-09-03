@@ -1,0 +1,36 @@
+<div id="login-modal" class="modal hide fade">
+
+    <div class="modal-header">
+        <h3>Connexion</h3>
+    </div>
+
+    <form id="login-form" action="" class="form-horizontal">
+        <fieldset>
+            <div class="modal-body">
+
+                <div class="control-group">
+                    <label class="control-label" for="username">Identifiant</label>
+                    <div class="controls">
+                        <input type="text" class="input-xlarge" id="username" name="username" validation="required" />
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="password">Mot de passe</label>
+                    <div class="controls">
+                        <input type="password" class="input-xlarge" id="password" name="password" validation="required" />
+                    </div>
+                </div>
+
+                <div style="display: none;" class="alert alert-error">
+                    <p><strong>Erreur:</strong> Mauvais identifiant ou mot de passe.</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <input type="submit" class="btn btn-primary" value="connexion" />
+            </div>
+        </fieldset>
+    </form>
+
+</div>
