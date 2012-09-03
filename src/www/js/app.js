@@ -9,10 +9,6 @@ require.config({
             exports: 'Backbone'
         },
 
-        'backbone_validation' : {
-            deps: ['backbone']
-        },
-
         'bootstrap_modal': {
             deps: ['jquery']
         },
@@ -40,20 +36,18 @@ require.config({
         },
 
         'blobbuilder' : {
-            exports : 'BlobBuilder',
+            exports : 'BlobBuilder'
         },
 
         'filesaver' : {
             deps: ['blobbuilder'],
-            exports : 'saveAs',
-        },
+            exports : 'saveAs'
+        }
     },
 
     paths: {
         // vendor
         backbone: 'lib/backbone',
-        backbone_validation : 'lib/backbone.validation',
-        backbone_model_binder : 'lib/Backbone.ModelBinder',
         backbone_forms : 'lib/backbone-forms',
         underscore: 'lib/underscore',
         jquery: 'lib/jquery',
