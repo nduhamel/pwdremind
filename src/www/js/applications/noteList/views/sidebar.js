@@ -52,7 +52,7 @@ define([
             event.preventDefault();
             var name = $(event.currentTarget).attr('name');
             if (name === 'add') {
-                sandbox.trigger('equest:addNote');
+                sandbox.trigger('request:addNote');
             } else if (name === 'addCat') {
                 sandbox.trigger('request:addNoteCategory');
             } else {
@@ -66,7 +66,7 @@ define([
             var dropdown = $(event.currentTarget).closest('li');
             var isActive = dropdown.hasClass('open');
             this.clearDropdown();
-            if (!isActive) dropdown.toggleClass('open')
+            if (!isActive) dropdown.toggleClass('open');
             this.dropDownOpen = dropdown;
         },
 
@@ -103,7 +103,7 @@ define([
                 cat.save(null, {silent: true});
             }, this));
             this.collection.sort({silent: true});
-        },
+        }
 
     });
 
