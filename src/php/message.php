@@ -4,7 +4,7 @@
     Sign data with a key and send them   
 */
 
-require_once('hermetic/crypto_util.php');
+require_once('utils/crypto_util.php');
 
 class Message 
 {

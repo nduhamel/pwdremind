@@ -18,6 +18,9 @@ define('PDO_DSN', 'sqlite:../test.db');
 define('PDO_USER','root');
 define('PDO_PASSWORD','root');
 
+// Database table prefix
+define('DB_PREFIX','pwdr_');
+
 //Session timeout
 define("SESSION_TIMEOUT", 300);
 
