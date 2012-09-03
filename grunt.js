@@ -71,6 +71,11 @@ module.exports = function(grunt) {
                 src: 'build/www/index.html',
                 appPath: './js/app.js',
                 removeAll: true
+            },
+            installer: {
+                src: 'build/www/install/index.html',
+                appPath: './js/install.js',
+                removeAll: true
             }
         },
 
@@ -78,6 +83,11 @@ module.exports = function(grunt) {
             build: {
                 src: 'build/www/index.html',
                 cssPath: './css/main.css',
+                removeAll: true
+            },
+            installer: {
+                src: 'build/www/install/index.html',
+                cssPath: '../css/main.css',
                 removeAll: true
             }
         },
@@ -104,11 +114,20 @@ module.exports = function(grunt) {
         },
 
         requirejs: {
-            name: '../../../almond',
-            include: 'app',
-            mainConfigFile: 'src/www/js/app.js',
-            baseUrl: "./src/www/js",
-            out: 'build/www/js/app.js'
+            build: {
+                name: '../../../almond',
+                include: 'app',
+                mainConfigFile: 'src/www/js/app.js',
+                baseUrl: "./src/www/js",
+                out: 'build/www/js/app.js'
+            },
+            installer: {
+                name: '../../../../almond',
+                include: 'install',
+                mainConfigFile: 'src/www/install/js/install.js',
+                baseUrl: "./src/www/install/js",
+                out: 'build/www/install/js/install.js'
+            }
         },
 
         copy: {
@@ -134,7 +153,7 @@ module.exports = function(grunt) {
     });
 
     // build task
-    grunt.registerTask('build', 'clean:build copy:build requirejs recess:build cssToRecess:build requireToAlmond:build');
+    grunt.registerTask('build', 'clean:build copy:build requirejs:installer requirejs:build recess:build cssToRecess:build cssToRecess:installer requireToAlmond:installer requireToAlmond:build');
 
     // devbuild task
     grunt.registerTask('devbuild', 'build copy:dev');
