@@ -1,23 +1,13 @@
-<div class="modal hide fade">
+<div id="add-modal" class="modal hide fade">
     <div class="modal-header">
         <a class="close">&times;</a>
-        <% if (isNew) { %>
-        <h3>Add a new category</h3>
-        <% } else { %>
-        <h3>Edit category</h3>
-        <% } %>
+        <h3><%=titleLabel%></h3>
     </div>
-
     <div class="modal-body">
-
-        <form>
-            <input class="span3" placeholder="Type category name..." type="text" name="name">
-        </form>
-
     </div>
 
     <div class="modal-footer">
-        <button type="cancel" class="btn">Annuler</button>
-        <button type="submit" class="btn btn-primary">Sauvegarder</button>
+        <button type="cancel" class="btn"><%=cancelLabel%></button>
+        <button type="submit" class="btn btn-primary"><%=saveLabel%></button>
     </div>
 </div>

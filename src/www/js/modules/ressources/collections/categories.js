@@ -155,7 +155,7 @@ define([
         },
 
         comparator : function (a) {
-            return a.get('order');
+            return a.get('order') || -1;
         },
     });
 });

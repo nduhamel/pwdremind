@@ -6,6 +6,12 @@ define(['backbone'], function(Backbone){
             "dataCount" : 0
         },
 
+        schema : {
+            name : {
+                validators: ['required']
+            }
+        },
+
         crypted : ['name', 'order'],
 
         initialize : function (attributes, options) {
