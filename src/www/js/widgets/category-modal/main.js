@@ -5,71 +5,76 @@ define([
     'sandbox',
     'text!./tpl/base.html',
     'bootstrap_modal',
-    'backbone_model_binder',
-    'backbone_validation'
+    'backbone_forms'
 ], function($, _, Backbone, sandbox, baseTpl){
 
-    var CategoryModal = sandbox.WidgetView.extend({
+return CategoryModal = sandbox.WidgetView.extend({
 
-        appendToEl : 'body',
+  appendToEl : 'body',
 
-        events : {
-            "click button[type='submit']" : "onSubmit",
-            "click button[type='cancel']" : "onCancel",
-            "click a.close" : "onCancel"
-        },
+  events : {
+    "click button[type='submit']" : "onSubmit",
+    "click button[type='cancel']" : "onCancel",
+    "click a.close" : "onCancel"
+  },
 
-        initialize : function () {
-            this.modelBinder = new Backbone.ModelBinder();
-            // If not new save attributes for cancel
-            if (!this.model.isNew()) {
-                this._revertAttributes = this.model.toJSON();
-            }
-        },
+  initialize : function () {
+    // If not new save attributes for cancel
+    if (!this.model.isNew()) {
+      this._revertAttributes = this.model.toJSON();
+    }
+  },
 
-        render : function() {
+  render : function() {
+    var renderedContent;
+    console.log('render');
 
-            this.$el.html(_.template(baseTpl, {isNew : this.model.isNew()}));
+    this.form = new Backbone.Form({
+      model: this.model
+    }).render();
 
-            this.$('.modal').modal({
-                show: true,
-                backdrop: 'static',
-                keyboard: false
-            });
-
-            Backbone.Validation.bind(this, {forceUpdate: true});
-            this.modelBinder.bind(this.model, this.el);
-
-            return this;
-        },
-
-        onDestroy : function () {
-            this.$('.modal').modal('hide');
-            this.modelBinder.unbind();
-            Backbone.Validation.unbind(this);
-        },
-
-        onSubmit : function (event) {
-            event.preventDefault();
-            if (this.model.isValid(true)) {
-                var collection = this.collection;
-                this.model.save(null, {success: function (model) {
-                    collection.add(model);
-                }});
-                this.destroy();
-            }
-
-        },
-
-        onCancel : function (event) {
-            event.preventDefault();
-            if (!this.model.isNew()) {
-                this.model.set(this._revertAttributes);
-            }
-            this.destroy();
-        }
-
+    renderedContent = _.template(baseTpl,{
+      titleLabel: this.model.isNew ? 'Add' : 'Edit',
+      cancelLabel: "Cancel",
+      saveLabel: "Save"
     });
 
-    return CategoryModal;
+    this.$el.html(renderedContent);
+    this.$('.modal-body').append(this.form.el);
+
+    this.$('.modal').modal({
+        show: true,
+        backdrop: 'static',
+        keyboard: false
+    });
+
+    return this;
+  },
+
+  onDestroy : function () {
+    this.form.off();
+    this.$('.modal').modal('hide');
+  },
+
+  onSubmit : function (event) {
+    event.preventDefault();
+    if (this.form.validate() === null) {
+      this.form.commit();
+      var collection = this.collection;
+      this.model.save(null, {success: function (model) {
+        collection.push(model);
+      }});
+      this.destroy();
+    }
+  },
+
+  onCancel : function (event) {
+    event.preventDefault();
+    if (!this.model.isNew()) {
+      this.model.set(this._revertAttributes);
+    }
+    this.destroy();
+  }
+});
+
 });
