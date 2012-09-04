@@ -287,6 +287,12 @@ class App
 
         });
 
+        // Installer
+        $router->addRoute('GET', '/install/', function() {
+            error_log('GET OK');
+            header('Location: index.html');
+        });
+
         //Run the router
         $router->run($this->_method, $this->_URI);
 
