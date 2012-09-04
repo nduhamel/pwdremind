@@ -93,12 +93,15 @@ class PwdremindAPI
             }
         };
 
-        // Adding routes
-        include('routes/password.php');
-        include('routes/auth.php');
-        include('routes/note.php');
-        include('routes/history.php');
-        include('routes/redirections.php');
+        // Autoload routes
+        if ($dir = opendir('../php/routes')) {
+            while (false !== ($route = readdir($dir))) {
+                if ($route != "." && $route != "..") {
+                    include('routes/'.$route);
+                }
+            }
+            closedir($dir);
+        }
 
         //Run the router
         $router->run($this->_method, $this->_URI);
