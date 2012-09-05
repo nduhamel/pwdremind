@@ -9,7 +9,8 @@ $post = array();
 
 //URI Data
 $scriptName = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']) ); 
-$inputs['URI'] = substr_replace($_SERVER['REQUEST_URI'], '', 0, strlen($scriptName));
+$inputs['URI'] = '/'.substr_replace($_SERVER['REQUEST_URI'], '', 0, strlen($scriptName));
+$inputs['URI'] = str_replace('//', '/', $inputs['URI']);
 
 //Method
 // POST PUT GET
