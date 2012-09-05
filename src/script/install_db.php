@@ -1,6 +1,6 @@
 <?php
-    require_once('../config.php');
-    require_once('../php/utils/db_sql.php');
+    require_once(dirname(dirname(__FILE__)).'/config.php');
+    require_once(__ROOT__.'php/utils/db_sql.php');
 
     if (PDO_DRIVER == 'sqlite') {
         $db = new PDO(PDO_DSN);

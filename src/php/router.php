@@ -1,6 +1,7 @@
 <?php
 
-require_once('route.php');
+require_once(dirname(dirname(__FILE__)).'/config.php');
+require_once(__ROOT__.'php/route.php');
 
 /**
 * Router class

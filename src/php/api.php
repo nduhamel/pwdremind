@@ -1,11 +1,13 @@
 <?php
-require_once('database.php');
-require_once('srpsession.php');
-require_once('message.php');
-require_once('authentication.php');
-require_once('router.php');
-require_once('utils/crypto_util.php');
-require_once('../config.php');
+
+require_once(dirname(dirname(__FILE__)).'/config.php');
+require_once(__ROOT__.'php/database.php');
+require_once(__ROOT__.'php/srpsession.php');
+require_once(__ROOT__.'php/message.php');
+require_once(__ROOT__.'php/authentication.php');
+require_once(__ROOT__.'php/router.php');
+require_once(__ROOT__.'php/utils/crypto_util.php');
+
 
 class PwdremindAPI
 {
@@ -94,10 +96,10 @@ class PwdremindAPI
         };
 
         // Autoload routes
-        if ($dir = opendir('../php/routes')) {
+        if ($dir = opendir(__ROOT__.'php/routes')) {
             while (false !== ($route = readdir($dir))) {
                 if ($route != "." && $route != "..") {
-                    include('routes/'.$route);
+                    include_once(__ROOT__.'php/routes/'.$route);
                 }
             }
             closedir($dir);
@@ -105,6 +107,5 @@ class PwdremindAPI
 
         //Run the router
         $router->run($this->_method, $this->_URI);
-
     }
 }

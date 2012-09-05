@@ -44,7 +44,7 @@ $(function() {
         var PDO_DSN = "";
 
         if ( $("#db-type").val() == 'sqlite')
-        PDO_DSN = type + ':../' + name + '.db';
+        PDO_DSN = type + ':__SQLITEROOT__' + name + '.db';
         else
         PDO_DSN = type + ':host=' + host + ';port=' + port + ';dbname=' + name;
 

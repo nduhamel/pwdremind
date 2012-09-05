@@ -1,7 +1,9 @@
 <?php
-require_once('session.php');
-require_once('utils/crypto_util.php');
-require_once('utils/srp_256.php');
+
+require_once(dirname(dirname(__FILE__)).'/config.php');
+require_once(__ROOT__.'php/session.php');
+require_once(__ROOT__.'php/utils/crypto_util.php');
+require_once(__ROOT__.'php/utils/srp_256.php');
 
 class SrpSession extends Session
 {

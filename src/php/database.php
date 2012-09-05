@@ -1,5 +1,6 @@
 <?php
-require_once('../config.php');
+
+require_once(dirname(dirname(__FILE__)).'/config.php');
 
 class Database {
     private $_db;

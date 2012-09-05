@@ -14,7 +14,6 @@ $router->addRoute('GET', '/', function() {
 
 // GET installer page
 $router->addRoute('GET', '/install/', function() {
-    error_log('GET OK');
     header('Location: index.html');
 });
 

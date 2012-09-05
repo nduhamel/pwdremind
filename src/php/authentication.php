@@ -1,8 +1,9 @@
 <?php
-require_once('../php/utils/crypto_util.php');
-require_once('../php/srp.php');
-require_once('../php/database.php');
-require_once('../config.php');
+
+require_once(dirname(dirname(__FILE__)).'/config.php');
+require_once(__ROOT__.'php/utils/crypto_util.php');
+require_once(__ROOT__.'php/srp.php');
+require_once(__ROOT__.'php/database.php');
 
 class Authentication
 {

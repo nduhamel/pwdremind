@@ -1,7 +1,6 @@
 <?php
 
-    require_once('../config.php');
-    require_once('../php/utils/add_user.php');
+    require_once(dirname(dirname(__FILE__)).'/config.php');
 
     if (PDO_DRIVER == 'sqlite') {
         $db = new PDO(PDO_DSN);
@@ -11,7 +10,7 @@
 
     $srp = new SRPOptions();
 
-    // Get information FROM ". DB_PREFIX ."user
+    // Get information FROM ". DB_PREFIX ."userc
     fwrite(STDOUT, "Please enter username: ");
     $name = trim(fgets(STDIN));
     fwrite(STDOUT, "Please enter password: ");

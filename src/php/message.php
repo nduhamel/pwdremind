@@ -4,7 +4,8 @@
     Sign data with a key and send them   
 */
 
-require_once('utils/crypto_util.php');
+require_once(dirname(dirname(__FILE__)).'/config.php');
+require_once(__ROOT__.'php/utils/crypto_util.php');
 
 class Message 
 {

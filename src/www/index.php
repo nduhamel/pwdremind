@@ -1,5 +1,7 @@
 <?php
-require_once('../php/api.php');
+
+require_once(dirname(dirname(__FILE__)).'/config.php');
+require_once(__ROOT__.'php/api.php');
 
 //Empty arrays
 $inputs = array();
@@ -26,6 +28,4 @@ $inputs = array_merge($inputs,$post);
 //Start the app
 $app = new PwdremindAPI($inputs);
 $app->run();
-
-
 

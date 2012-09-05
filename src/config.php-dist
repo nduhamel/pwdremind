@@ -24,6 +24,9 @@ define('DB_PREFIX','pwdr_');
 //Session timeout
 define("SESSION_TIMEOUT", 300);
 
+// App root
+define('__ROOT__', dirname(__FILE__).'/');
+
 //Log
 ini_set("log_errors" , "1");
 ini_set("error_log" , "errors.log");
