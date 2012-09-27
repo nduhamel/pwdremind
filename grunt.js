@@ -66,6 +66,7 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
 
+        // Correct js file path
         requireToAlmond: {
             build: {
                 src: 'build/www/index.html',
@@ -79,6 +80,7 @@ module.exports = function(grunt) {
             }
         },
 
+        // Correct CSS file path
         cssToRecess : {
             build: {
                 src: 'build/www/index.html',
@@ -93,13 +95,13 @@ module.exports = function(grunt) {
         },
 
 
-        //CSS
+        // Compile CSS
         recess: {
             build: {
                 src: [
+                    "src/www/css/bootstrap.css",
                     "src/www/css/main.css",
-                    "src/www/css/bootstrap-responsive.css",
-                    "src/www/css/bootstrap.css"
+                    "src/www/css/bootstrap-responsive.css"
                 ],
                 dest: 'build/www/css/main.css',
                 options: {
@@ -109,10 +111,12 @@ module.exports = function(grunt) {
             }
         },
 
+        // Clean old build files
         clean: {
             build: ['build']
         },
 
+        // Compile JS
         requirejs: {
             build: {
                 name: '../../../almond',
@@ -130,6 +134,7 @@ module.exports = function(grunt) {
             }
         },
 
+        // Copy the files
         copy: {
           build: {
             files: {
@@ -152,13 +157,16 @@ module.exports = function(grunt) {
 
     });
 
-    // build task
-    grunt.registerTask('build', 'clean:build copy:build requirejs:installer requirejs:build recess:build cssToRecess:build cssToRecess:installer requireToAlmond:installer requireToAlmond:build');
+    // Main app task
+    grunt.registerTask('build', 'clean:build copy:build requirejs:build recess:build cssToRecess:build  requireToAlmond:build');
 
-    // devbuild task
-    grunt.registerTask('devbuild', 'build copy:dev');
+    // Installer task
+    grunt.registerTask('installer', 'requirejs:installer cssToRecess:installer requireToAlmond:installer');
 
-    // default build task
-    grunt.registerTask('default', 'build');
+    // Dev task
+    grunt.registerTask('devbuild', 'copy:dev');
+
+    // Run build task
+    grunt.registerTask('default', 'build installer devbuild');
 
 };
