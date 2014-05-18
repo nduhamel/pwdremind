@@ -191,7 +191,4 @@ requirejs([
     sandbox.on('logout', function () {
         location.reload();
     });
-
-    // For testing
-    sandbox.trigger('request:login','nicolas','test');
 });
