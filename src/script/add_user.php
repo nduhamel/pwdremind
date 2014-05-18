@@ -1,6 +1,7 @@
 <?php
 
     require_once(dirname(dirname(__FILE__)).'/config.php');
+    require_once(dirname(dirname(__FILE__)).'/php/utils/add_user.php');
 
     if (PDO_DRIVER == 'sqlite') {
         $db = new PDO(PDO_DSN);
@@ -31,7 +32,7 @@
 
     //Adding user to the database
     try {
-        $req = "INSERT INTO user (username, verifier, salt, config)
+        $req = "INSERT INTO ".DB_PREFIX."user (username, verifier, salt, config)
                 VALUES ('".$name."', '".$verifier."', '".$salt."', '{}')";
         $db->query($req);
         fwrite(STDOUT,"User added!\n");
